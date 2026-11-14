@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { ChurchIcon } from './icons'
+import { PlaceMap } from './place-map'
 import { CONTINENTS } from '@/lib/geo'
 import type { Church, Diocese } from '@/lib/types'
 
@@ -29,7 +30,7 @@ export function ChurchFinder({ churches }: { churches: Church[] }) {
   const [deanery, setDeanery] = useState('')
   const [q, setQ] = useState('')
 
-  const list = inDio.filter((r) => (!deanery || r.deanery === deanery) && (!q || `${r.name} ${r.address}`.toLowerCase().includes(q.toLowerCase())))
+  const list = inDio.filter((r) => (!deanery || r.deanery === deanery) && (!q || `${r.name} ${r.address ?? ''}`.toLowerCase().includes(q.toLowerCase())))
   const grouped = new Map<string, { d: Diocese; byDeanery: Map<string, Row[]> }>()
   for (const r of list) {
     const g = grouped.get(r.diocese.id) ?? { d: r.diocese, byDeanery: new Map() }
@@ -74,9 +75,17 @@ export function ChurchFinder({ churches }: { churches: Church[] }) {
       <p className="m-0 text-[15px] text-muted" aria-live="polite">{list.length} {list.length === 1 ? 'parish' : 'parishes'}{where ? <> in <strong className="text-ink">{where}</strong></> : ''}</p>
       {sortedGroups.map(({ d, byDeanery }) => (
         <section key={d.id} className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-line pb-2.5">
-            <h2 className="m-0 font-serif text-[30px] font-semibold">{d.kind} of {d.name}</h2>
-            <span className="text-sm text-muted">{[d.province && `Province of ${d.province}`, d.country].filter(Boolean).join(' · ')}</span>
+          <div className="flex flex-col gap-2 border-b border-line pb-3">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h2 className="m-0 font-serif text-[30px] font-semibold">{d.kind} of {d.name}</h2>
+              <span className="text-sm text-muted">{[d.province && `Province of ${d.province}`, d.country].filter(Boolean).join(' · ')}</span>
+            </div>
+            {(d.address || d.map_url) && (
+              <div className="flex max-w-[640px] flex-col gap-1.5">
+                {d.address && <p className="m-0 whitespace-pre-line text-[15px] text-muted">{d.address}</p>}
+                <PlaceMap name={`${d.kind} of ${d.name}`} address={d.address} country={d.country} mapUrl={d.map_url} />
+              </div>
+            )}
           </div>
           {[...byDeanery.entries()].sort(([a], [b]) => (a ? a.localeCompare(b) : 1)).map(([dean, parishes]) => (
             <div key={dean || 'none'} className="flex flex-col gap-3">
@@ -85,10 +94,10 @@ export function ChurchFinder({ churches }: { churches: Church[] }) {
                 {parishes.sort((a, b) => a.name.localeCompare(b.name)).map((c) => (
                   <article key={c.id} className="flex gap-3.5 rounded-2xl border border-line bg-surface px-5 py-4">
                     <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent"><ChurchIcon /></span>
-                    <div className="flex min-w-0 flex-col gap-1">
+                    <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <h4 className="m-0 text-lg">{c.name}</h4>
-                      <p className="m-0 whitespace-pre-line text-[15px] text-muted">{c.address}</p>
-                      <a href={c.map_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${c.name}, ${c.address}, ${d.country}`)}`} target="_blank" rel="noopener noreferrer" className="pt-1 text-[15px] font-semibold">Get directions →</a>
+                      {c.address && <p className="m-0 whitespace-pre-line text-[15px] text-muted">{c.address}</p>}
+                      <div className="pt-1"><PlaceMap name={c.name} address={c.address} country={d.country} mapUrl={c.map_url} /></div>
                     </div>
                   </article>
                 ))}

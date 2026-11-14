@@ -98,8 +98,8 @@ export type Book = Seo & {
   category?: Category | null
 }
 
-export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null }
+export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address?: string | null; map_url?: string | null }
 
-export type Church = { id: string; name: string; address: string; map_url: string | null; deanery: string | null; diocese_id: string | null; diocese?: Diocese | null }
+export type Church = { id: string; name: string; address: string | null; map_url: string | null; deanery: string | null; diocese_id: string | null; diocese?: Diocese | null }
 
 export type PublicPrayerRequest = { id: string; first_name: string; country: string | null; body: string; prayed_count: number; created_at: string; approved_at: string | null }
