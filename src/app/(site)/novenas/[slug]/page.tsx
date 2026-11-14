@@ -44,7 +44,7 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
       </div>
       <Featured src={n.featured_image} alt={n.image_alt} priority />
       <ShareBar title={n.title} />
-      <NovenaDays days={days} startISO={start} commonHtml={md(n.common_prayers_md)} initial={initial} />
+      <NovenaDays novenaId={n.id} days={days} startISO={start} commonHtml={md(n.common_prayers_md)} initial={initial} />
       {upcoming.length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">More novenas</h2>

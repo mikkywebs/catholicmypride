@@ -15,18 +15,20 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     pray: [
       flags.novenas && { label: 'Novenas', href: '/novenas' },
       flags.prayers && { label: 'Daily Prayers', href: '/daily-prayers' },
+      flags.chaplets && { label: 'Chaplets', href: '/chaplets' },
       flags.readings && { label: 'Mass Readings', href: '/mass-readings' },
     ].filter(Boolean) as NavData['pray'],
     resources: [
       flags.blog && { label: 'Blog', href: '/blog' },
-      flags.songs && { label: 'Music', href: '/music' },
+      flags.songs && { label: 'Music & Audio', href: '/music' },
       flags.books && { label: 'Ebooks', href: '/ebooks' },
       flags.churches && { label: 'Church Directory', href: '/churches' },
     ].filter(Boolean) as NavData['resources'],
     saint: flags.saints,
     wall: flags.wall,
   }
-  const tracks = songs.filter((x) => x.audio_url).map((x) => ({ slug: x.slug, title: x.title, src: x.audio_url!, cover: x.featured_image }))
+  // The music bar plays songs only; spoken messages and prayers stay on their own pages.
+  const tracks = songs.filter((x) => x.audio_url && x.kind !== 'audio').map((x) => ({ slug: x.slug, title: x.title, src: x.audio_url!, cover: x.featured_image }))
 
   return (
     <div id="top" className="flex min-h-screen flex-col">

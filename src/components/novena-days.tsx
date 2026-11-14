@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useClientValue } from './use-client'
 import { AudioPlayer } from './audio-player'
+import { Reactions } from './engage'
 
 type Day = { day: number; title: string | null; html: string; audio_url: string | null; audio_seconds: number | null }
 
@@ -12,7 +13,7 @@ function localISO() {
 }
 
 /** Day 1–9 picker. Opens on today's day if the novena is running. */
-export function NovenaDays({ days, startISO, commonHtml, initial }: { days: Day[]; startISO: string; commonHtml: string; initial: number | null }) {
+export function NovenaDays({ novenaId, days, startISO, commonHtml, initial }: { novenaId: string; days: Day[]; startISO: string; commonHtml: string; initial: number | null }) {
   const today = useClientValue(() => {
     const start = new Date(startISO + 'T00:00:00')
     const now = new Date(localISO() + 'T00:00:00')
@@ -68,6 +69,7 @@ export function NovenaDays({ days, startISO, commonHtml, initial }: { days: Day[
             <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: commonHtml }} />
           </div>
         )}
+        <Reactions key={sel} type="novena" id={`${novenaId}:day${sel}`} kinds={['love', 'amen', 'thumbs']} title={`Did you pray Day ${sel}?`} compact />
         <div className="flex flex-wrap justify-between gap-3 border-t border-line pt-4">
           <button type="button" disabled={sel === 1} onClick={() => go(sel - 1)} className="min-h-12 rounded-md border border-ink px-6 font-semibold text-ink disabled:opacity-40">← Day {Math.max(1, sel - 1)}</button>
           <button type="button" disabled={sel === 9} onClick={() => go(sel + 1)} className="min-h-12 rounded-md bg-accent px-6 font-semibold text-accent-ink disabled:opacity-40">Day {Math.min(9, sel + 1)} →</button>

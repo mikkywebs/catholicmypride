@@ -4,8 +4,8 @@ import { requireAdmin } from '@/lib/admin'
 import { signOut } from '../actions'
 
 const NAV = [
-  ['Dashboard', '/admin'], ['Blog', '/admin/posts'], ['Novenas', '/admin/novenas'], ['Daily Prayers', '/admin/prayers'],
-  ['Mass Readings', '/admin/readings'], ['Saints', '/admin/saints'], ['Music', '/admin/songs'], ['Ebooks', '/admin/books'],
+  ['Dashboard', '/admin'], ['Blog', '/admin/posts'], ['Novenas', '/admin/novenas'], ['Daily Prayers', '/admin/prayers'], ['Chaplets', '/admin/chaplets'],
+  ['Mass Readings', '/admin/readings'], ['Saints', '/admin/saints'], ['Music & Audio', '/admin/songs'], ['Ebooks', '/admin/books'],
   ['Churches', '/admin/churches'], ['Prayer Requests', '/admin/prayer-requests'], ['Messages', '/admin/messages'],
   ['Categories', '/admin/categories'], ['Settings', '/admin/settings'],
 ]

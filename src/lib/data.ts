@@ -1,7 +1,7 @@
 import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
-import type { Book, Category, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Settings, Song } from './types'
+import type { Book, Category, Chaplet, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Settings, Song } from './types'
 
 // Every public read is cached and tagged. Admin saves call updateTag(<tag>)
 // so changes appear straight away.
@@ -59,17 +59,17 @@ export async function getSectionFlags() {
   cacheLife('minutes')
   cacheTag('content')
   const db = publicClient()
-  const empty = { blog: false, songs: false, books: false, churches: false, novenas: false, readings: false, saints: false, prayers: false, wall: false }
+  const empty = { blog: false, songs: false, books: false, churches: false, novenas: false, readings: false, saints: false, prayers: false, chaplets: false, wall: false }
   if (!db) return empty
   const head = async (table: string) => {
     const { count } = await db.from(table).select('id', { count: 'exact', head: true })
     return (count ?? 0) > 0
   }
-  const [blog, songs, books, churches, novenas, readings, saints, prayers, wall] = await Promise.all([
+  const [blog, songs, books, churches, novenas, readings, saints, prayers, chaplets, wall] = await Promise.all([
     head('posts'), head('songs'), head('books'), head('churches'), head('novenas'),
-    head('readings'), head('saints'), head('prayers'), head('public_prayer_requests'),
+    head('readings'), head('saints'), head('prayers'), head('chaplets'), head('public_prayer_requests'),
   ])
-  return { blog, songs, books, churches, novenas, readings, saints, prayers, wall }
+  return { blog, songs, books, churches, novenas, readings, saints, prayers, chaplets, wall }
 }
 
 // ---------- Blog ----------
@@ -227,6 +227,27 @@ export async function getPrayer(slug: string): Promise<Prayer | null> {
   if (!db) return null
   const { data } = await db.from('prayers').select('*, category:categories(*)').eq('slug', slug).maybeSingle()
   return (data as Prayer) ?? null
+}
+
+// ---------- Chaplets ----------
+export async function getChaplets(): Promise<Chaplet[]> {
+  'use cache'
+  cacheLife('minutes')
+  cacheTag('chaplets')
+  const db = publicClient()
+  if (!db) return []
+  const { data } = await db.from('chaplets').select('*').order('sort').order('title')
+  return (data as Chaplet[]) ?? []
+}
+
+export async function getChaplet(slug: string): Promise<Chaplet | null> {
+  'use cache'
+  cacheLife('minutes')
+  cacheTag('chaplets', `chaplet:${slug}`)
+  const db = publicClient()
+  if (!db) return null
+  const { data } = await db.from('chaplets').select('*').eq('slug', slug).maybeSingle()
+  return (data as Chaplet) ?? null
 }
 
 // ---------- Books ----------

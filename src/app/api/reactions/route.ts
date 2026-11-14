@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { publicClient } from '@/lib/supabase/public'
 
-const TYPES = new Set(['song', 'reading', 'post'])
+const TYPES = new Set(['song', 'reading', 'post', 'novena', 'chaplet'])
 const KINDS = new Set(['wow', 'awesome', 'emotional', 'love', 'amen', 'thumbs'])
 
 export async function GET(req: NextRequest) {

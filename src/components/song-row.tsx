@@ -23,8 +23,8 @@ export function SongRow({ slug, title, meta, src, cover }: { slug: string; title
       <button type="button" disabled={!src} onClick={toggle} aria-label={`${playing ? 'Pause' : 'Play'} ${title}`} className="flex size-12 shrink-0 items-center justify-center rounded-full bg-navy text-navy-ink disabled:opacity-40">
         {playing ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
       </button>
-      <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-ph">
-        {cover && <Image src={cover} alt="" fill sizes="56px" className="object-cover" />}
+      <div className="relative aspect-[4/5] w-12 shrink-0 overflow-hidden rounded-lg bg-ph">
+        {cover && <Image src={cover} alt="" fill sizes="48px" className="object-cover" />}
       </div>
       <div className="min-w-0 flex-1 basis-52">
         <a href={`/music/${slug}`} className="font-semibold text-ink no-underline">{title}</a>

@@ -7,7 +7,7 @@ function browserClient() {
   return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 }
 
-const SIZES = { '16:9': [1600, 900], '2:3': [1000, 1500], square: [800, 800] } as const
+const SIZES = { '16:9': [1600, 900], '4:5': [1080, 1350], '2:3': [1000, 1500], square: [800, 800] } as const
 
 /** Centre-crops an image to the exact shape and size, and compresses it. */
 async function cropImage(file: File, shape: keyof typeof SIZES): Promise<Blob> {
@@ -40,7 +40,7 @@ export function ImageUpload({ name, label, shape, initial, altName, altInitial }
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
   const input = useRef<HTMLInputElement>(null)
-  const aspect = shape === '16:9' ? 'aspect-video' : shape === '2:3' ? 'aspect-[2/3] max-w-[240px]' : 'aspect-square max-w-[200px]'
+  const aspect = shape === '16:9' ? 'aspect-video' : shape === '4:5' ? 'aspect-[4/5] max-w-[300px]' : shape === '2:3' ? 'aspect-[2/3] max-w-[240px]' : 'aspect-square max-w-[200px]'
   const pick = async (f: File | undefined) => {
     if (!f) return
     setBusy(true); setErr('')

@@ -15,7 +15,7 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
   ].filter((x) => x.url)
   const resources = [
     flags.blog && { label: 'Blog', href: '/blog' },
-    flags.songs && { label: 'Music', href: '/music' },
+    flags.songs && { label: 'Music & Audio', href: '/music' },
     flags.books && { label: 'Ebooks', href: '/ebooks' },
     flags.churches && { label: 'Church Directory', href: '/churches' },
   ].filter(Boolean) as { label: string; href: string }[]

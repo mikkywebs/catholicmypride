@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useClientValue } from './use-client'
+import { browserPublicClient } from '@/lib/supabase/browser'
 import { ArrowUp, BrandIcon, BRANDS, EyeIcon, LinkIcon, MailIcon } from './icons'
 
 /** Thin reading-progress bar at the top, and a back-to-top button. */
@@ -88,22 +89,40 @@ export function ViewCount({ section, threshold }: { section: string; threshold: 
   return <span className="inline-flex items-center gap-1.5"><EyeIcon />{n.toLocaleString()} views</span>
 }
 
-type Kind = 'wow' | 'awesome' | 'emotional' | 'love' | 'amen' | 'thumbs'
+export type Kind = 'wow' | 'awesome' | 'emotional' | 'love' | 'amen' | 'thumbs'
 const LABEL: Record<Kind, string> = { wow: 'Wow', awesome: 'Awesome', emotional: 'Emotional', love: 'Love', amen: 'Amen', thumbs: 'Thumbs up' }
+type ContentKind = 'song' | 'reading' | 'post' | 'novena' | 'chaplet'
 
-/** Reaction buttons. One reaction per visitor per item, remembered in the browser. */
-export function Reactions({ type, id, kinds, title }: { type: 'song' | 'reading' | 'post'; id: string; kinds: Kind[]; title: string }) {
+/**
+ * Reaction buttons. One reaction per visitor per item, remembered in the browser.
+ * Counts update live for everyone on the page.
+ */
+export function Reactions({ type, id, kinds, title, labels, compact }: { type: ContentKind; id: string; kinds: Kind[]; title: string; labels?: Partial<Record<Kind, string>>; compact?: boolean }) {
   const key = `cmp-react:${type}:${id}`
   const [counts, setCounts] = useState<Record<string, number>>({})
   const stored = useClientValue(() => localStorage.getItem(key), null)
   const [override, setMine] = useState<string | null | undefined>(undefined)
   const mine = override === undefined ? stored : override
+
   useEffect(() => {
+    let alive = true
     fetch(`/api/reactions?type=${type}&id=${encodeURIComponent(id)}`)
       .then((r) => (r.ok ? r.json() : {}))
-      .then((d) => setCounts(d ?? {}))
+      .then((d) => { if (alive) setCounts(d ?? {}) })
       .catch(() => {})
-  }, [key, type, id])
+    const db = browserPublicClient()
+    if (!db) return () => { alive = false }
+    const channel = db
+      .channel(`reactions:${type}:${id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reactions', filter: `content_id=eq.${id}` }, (payload) => {
+        const row = payload.new as { content_type?: string; kind?: string; count?: number }
+        if (row?.content_type === type && row.kind && typeof row.count === 'number') {
+          setCounts((c) => ({ ...c, [row.kind!]: row.count! }))
+        }
+      })
+      .subscribe()
+    return () => { alive = false; db.removeChannel(channel) }
+  }, [type, id])
 
   const send = (kind: Kind, delta: number) =>
     fetch('/api/reactions', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type, id, kind, delta }) })
@@ -123,8 +142,8 @@ export function Reactions({ type, id, kinds, title }: { type: 'song' | 'reading'
   }
 
   return (
-    <section className="reveal flex flex-col items-center gap-3 text-center">
-      <h2 className="m-0 font-serif text-[28px] font-semibold">{title}</h2>
+    <section className={`flex flex-col items-center gap-3 text-center ${compact ? '' : 'reveal'}`}>
+      <h2 className={`m-0 font-serif font-semibold ${compact ? 'text-[22px]' : 'text-[28px]'}`}>{title}</h2>
       <div className="flex flex-wrap justify-center gap-3">
         {kinds.map((k) => {
           const on = mine === k
@@ -134,9 +153,9 @@ export function Reactions({ type, id, kinds, title }: { type: 'song' | 'reading'
               type="button"
               aria-pressed={on}
               onClick={() => pick(k)}
-              className={`inline-flex min-h-[46px] items-center gap-2.5 rounded-full border px-5 font-semibold ${on ? 'border-accent bg-accent text-accent-ink' : 'border-field bg-surface text-ink'}`}
+              className={`inline-flex min-h-[46px] items-center gap-2.5 rounded-full border px-5 font-semibold transition ${on ? 'border-accent bg-accent text-accent-ink' : 'border-field bg-surface text-ink'}`}
             >
-              {LABEL[k]} <span className="text-sm opacity-80">{counts[k] ?? 0}</span>
+              {labels?.[k] ?? LABEL[k]} <span className="text-sm tabular-nums opacity-80" aria-live="polite">{counts[k] ?? 0}</span>
             </button>
           )
         })}

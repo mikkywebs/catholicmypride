@@ -157,15 +157,15 @@ async function Songs() {
     <section className="reveal border-y border-line bg-sky px-6 py-16">
       <div className="mx-auto max-w-[900px]">
         <div className="mb-7 text-center">
-          <Eyebrow>Hymns &amp; Songs</Eyebrow>
-          <H2 className="mt-1.5">Listen and download</H2>
+          <Eyebrow>Music &amp; Audio</Eyebrow>
+          <H2 className="mt-1.5">Songs, messages &amp; prayers</H2>
         </div>
         <div className="flex flex-col gap-2.5">
           {songs.map((s) => (
-            <SongRow key={s.id} slug={s.slug} title={s.title} src={s.audio_url} cover={s.featured_image} meta={[s.category?.name, duration(s.duration_seconds)].filter(Boolean).join(' · ')} />
+            <SongRow key={s.id} slug={s.slug} title={s.title} src={s.audio_url} cover={s.featured_image} meta={[s.kind === 'audio' ? 'Audio' : 'Song', s.category?.name, duration(s.duration_seconds)].filter(Boolean).join(' · ')} />
           ))}
         </div>
-        <p className="mb-0 mt-6 text-center"><Link href="/music" className="font-semibold">All songs →</Link></p>
+        <p className="mb-0 mt-6 text-center"><Link href="/music" className="font-semibold">All songs &amp; audio →</Link></p>
       </div>
     </section>
   )

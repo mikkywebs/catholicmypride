@@ -6,7 +6,7 @@ export type Field =
   | { name: string; label: string; type: 'textarea' | 'markdown'; rows?: number; required?: boolean; help?: string; placeholder?: string }
   | { name: string; label: string; type: 'select'; options: string[]; required?: boolean; help?: string; half?: boolean; empty?: string }
   | { name: string; label: string; type: 'category'; kind: 'blog' | 'song' | 'book' | 'prayer'; half?: boolean }
-  | { name: string; label: string; type: 'image'; shape: '16:9' | '2:3' | 'square'; altField?: string }
+  | { name: string; label: string; type: 'image'; shape: '16:9' | '4:5' | '2:3' | 'square'; altField?: string }
   | { name: string; label: string; type: 'audio'; secondsField: string; help?: string }
   | { name: string; label: string; type: 'file'; accept: string; help?: string }
   | { name: string; label: string; type: 'tags'; help?: string; placeholder?: string }
@@ -68,19 +68,20 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     ],
   },
   songs: {
-    key: 'songs', table: 'songs', singular: 'song', plural: 'Music', titleField: 'title', slugFrom: 'title',
+    key: 'songs', table: 'songs', singular: 'song or audio', plural: 'Music & Audio', titleField: 'title', slugFrom: 'title',
     publicBase: '/music/', publicField: 'slug',
-    listColumns: [{ field: 'title', label: 'Title' }, { field: 'status', label: 'Status' }, { field: 'published_at', label: 'Published' }],
+    listColumns: [{ field: 'title', label: 'Title' }, { field: 'kind', label: 'Type' }, { field: 'status', label: 'Status' }, { field: 'published_at', label: 'Published' }],
     orderBy: 'created_at', tags: ['songs', 'content'], seo: true, status: true,
     fields: [
-      { name: 'title', label: 'Song title', type: 'text', required: true },
+      { name: 'kind', label: 'Is this a song, or an audio message / prayer?', type: 'select', options: ['song', 'audio'], required: true, help: 'Song = music with singing. Audio = a spoken message, teaching or prayer.' },
+      { name: 'title', label: 'Title', type: 'text', required: true },
       { name: 'slug', label: 'Web address (slug)', type: 'text', required: true },
       { name: 'category_id', label: 'Category', type: 'category', kind: 'song', half: true },
-      featured(),
-      { name: 'about', label: 'About the song', type: 'textarea', rows: 3 },
-      { name: 'lyrics', label: 'Lyrics (optional)', type: 'textarea', rows: 12 },
+      { name: 'featured_image', label: 'Cover image (4:5, like an album cover)', type: 'image', shape: '4:5', altField: 'image_alt' },
+      { name: 'about', label: 'About this song or message', type: 'textarea', rows: 3 },
+      { name: 'lyrics', label: 'Lyrics or transcript (optional)', type: 'textarea', rows: 12 },
       { name: 'audio_url', label: 'MP3 file', type: 'audio', secondsField: 'duration_seconds' },
-      { name: 'allow_download', label: 'Show the Download MP3 button on the song page', type: 'boolean' },
+      { name: 'allow_download', label: 'Show the Download MP3 button on its page', type: 'boolean' },
       ...SEO_FIELDS,
       ...STATUS_FIELDS,
     ],
@@ -175,6 +176,23 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       featured(),
       { name: 'body_md', label: 'Prayer text', type: 'markdown', rows: 14, required: true },
       { name: 'audio_url', label: 'Audio (optional)', type: 'audio', secondsField: 'audio_seconds' },
+      ...SEO_FIELDS,
+      ...STATUS_FIELDS,
+    ],
+  },
+  chaplets: {
+    key: 'chaplets', table: 'chaplets', singular: 'chaplet', plural: 'Chaplets', titleField: 'title', slugFrom: 'title',
+    publicBase: '/chaplets/', publicField: 'slug',
+    listColumns: [{ field: 'title', label: 'Chaplet' }, { field: 'sort', label: 'Order' }, { field: 'status', label: 'Status' }],
+    orderBy: 'sort', tags: ['chaplets', 'content'], seo: true, status: true,
+    fields: [
+      { name: 'title', label: 'Chaplet name', type: 'text', required: true, placeholder: 'e.g. Chaplet of Divine Mercy' },
+      { name: 'slug', label: 'Web address (slug)', type: 'text', required: true },
+      { name: 'sort', label: 'Order in the list (1 = first)', type: 'number', half: true },
+      featured(),
+      { name: 'intro', label: 'Short introduction', type: 'textarea', rows: 3, help: 'Its origin and when it is prayed.' },
+      { name: 'body_md', label: 'How to pray it (steps and prayers)', type: 'markdown', rows: 20, required: true, help: 'Tip: use ## for each step, e.g. ## On the large beads.' },
+      { name: 'audio_url', label: 'Pray-along audio (optional)', type: 'audio', secondsField: 'audio_seconds' },
       ...SEO_FIELDS,
       ...STATUS_FIELDS,
     ],

@@ -41,8 +41,15 @@ export type Song = Seo & {
   id: string; slug: string; title: string; about: string | null; lyrics: string | null
   audio_url: string | null; duration_seconds: number | null; featured_image: string | null
   image_alt: string | null; category_id: string | null; allow_download: boolean
+  kind: 'song' | 'audio'
   published_at: string | null
   category?: Category | null
+}
+
+export type Chaplet = Seo & {
+  id: string; slug: string; title: string; intro: string | null; body_md: string
+  featured_image: string | null; image_alt: string | null
+  audio_url: string | null; audio_seconds: number | null; sort: number
 }
 
 export type Reading = Seo & {

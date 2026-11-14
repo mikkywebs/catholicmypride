@@ -24,6 +24,15 @@ export function Featured({ src, alt, priority, className = '', rounded = 'rounde
   )
 }
 
+/** 4:5 cover for songs and audio. */
+export function Portrait({ src, alt, className = '', priority, sizes = '(max-width: 700px) 100vw, 380px' }: { src: string | null | undefined; alt?: string | null; className?: string; priority?: boolean; sizes?: string }) {
+  return (
+    <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-ph ${className}`}>
+      {src && <Image src={src} alt={alt ?? ''} fill sizes={sizes} className="object-cover" priority={priority} />}
+    </div>
+  )
+}
+
 export function Cover({ src, alt, className = '' }: { src: string | null | undefined; alt?: string; className?: string }) {
   return (
     <div className={`relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-ph shadow-[0_10px_28px_rgba(31,36,48,0.16)] ${className}`}>
