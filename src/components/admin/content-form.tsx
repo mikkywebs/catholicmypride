@@ -6,9 +6,9 @@ import type { Category, Diocese } from '@/lib/types'
 import { publicUrl, type ContentType, type Field } from '@/lib/content-types'
 import { slugify } from '@/lib/text'
 import { AudioUpload, FileUpload, ImageUpload } from './upload'
-import { DioceseField, PlaceField, PlaylistField, TimeField, WeekdaysField, type SongOption } from './fields-extra'
+import { DioceseField, MusicBarField, PlaceField, TimeField, WeekdaysField } from './fields-extra'
 
-export type FormOptions = { dioceses?: Diocese[]; songs?: SongOption[] }
+export type FormOptions = { dioceses?: Diocese[] }
 
 type Row = Record<string, unknown>
 type Action = (state: FormState, form: FormData) => Promise<FormState>
@@ -136,8 +136,8 @@ function FieldInput({ f, row, cats, slugFrom, options }: { f: Field; row: Row; c
       return <WeekdaysField name={f.name} label={f.label} help={f.help} initial={(row[f.name] as number[] | undefined) ?? []} />
     case 'time':
       return <TimeField name={f.name} label={f.label} help={f.help} initial={val(f.name)} />
-    case 'playlist':
-      return <PlaylistField name={f.name} label={f.label} help={f.help} songs={options.songs ?? []} initial={(row[f.name] as string[] | undefined) ?? []} />
+    case 'musicbar':
+      return <MusicBarField row={row} />
     case 'boolean':
       return <label className="flex items-center gap-2.5 text-[15px]"><input type="checkbox" name={f.name} defaultChecked={Boolean(row[f.name] ?? (f.name === 'allow_download' || f.name === 'is_free'))} className="size-5 accent-accent" />{f.label}</label>
   }

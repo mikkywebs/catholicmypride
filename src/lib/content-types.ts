@@ -16,7 +16,7 @@ export type Field =
   | { name: string; label: string; type: 'diocese'; help?: string }
   | { name: string; label: string; type: 'weekdays'; help?: string }
   | { name: string; label: string; type: 'time'; help?: string; half?: boolean }
-  | { name: string; label: string; type: 'playlist'; help?: string }
+  | { name: string; label: string; type: 'musicbar' }
 
 export type ContentType = {
   key: string
@@ -75,7 +75,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   songs: {
     key: 'songs', table: 'songs', singular: 'song or audio', plural: 'Music & Audio', titleField: 'title', slugFrom: 'title',
     publicBase: '/music/', publicField: 'slug',
-    listColumns: [{ field: 'title', label: 'Title' }, { field: 'kind', label: 'Type' }, { field: 'status', label: 'Status' }, { field: 'published_at', label: 'Published' }],
+    listColumns: [{ field: 'title', label: 'Title' }, { field: 'kind', label: 'Type' }, { field: 'on_bar', label: 'On music bar' }, { field: 'status', label: 'Status' }],
     orderBy: 'created_at', tags: ['songs', 'content'], seo: true, status: true,
     fields: [
       { name: 'kind', label: 'Is this a song, or an audio message / prayer?', type: 'select', options: ['song', 'audio'], required: true, help: 'Song = music with singing. Audio = a spoken message, teaching or prayer.' },
@@ -87,6 +87,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'lyrics', label: 'Lyrics or transcript (optional)', type: 'textarea', rows: 12 },
       { name: 'audio_url', label: 'MP3 file', type: 'audio', secondsField: 'duration_seconds' },
       { name: 'allow_download', label: 'Show the Download MP3 button on its page', type: 'boolean' },
+      { name: 'on_bar', label: 'Music bar', type: 'musicbar' },
       ...SEO_FIELDS,
       ...STATUS_FIELDS,
     ],
@@ -249,22 +250,6 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'address', label: 'Address', type: 'textarea', rows: 2, required: true },
       { name: 'map_url', label: 'Google Maps link (optional)', type: 'url' },
       { name: 'status', label: 'Status', type: 'select', options: ['published', 'draft'], half: true },
-    ],
-  },
-  playlists: {
-    key: 'playlists', table: 'music_playlists', singular: 'playlist', plural: 'Music bar playlists', titleField: 'name',
-    listColumns: [{ field: 'name', label: 'Playlist' }, { field: 'days', label: 'Days' }, { field: 'start_time', label: 'From' }, { field: 'end_time', label: 'To' }, { field: 'loop_mode', label: 'At the end' }, { field: 'status', label: 'Status' }],
-    orderBy: 'sort', tags: ['playlists'], status: false,
-    fields: [
-      { name: 'name', label: 'Playlist name', type: 'text', required: true, placeholder: 'e.g. Morning prayers' },
-      { name: 'items', label: 'What plays, in order', type: 'playlist', help: 'Mix songs and audio messages in any order.' },
-      { name: 'h1', label: 'When it plays (by each visitor’s own clock)', type: 'heading' },
-      { name: 'days', label: 'Days', type: 'weekdays', help: 'Tick none for every day.' },
-      { name: 'start_time', label: 'From', type: 'time', half: true, help: 'Leave both times empty for all day.' },
-      { name: 'end_time', label: 'Until', type: 'time', half: true },
-      { name: 'loop_mode', label: 'After the last item', type: 'select', options: ['loop', 'once'], help: 'loop = start again from the top; once = stop.' },
-      { name: 'sort', label: 'Priority if two playlists overlap (1 = wins)', type: 'number' },
-      { name: 'status', label: 'Status', type: 'select', options: ['published', 'draft'] },
     ],
   },
 }

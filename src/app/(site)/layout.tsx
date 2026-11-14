@@ -4,10 +4,10 @@ import { Header, HeaderShell, type NavData } from '@/components/header'
 import { MusicBar } from '@/components/music-bar'
 import { ScrollTools } from '@/components/engage'
 import { Ticker } from '@/components/ticker'
-import { getPlaylists, getSectionFlags, getSettings, getSongs } from '@/lib/data'
+import { getSectionFlags, getSettings, getSongs } from '@/lib/data'
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [s, flags, songs, playlists] = await Promise.all([getSettings(), getSectionFlags(), getSongs(300), getPlaylists()])
+  const [s, flags, songs] = await Promise.all([getSettings(), getSectionFlags(), getSongs(300)])
   const nav: NavData = {
     logoUrl: s.logo_url,
     siteName: s.site_name,
@@ -27,11 +27,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     saint: flags.saints,
     wall: flags.wall,
   }
-  // Music bar: scheduled playlists chosen by the admin, with a fallback when none is on.
+  // Music bar: items the admin put on the bar (each with its own schedule), else the fallback.
   const playable = songs.filter((x) => x.audio_url)
   const library = playable.map((x) => ({ id: x.id, slug: x.slug, title: x.title, src: x.audio_url!, cover: x.featured_image }))
   const fallback = s.music_fallback === 'none' ? [] : playable.filter((x) => s.music_fallback === 'all' || (s.music_fallback === 'audio' ? x.kind === 'audio' : x.kind !== 'audio')).map((x) => x.id)
-  const scheduled = playlists.map((p) => ({ days: p.days, start: p.start_time, end: p.end_time, loop: p.loop_mode !== 'once', sort: p.sort, trackIds: p.items }))
+  const slots = playable.filter((x) => x.on_bar).map((x) => ({ id: x.id, title: x.title, days: x.bar_days ?? [], start: x.bar_start, end: x.bar_end, order: x.bar_order ?? 0 }))
 
   return (
     <div id="top" className="flex min-h-screen flex-col">
@@ -43,7 +43,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <ScrollTools />
       <main id="main" className="flex-1">{children}</main>
       <Footer s={s} flags={flags} />
-      <MusicBar library={library} playlists={scheduled} fallback={fallback} />
+      <MusicBar library={library} slots={slots} loop={s.music_loop !== 'once'} fallback={fallback} />
     </div>
   )
 }

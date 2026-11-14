@@ -80,7 +80,13 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
               <option value="all">Everything (songs and audio)</option>
               <option value="none">Nothing (hide the music bar)</option>
             </select>
-            <span className="text-[13px] font-normal text-muted">Set up scheduled playlists under <Link href="/admin/playlists">Music bar</Link>.</span>
+            <span className="text-[13px] font-normal text-muted">Choose what plays and when in each item under <Link href="/admin/songs">Music &amp; Audio</Link>.</span>
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-semibold">After the last item
+            <select name="music_loop" defaultValue={s.music_loop ?? 'loop'} className={input}>
+              <option value="loop">Start again from the top</option>
+              <option value="once">Stop</option>
+            </select>
           </label>
         </section>
         <section className={card}>

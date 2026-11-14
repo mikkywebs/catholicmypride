@@ -11,7 +11,7 @@ export default async function Page(props: PageProps<'/admin/[type]/new'>) {
   if (!t) notFound()
   const { db } = await requireAdmin()
   const [{ data: cats }, options] = await Promise.all([db.from('categories').select('*').order('name'), loadFormOptions(db, t)])
-  const defaults: Record<string, unknown> = ['churches', 'dioceses', 'playlists'].includes(t.key) ? { status: 'published', kind: t.key === 'dioceses' ? 'Diocese' : undefined, loop_mode: 'loop' } : t.key === 'songs' ? { status: 'draft', kind: 'song' } : { status: 'draft' }
+  const defaults: Record<string, unknown> = ['churches', 'dioceses'].includes(t.key) ? { status: 'published', kind: t.key === 'dioceses' ? 'Diocese' : undefined } : t.key === 'songs' ? { status: 'draft', kind: 'song' } : { status: 'draft' }
   return (
     <div className="flex flex-col gap-5">
       <h1 className="m-0 font-serif text-[38px] font-semibold">New {t.singular}</h1>

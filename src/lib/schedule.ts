@@ -1,6 +1,6 @@
-// Picks which music bar playlist should play right now (visitor's local clock).
+// Works out what the music bar should play right now (visitor's local clock).
 
-export type ScheduledPlaylist = { days: number[]; start: string | null; end: string | null; loop: boolean; sort: number; trackIds: string[] }
+export type BarSlot = { id: string; title: string; days: number[]; start: string | null; end: string | null; order: number }
 
 function minutes(t: string) {
   const [h, m] = t.split(':').map(Number)
@@ -8,7 +8,7 @@ function minutes(t: string) {
 }
 
 /** True if `now` falls inside the playlist's days and time window. Windows may cross midnight. */
-export function isActive(p: Pick<ScheduledPlaylist, 'days' | 'start' | 'end'>, now: Date) {
+export function isActive(p: Pick<BarSlot, 'days' | 'start' | 'end'>, now: Date) {
   const day = now.getDay()
   const mins = now.getHours() * 60 + now.getMinutes()
   if (!p.start && !p.end) return p.days.length === 0 || p.days.includes(day)
@@ -21,6 +21,7 @@ export function isActive(p: Pick<ScheduledPlaylist, 'days' | 'start' | 'end'>, n
   return false
 }
 
-export function pickPlaylist<T extends ScheduledPlaylist>(lists: T[], now: Date): T | null {
-  return [...lists].sort((a, b) => a.sort - b.sort).find((p) => p.trackIds.length > 0 && isActive(p, now)) ?? null
+/** Items on the music bar that are scheduled for `now`, in the admin's order. */
+export function activeSlots(slots: BarSlot[], now: Date) {
+  return slots.filter((x) => isActive(x, now)).sort((a, b) => a.order - b.order || a.title.localeCompare(b.title))
 }

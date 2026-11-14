@@ -14,7 +14,7 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
   let query = db.from(t.table).select('*').order(t.orderBy, { ascending: false }).limit(200)
   if (q) query = query.ilike(t.titleField === 'date' ? 'title' : t.titleField, `%${q}%`)
   const { data: rows } = await query
-  const fmt = (v: unknown) => (v == null || v === '' ? '—' : typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v) ? new Date(v).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : String(v))
+  const fmt = (v: unknown) => (v === true ? 'Yes' : v === false ? '—' : v == null || v === '' ? '—' : typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v) ? new Date(v).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : String(v))
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">

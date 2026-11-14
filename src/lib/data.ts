@@ -1,7 +1,7 @@
 import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
-import type { Book, Category, Chaplet, Church, Playlist, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Settings, Song } from './types'
+import type { Book, Category, Chaplet, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Settings, Song } from './types'
 
 // Every public read is cached and tagged. Admin saves call updateTag(<tag>)
 // so changes appear straight away.
@@ -31,6 +31,7 @@ const DEFAULT_SETTINGS: Settings = {
   donate_needs_md: null,
   view_threshold: 50,
   music_fallback: 'songs',
+  music_loop: 'loop',
 }
 
 
@@ -281,17 +282,6 @@ export async function getChurches(): Promise<Church[]> {
   if (!db) return []
   const { data } = await db.from('churches').select('id, name, address, map_url, deanery, diocese_id, diocese:dioceses(*)').not('diocese_id', 'is', null).order('name').limit(5000)
   return (data as unknown as Church[]) ?? []
-}
-
-// ---------- Music bar playlists ----------
-export async function getPlaylists(): Promise<Playlist[]> {
-  'use cache'
-  cacheLife('minutes')
-  cacheTag('playlists')
-  const db = publicClient()
-  if (!db) return []
-  const { data } = await db.from('music_playlists').select('*').order('sort')
-  return (data as Playlist[]) ?? []
 }
 
 // ---------- Prayer wall ----------

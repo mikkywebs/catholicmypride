@@ -57,11 +57,16 @@ function readField(f: Field, form: FormData): [string, unknown][] {
       return [[f.name, form.getAll(f.name).map((d) => Number(d)).filter((d) => d >= 0 && d <= 6).sort()]]
     case 'time':
       return [[f.name, /^\d{2}:\d{2}$/.test(raw(f.name)) ? raw(f.name) : null]]
-    case 'playlist': {
-      try {
-        const ids = JSON.parse(raw(f.name) || '[]')
-        return [[f.name, Array.isArray(ids) ? ids.filter((x) => typeof x === 'string' && /^[0-9a-f-]{36}$/i.test(x)) : []]]
-      } catch { return [[f.name, []]] }
+    case 'musicbar': {
+      const on = form.get('on_bar') === 'on'
+      const time = (n: string) => (/^\d{2}:\d{2}$/.test(raw(n)) ? raw(n) : null)
+      return [
+        ['on_bar', on],
+        ['bar_days', form.getAll('bar_days').map((d) => Number(d)).filter((d) => d >= 0 && d <= 6).sort()],
+        ['bar_start', time('bar_start')],
+        ['bar_end', time('bar_end')],
+        ['bar_order', Number.parseInt(raw('bar_order'), 10) || 0],
+      ]
     }
     case 'image':
       return f.altField ? [[f.name, raw(f.name) || null], [f.altField, raw(f.altField) || null]] : [[f.name, raw(f.name) || null]]
@@ -200,6 +205,7 @@ export async function saveSettings(_: FormState, form: FormData): Promise<FormSt
   row.view_threshold = Math.max(0, Number.parseInt(String(form.get('view_threshold') ?? '50'), 10) || 0)
   const fb = String(form.get('music_fallback') ?? 'songs')
   row.music_fallback = MUSIC_FALLBACKS.includes(fb) ? fb : 'songs'
+  row.music_loop = form.get('music_loop') === 'once' ? 'once' : 'loop'
   const { error } = await db.from('settings').update(row).eq('id', 1)
   if (error) return { ok: false, message: error.message }
 

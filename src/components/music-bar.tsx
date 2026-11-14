@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { announcePlay, onOtherPlay } from './audio-bus'
 import { NextIcon, PauseIcon, PlayIcon, PrevIcon, VolumeIcon } from './icons'
 import { useClientValue } from './use-client'
-import { pickPlaylist, type ScheduledPlaylist } from '@/lib/schedule'
+import { activeSlots, type BarSlot } from '@/lib/schedule'
 
 export type Track = { id: string; slug: string; title: string; src: string; cover: string | null }
 
@@ -22,14 +22,13 @@ const minuteNow = () => Math.floor(Date.now() / 60_000)
  * Sticky music bar. Browsers block sound until the visitor interacts,
  * so it starts on the first tap or click anywhere. There is no download control.
  */
-export function MusicBar({ library, playlists, fallback }: { library: Track[]; playlists: ScheduledPlaylist[]; fallback: string[] }) {
+export function MusicBar({ library, slots, loop, fallback }: { library: Track[]; slots: BarSlot[]; loop: boolean; fallback: string[] }) {
   const audio = useRef<HTMLAudioElement>(null)
   const minute = useSyncExternalStore(subscribeClock, minuteNow, () => 0)
   const byId = new Map(library.map((t) => [t.id, t]))
-  const active = minute ? pickPlaylist(playlists, new Date(minute * 60_000)) : null
-  const ids = active ? active.trackIds : fallback
+  const scheduled = minute ? activeSlots(slots, new Date(minute * 60_000)).map((x) => x.id) : []
+  const ids = scheduled.length ? scheduled : fallback
   const tracks = ids.map((id) => byId.get(id)).filter(Boolean) as Track[]
-  const loop = active ? active.loop : true
   const queueKey = ids.join(',')
   const [pos, setPos] = useState({ key: '', i: 0 })
   const i = pos.key === queueKey && pos.i < tracks.length ? pos.i : 0

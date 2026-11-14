@@ -7,8 +7,6 @@ import type { Diocese } from '@/lib/types'
 
 const input = 'min-h-11 w-full rounded-lg border border-field bg-surface px-3 py-2.5 font-normal text-ink'
 
-export type SongOption = { id: string; title: string; kind: string }
-
 /** Continent → country (saved as two fields). */
 export function PlaceField({ name, countryName, label, help, initialContinent, initialCountry }: { name: string; countryName: string; label: string; help?: string; initialContinent?: string; initialCountry?: string }) {
   const [continent, setContinent] = useState(initialContinent || (initialCountry ? COUNTRY_CONTINENT[initialCountry] ?? '' : ''))
@@ -96,42 +94,28 @@ export function TimeField({ name, label, help, initial }: { name: string; label:
   )
 }
 
-/** Hand-picked, ordered list of songs and audio messages. */
-export function PlaylistField({ name, label, help, songs, initial }: { name: string; label: string; help?: string; songs: SongOption[]; initial?: string[] }) {
-  const [ids, setIds] = useState<string[]>((initial ?? []).filter((x) => songs.some((s) => s.id === x)))
-  const [add, setAdd] = useState('')
-  const byId = new Map(songs.map((s) => [s.id, s]))
-  const move = (i: number, d: number) => setIds((l) => { const n = [...l]; const j = i + d; if (j < 0 || j >= n.length) return n; [n[i], n[j]] = [n[j], n[i]]; return n })
-  const btn = 'flex size-9 items-center justify-center rounded-md border border-field bg-surface text-sm disabled:opacity-30'
+/** "Play this on the music bar" — ticking it opens the schedule options. */
+export function MusicBarField({ row }: { row: Record<string, unknown> }) {
+  const [on, setOn] = useState(Boolean(row.on_bar))
   return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="pb-1.5 text-sm font-semibold">{label}</legend>
-      <input type="hidden" name={name} value={JSON.stringify(ids)} />
-      {ids.length === 0 && <p className="m-0 text-sm text-muted">Nothing added yet.</p>}
-      <ol className="m-0 flex list-none flex-col gap-2 p-0">
-        {ids.map((id, i) => {
-          const s = byId.get(id)
-          return (
-            <li key={id} className="flex items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2">
-              <span className="w-6 text-sm text-muted">{i + 1}.</span>
-              <span className="flex-1 font-semibold">{s?.title ?? 'Removed item'}</span>
-              <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${s?.kind === 'audio' ? 'bg-sky text-ink' : 'bg-accent-soft text-eyebrow'}`}>{s?.kind === 'audio' ? 'Audio' : 'Song'}</span>
-              <button type="button" className={btn} onClick={() => move(i, -1)} disabled={i === 0} aria-label="Move up">↑</button>
-              <button type="button" className={btn} onClick={() => move(i, 1)} disabled={i === ids.length - 1} aria-label="Move down">↓</button>
-              <button type="button" className={btn} onClick={() => setIds((l) => l.filter((x) => x !== id))} aria-label="Remove">✕</button>
-            </li>
-          )
-        })}
-      </ol>
-      <div className="flex flex-wrap gap-2">
-        <select value={add} onChange={(e) => setAdd(e.target.value)} className={`${input} flex-1 basis-60`} aria-label="Add a song or audio">
-          <option value="">Add a song or audio message…</option>
-          <optgroup label="Songs">{songs.filter((s) => s.kind !== 'audio' && !ids.includes(s.id)).map((s) => <option key={s.id} value={s.id}>{s.title}</option>)}</optgroup>
-          <optgroup label="Audio messages & prayers">{songs.filter((s) => s.kind === 'audio' && !ids.includes(s.id)).map((s) => <option key={s.id} value={s.id}>{s.title}</option>)}</optgroup>
-        </select>
-        <button type="button" disabled={!add} onClick={() => { setIds((l) => [...l, add]); setAdd('') }} className="min-h-11 rounded-md bg-navy px-5 font-semibold text-navy-ink disabled:opacity-40">Add</button>
+    <fieldset className="flex flex-col gap-3 rounded-2xl border border-line bg-bg p-4">
+      <legend className="px-1 text-sm font-semibold">Music bar</legend>
+      <label className="flex items-center gap-2.5 text-[15px] font-semibold">
+        <input type="checkbox" name="on_bar" checked={on} onChange={(e) => setOn(e.target.checked)} className="size-5 accent-accent" />
+        Play this on the music bar
+      </label>
+      {/* Hidden rather than removed, so choices are kept if you untick and tick again. */}
+      <div className={`flex-col gap-4 ${on ? 'flex' : 'hidden'}`}>
+        <WeekdaysField name="bar_days" label="Days" help="Tick none for every day." initial={(row.bar_days as number[] | undefined) ?? []} />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TimeField name="bar_start" label="From" help="Leave both empty for all day. Visitors' own clock." initial={row.bar_start as string | null} />
+          <TimeField name="bar_end" label="Until" initial={row.bar_end as string | null} />
+        </div>
+        <label className="flex flex-col gap-1.5 text-sm font-semibold">Position in the music bar
+          <input type="number" name="bar_order" min={0} defaultValue={row.bar_order == null ? '' : String(row.bar_order)} placeholder="1" className={input} />
+          <span className="text-[13px] font-normal text-muted">1 plays first. Items with the same number play in alphabetical order.</span>
+        </label>
       </div>
-      {help && <span className="text-[13px] text-muted">{help} Only published items with an MP3 can play.</span>}
     </fieldset>
   )
 }
