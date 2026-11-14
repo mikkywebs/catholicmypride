@@ -17,7 +17,7 @@ const DEFAULT_SETTINGS: Settings = {
   about_image_url: null,
   about_story_title: null,
   about_story_md: null,
-  contact_email: 'contact@catholicmypride.org',
+  contact_email: 'cmpapostolate@gmail.com',
   contact_phone: null,
   contact_address: null,
   youtube_url: 'https://www.youtube.com/@CMPApostolate',

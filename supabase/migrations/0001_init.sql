@@ -36,7 +36,7 @@ create table if not exists public.settings (
   about_image_url text,
   about_story_title text,
   about_story_md text,
-  contact_email text default 'contact@catholicmypride.org',
+  contact_email text default 'cmpapostolate@gmail.com',
   contact_phone text,
   contact_address text,
   youtube_url text default 'https://www.youtube.com/@CMPApostolate',

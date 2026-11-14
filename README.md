@@ -8,7 +8,7 @@ Next.js (App Router, Cache Components) + Supabase + Vercel.
 2. In Supabase → Authentication → Users, add the admin's email and password. Then run:
    ```sql
    insert into public.admin_users (user_id)
-   select id from auth.users where email = 'contact@catholicmypride.org';
+   select id from auth.users where email = 'cmpapostolate@gmail.com';
    ```
 3. On Vercel, import this repo and add the variables from `.env.example`.
 4. Add `catholicmypride.org` in Vercel → Domains, keeping Namecheap's DNS (add Vercel's A/CNAME records there).

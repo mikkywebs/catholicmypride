@@ -12,7 +12,7 @@ const SECTIONS = [
   { title: "Purchases", body: "Paid ebooks are sold through our payment partner, whose terms also apply. Contact us if there is a problem with a purchase." },
   { title: "Links to other sites", body: "We are not responsible for the content of websites we link to." },
   { title: "Changes and availability", body: "We may change or pause any part of the site at any time." },
-  { title: "Contact", body: "Questions about these terms: contact@catholicmypride.org." },
+  { title: "Contact", body: "Questions about these terms: cmpapostolate@gmail.com." },
 ]
 
 export default function Page() {
