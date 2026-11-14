@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAdmin } from '@/lib/admin'
-import { CONTENT_TYPES } from '@/lib/content-types'
+import { CONTENT_TYPES, publicUrl } from '@/lib/content-types'
 import { deleteItem } from '../../actions'
 
 export default async function Page(props: PageProps<'/admin/[type]'>) {
@@ -41,7 +41,7 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-3">
                     <Link href={`/admin/${t.key}/${r.id}`} className="font-semibold">Edit</Link>
-                    {t.publicPath && r.status === 'published' && <a href={t.publicPath(r)} target="_blank" rel="noreferrer">View</a>}
+                    {publicUrl(t, r) && r.status === 'published' && <a href={publicUrl(t, r)!} target="_blank" rel="noreferrer">View</a>}
                     <form action={deleteItem.bind(null, t.key, String(r.id))}><button className="text-muted hover:text-[#b42318]">Delete</button></form>
                   </div>
                 </td>

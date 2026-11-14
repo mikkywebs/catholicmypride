@@ -20,7 +20,10 @@ export type ContentType = {
   plural: string
   titleField: string
   slugFrom?: string
-  publicPath?: (row: Record<string, unknown>) => string
+  /** Public address prefix, e.g. '/blog/'. Plain data so it can be sent to the browser. */
+  publicBase?: string
+  /** Field appended to publicBase: 'slug' or 'date'. */
+  publicField?: 'slug' | 'date'
   listColumns: { field: string; label: string }[]
   orderBy: string
   tags: string[]
@@ -44,7 +47,7 @@ const featured = (alt = true): Field => ({ name: 'featured_image', label: 'Featu
 export const CONTENT_TYPES: Record<string, ContentType> = {
   posts: {
     key: 'posts', table: 'posts', singular: 'blog post', plural: 'Blog', titleField: 'title', slugFrom: 'title',
-    publicPath: (r) => `/blog/${r.slug}`,
+    publicBase: '/blog/', publicField: 'slug',
     listColumns: [{ field: 'title', label: 'Title' }, { field: 'status', label: 'Status' }, { field: 'published_at', label: 'Published' }],
     orderBy: 'created_at', tags: ['posts', 'content'], seo: true, status: true,
     fields: [
@@ -66,7 +69,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   },
   songs: {
     key: 'songs', table: 'songs', singular: 'song', plural: 'Music', titleField: 'title', slugFrom: 'title',
-    publicPath: (r) => `/music/${r.slug}`,
+    publicBase: '/music/', publicField: 'slug',
     listColumns: [{ field: 'title', label: 'Title' }, { field: 'status', label: 'Status' }, { field: 'published_at', label: 'Published' }],
     orderBy: 'created_at', tags: ['songs', 'content'], seo: true, status: true,
     fields: [
@@ -84,7 +87,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   },
   readings: {
     key: 'readings', table: 'readings', singular: 'Mass readings', plural: 'Mass Readings', titleField: 'date',
-    publicPath: (r) => `/mass-readings/${r.date}`,
+    publicBase: '/mass-readings/', publicField: 'date',
     listColumns: [{ field: 'date', label: 'Date' }, { field: 'title', label: 'Day' }, { field: 'status', label: 'Status' }],
     orderBy: 'date', tags: ['readings', 'content'], seo: true, status: true,
     fields: [
@@ -121,7 +124,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   },
   novenas: {
     key: 'novenas', table: 'novenas', singular: 'novena', plural: 'Novenas', titleField: 'title', slugFrom: 'title',
-    publicPath: (r) => `/novenas/${r.slug}`,
+    publicBase: '/novenas/', publicField: 'slug',
     listColumns: [{ field: 'title', label: 'Title' }, { field: 'feast_date', label: 'Feast' }, { field: 'status', label: 'Status' }],
     orderBy: 'feast_date', tags: ['novenas', 'content'], seo: true, status: true,
     fields: [
@@ -137,7 +140,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   },
   saints: {
     key: 'saints', table: 'saints', singular: 'saint', plural: 'Saint of the Day', titleField: 'name', slugFrom: 'name',
-    publicPath: (r) => `/saint-of-the-day/${r.slug}`,
+    publicBase: '/saint-of-the-day/', publicField: 'slug',
     listColumns: [{ field: 'name', label: 'Saint' }, { field: 'show_on', label: 'Shown on' }, { field: 'status', label: 'Status' }],
     orderBy: 'show_on', tags: ['saints', 'content'], seo: true, status: true,
     fields: [
@@ -160,7 +163,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   },
   prayers: {
     key: 'prayers', table: 'prayers', singular: 'prayer', plural: 'Daily Prayers', titleField: 'title', slugFrom: 'title',
-    publicPath: (r) => `/daily-prayers/${r.slug}`,
+    publicBase: '/daily-prayers/', publicField: 'slug',
     listColumns: [{ field: 'title', label: 'Title' }, { field: 'time_of_day', label: 'Time' }, { field: 'show_on', label: 'Date' }, { field: 'status', label: 'Status' }],
     orderBy: 'created_at', tags: ['prayers', 'content'], seo: true, status: true,
     fields: [
@@ -178,7 +181,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   },
   books: {
     key: 'books', table: 'books', singular: 'ebook', plural: 'Ebooks', titleField: 'title', slugFrom: 'title',
-    publicPath: (r) => `/ebooks/${r.slug}`,
+    publicBase: '/ebooks/', publicField: 'slug',
     listColumns: [{ field: 'title', label: 'Title' }, { field: 'status', label: 'Status' }, { field: 'published_at', label: 'Published' }],
     orderBy: 'created_at', tags: ['books', 'content'], seo: true, status: true,
     fields: [
@@ -215,4 +218,11 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'status', label: 'Status', type: 'select', options: ['published', 'draft'], half: true },
     ],
   },
+}
+
+/** Public address of a saved item, or null if the type has no public page. */
+export function publicUrl(t: Pick<ContentType, 'publicBase' | 'publicField'>, row: Record<string, unknown>) {
+  if (!t.publicBase || !t.publicField) return null
+  const v = row[t.publicField]
+  return v ? `${t.publicBase}${v}` : null
 }

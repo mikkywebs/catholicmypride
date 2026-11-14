@@ -1,5 +1,6 @@
 import { marked } from 'marked'
 import sanitizeHtml from 'sanitize-html'
+export { slugify, SITE_URL, LINK_PATTERN } from './text'
 
 /** Markdown written by the admin, rendered to safe HTML. */
 export function md(text: string | null | undefined) {
@@ -24,16 +25,10 @@ export function duration(seconds: number | null | undefined) {
   return `${m}:${String(s).padStart(2, '0')}`
 }
 
-export function slugify(s: string) {
-  return s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80)
-}
 
 export function dateLabel(iso: string | null | undefined) {
   if (!iso) return ''
   return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 }
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://catholicmypride.org'
 
-/** Matches the database rule: web addresses are not allowed in prayer requests. */
-export const LINK_PATTERN = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|org|net|ng|io|co|info|xyz|ly|me|uk|app|link)\b)/i

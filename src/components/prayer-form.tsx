@@ -3,7 +3,7 @@
 import { useActionState, useMemo, useState } from 'react'
 import { submitPrayerRequest, type RequestState } from '@/app/actions'
 import { COUNTRIES } from '@/lib/countries'
-import { LINK_PATTERN } from '@/lib/format'
+import { LINK_PATTERN } from '@/lib/text'
 import { ChevronDown } from './icons'
 
 const field = 'min-h-11 w-full rounded-lg border border-field bg-surface px-3 py-2.5 text-ink'

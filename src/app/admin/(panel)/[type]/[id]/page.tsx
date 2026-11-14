@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { ContentForm } from '@/components/admin/content-form'
 import { requireAdmin } from '@/lib/admin'
-import { CONTENT_TYPES } from '@/lib/content-types'
+import { CONTENT_TYPES, publicUrl } from '@/lib/content-types'
 import { saveItem } from '../../../actions'
 
 export default async function Page(props: PageProps<'/admin/[type]/[id]'>) {
@@ -19,7 +19,7 @@ export default async function Page(props: PageProps<'/admin/[type]/[id]'>) {
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="m-0 font-serif text-[38px] font-semibold">Edit {t.singular}</h1>
-        {t.publicPath && row.status === 'published' && <a href={t.publicPath(row)} target="_blank" rel="noreferrer" className="font-semibold">View on site ↗</a>}
+        {publicUrl(t, row) && row.status === 'published' && <a href={publicUrl(t, row)!} target="_blank" rel="noreferrer" className="font-semibold">View on site ↗</a>}
       </div>
       <ContentForm type={t} row={row} cats={cats ?? []} action={saveItem.bind(null, t.key, id)} novenaDays={days.data ?? []} />
     </div>

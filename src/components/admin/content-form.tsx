@@ -3,8 +3,8 @@
 import { useActionState, useEffect, useRef, useState } from 'react'
 import type { FormState } from '@/app/admin/actions'
 import type { Category } from '@/lib/types'
-import type { ContentType, Field } from '@/lib/content-types'
-import { slugify } from '@/lib/format'
+import { publicUrl, type ContentType, type Field } from '@/lib/content-types'
+import { slugify } from '@/lib/text'
 import { AudioUpload, FileUpload, ImageUpload } from './upload'
 
 type Row = Record<string, unknown>
@@ -57,7 +57,7 @@ function SeoPanel({ form, type }: { form: React.RefObject<HTMLFormElement | null
   ]
   const passed = checks.filter((c) => c.ok).length
   const good = passed >= checks.length - 1
-  const path = type.publicPath ? type.publicPath({ slug: v.slug, date: v.slug }) : ''
+  const path = publicUrl(type, { slug: v.slug, date: v.slug }) ?? ''
   return (
     <section className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5">
       <div className="flex items-center justify-between gap-2">
