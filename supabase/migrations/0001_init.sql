@@ -455,3 +455,39 @@ drop policy if exists "anyone can send" on public.contact_messages;
 create policy "anyone can send" on public.contact_messages for insert with check (is_read = false);
 drop policy if exists "admin all" on public.contact_messages;
 create policy "admin all" on public.contact_messages for all using (public.is_admin()) with check (public.is_admin());
+
+-- ---------------------------------------------------------------------------
+-- Admin dashboard summary (admins only)
+-- ---------------------------------------------------------------------------
+create or replace function public.admin_stats(p_days int)
+returns json
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare since timestamptz := now() - make_interval(days => greatest(1, least(p_days, 365)));
+begin
+  if not public.is_admin() then raise exception 'not allowed'; end if;
+  return json_build_object(
+    'views', (select count(*) from page_views where created_at >= since),
+    'countries', (select count(distinct country) from page_views where created_at >= since and country is not null),
+    'daily', (select coalesce(json_agg(d order by d.day), '[]') from (
+        select to_char(date_trunc('day', created_at), 'YYYY-MM-DD') as day, count(*) as n
+        from page_views where created_at >= since group by 1) d),
+    'by_country', (select coalesce(json_agg(c), '[]') from (
+        select coalesce(country, '??') as name, count(*) as n from page_views
+        where created_at >= since group by 1 order by 2 desc limit 8) c),
+    'by_section', (select coalesce(json_agg(s), '[]') from (
+        select coalesce(section, 'Other') as name, count(*) as n from page_views
+        where created_at >= since group by 1 order by 2 desc limit 10) s),
+    'top_pages', (select coalesce(json_agg(p), '[]') from (
+        select path, max(section) as section, count(*) as n,
+               mode() within group (order by country) as country
+        from page_views where created_at >= since group by path order by 3 desc limit 10) p),
+    'pending_requests', (select count(*) from prayer_requests where status = 'pending' and not is_private),
+    'private_requests', (select count(*) from prayer_requests where status = 'pending' and is_private),
+    'unread_messages', (select count(*) from contact_messages where not is_read)
+  );
+end $$;
+grant execute on function public.admin_stats(int) to authenticated;

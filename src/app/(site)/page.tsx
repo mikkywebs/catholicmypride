@@ -38,7 +38,7 @@ async function Hero() {
         ) : (
           <div className="h-10" />
         )}
-        <div className={`relative mx-auto max-w-[760px] rounded-[14px] border-t-[3px] border-eyebrow bg-bg px-6 py-9 text-center sm:px-10 ${img ? '-mt-28' : ''}`}>
+        <div className={`relative mx-auto max-w-[760px] rounded-[14px] bg-bg px-6 py-9 text-center sm:px-10 ${img ? '-mt-28 border-t-[3px] border-eyebrow' : ''}`}>
           <Eyebrow className="mb-2">Welcome</Eyebrow>
           <h1 className="m-0 font-serif text-[40px] font-semibold leading-[1.1] sm:text-[52px]">{s.hero_title}</h1>
           <p className="mx-0 mb-6 mt-4 text-muted">{s.hero_subtitle}</p>

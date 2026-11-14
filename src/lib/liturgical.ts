@@ -71,8 +71,7 @@ export function liturgicalInfo(iso: string) {
   else season = 'Ordinary Time'
 
   const vestment =
-    season === 'Advent' || season === 'Lent' ? 'Violet'
-    : season === 'Holy Week' ? 'Red'
+    season === 'Advent' || season === 'Lent' || season === 'Holy Week' ? 'Violet'
     : season === 'Christmas' || season === 'Easter' ? 'White'
     : 'Green'
 
