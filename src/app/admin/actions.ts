@@ -5,7 +5,7 @@ import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/admin'
 import { CONTENT_TYPES, type Field } from '@/lib/content-types'
 import { slugify } from '@/lib/format'
-import { isYouTubeUrl } from '@/lib/text'
+import { cleanYouTubeUrl, isYouTubeUrl } from '@/lib/text'
 import { serverClient } from '@/lib/supabase/server'
 
 export type FormState = { ok: boolean; message: string } | null
@@ -87,7 +87,10 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   for (const f of t.fields) {
     if ('required' in f && f.required && (row[f.name] === null || row[f.name] === '')) return { ok: false, message: `Please fill in “${f.label}”.` }
   }
-  if (typeof row.youtube_url === 'string' && !isYouTubeUrl(row.youtube_url)) return { ok: false, message: 'The YouTube link must be a youtube.com or youtu.be address.' }
+  if (typeof row.youtube_url === 'string') {
+    if (!isYouTubeUrl(row.youtube_url)) return { ok: false, message: 'The YouTube link must be a youtube.com or youtu.be address.' }
+    row.youtube_url = cleanYouTubeUrl(row.youtube_url)
+  }
   if ('slug' in row) {
     row.slug = slugify(String(row.slug || row[t.slugFrom ?? t.titleField] || ''))
     if (!row.slug) return { ok: false, message: 'Please add a web address (slug).' }
@@ -104,6 +107,9 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   const { data, error } = await q
   if (error) {
     if (error.code === '23505') return { ok: false, message: 'That web address or date is already used. Please choose another.' }
+    if (error.code === 'PGRST204' || /column .* (does not exist|of .* in the schema cache)/i.test(error.message)) {
+      return { ok: false, message: `The database needs an update before this can be saved (${error.message}). Run the latest SQL update in Supabase, then try again.` }
+    }
     return { ok: false, message: `Could not save: ${error.message}` }
   }
 

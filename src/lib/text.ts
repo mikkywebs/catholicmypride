@@ -14,6 +14,17 @@ export function isYouTubeUrl(u: string) {
   }
 }
 
+/** Removes share/tracking parameters (feature, si, pp) from a YouTube link; keeps the video address. */
+export function cleanYouTubeUrl(u: string) {
+  try {
+    const url = new URL(u)
+    for (const p of ['feature', 'si', 'pp']) url.searchParams.delete(p)
+    return url.toString()
+  } catch {
+    return u
+  }
+}
+
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://catholicmypride.org'
 
 /** Matches the database rule: web addresses are not allowed in prayer requests. */
