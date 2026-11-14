@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { ContentForm } from '@/components/admin/content-form'
+import { loadFormOptions } from '@/lib/admin-options'
 import { requireAdmin } from '@/lib/admin'
 import { CONTENT_TYPES, publicUrl } from '@/lib/content-types'
 import { saveItem } from '../../../actions'
@@ -9,10 +10,11 @@ export default async function Page(props: PageProps<'/admin/[type]/[id]'>) {
   const t = CONTENT_TYPES[type]
   if (!t || !/^[0-9a-f-]{36}$/i.test(id)) notFound()
   const { db } = await requireAdmin()
-  const [{ data: row }, { data: cats }, days] = await Promise.all([
+  const [{ data: row }, { data: cats }, days, options] = await Promise.all([
     db.from(t.table).select('*').eq('id', id).maybeSingle(),
     db.from('categories').select('*').order('name'),
     t.key === 'novenas' ? db.from('novena_days').select('*').eq('novena_id', id) : Promise.resolve({ data: [] }),
+    loadFormOptions(db, t),
   ])
   if (!row) notFound()
   return (
@@ -21,7 +23,7 @@ export default async function Page(props: PageProps<'/admin/[type]/[id]'>) {
         <h1 className="m-0 font-serif text-[38px] font-semibold">Edit {t.singular}</h1>
         {publicUrl(t, row) && row.status === 'published' && <a href={publicUrl(t, row)!} target="_blank" rel="noreferrer" className="font-semibold">View on site ↗</a>}
       </div>
-      <ContentForm type={t} row={row} cats={cats ?? []} action={saveItem.bind(null, t.key, id)} novenaDays={days.data ?? []} />
+      <ContentForm type={t} row={row} cats={cats ?? []} action={saveItem.bind(null, t.key, id)} novenaDays={days.data ?? []} options={options} />
     </div>
   )
 }

@@ -12,6 +12,11 @@ export type Field =
   | { name: string; label: string; type: 'tags'; help?: string; placeholder?: string }
   | { name: string; label: string; type: 'boolean'; help?: string }
   | { name: string; label: string; type: 'heading' }
+  | { name: string; label: string; type: 'place'; countryName: string; help?: string }
+  | { name: string; label: string; type: 'diocese'; help?: string }
+  | { name: string; label: string; type: 'weekdays'; help?: string }
+  | { name: string; label: string; type: 'time'; help?: string; half?: boolean }
+  | { name: string; label: string; type: 'playlist'; help?: string }
 
 export type ContentType = {
   key: string
@@ -221,19 +226,45 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       ...STATUS_FIELDS,
     ],
   },
-  churches: {
-    key: 'churches', table: 'churches', singular: 'church', plural: 'Churches', titleField: 'name',
-    listColumns: [{ field: 'name', label: 'Church' }, { field: 'diocese', label: 'Diocese' }, { field: 'state', label: 'State' }, { field: 'country', label: 'Country' }],
+  dioceses: {
+    key: 'dioceses', table: 'dioceses', singular: 'diocese', plural: 'Dioceses', titleField: 'name',
+    listColumns: [{ field: 'name', label: 'Name' }, { field: 'kind', label: 'Type' }, { field: 'province', label: 'Province' }, { field: 'country', label: 'Country' }],
     orderBy: 'created_at', tags: ['churches', 'content'], status: false,
     fields: [
-      { name: 'name', label: 'Church name', type: 'text', required: true },
-      { name: 'country', label: 'Country', type: 'text', required: true, half: true },
-      { name: 'state', label: 'State / Region', type: 'text', required: true, half: true },
-      { name: 'diocese', label: 'Diocese / Archdiocese name', type: 'text', required: true, half: true },
-      { name: 'diocese_kind', label: 'Diocese or Archdiocese', type: 'select', options: ['Diocese', 'Archdiocese'], half: true },
+      { name: 'continent', label: 'Continent and country', type: 'place', countryName: 'country', help: 'Choose the continent first, then the country.' },
+      { name: 'kind', label: 'Type', type: 'select', options: ['Archdiocese', 'Diocese', 'Apostolic Vicariate', 'Prefecture'], half: true },
+      { name: 'name', label: 'Name (without the word Diocese)', type: 'text', required: true, half: true, placeholder: 'e.g. Lagos' },
+      { name: 'province', label: 'Ecclesiastical province', type: 'text', placeholder: 'e.g. Lagos', help: 'The group of dioceses under a metropolitan archdiocese. Usually named after the archdiocese.' },
+      { name: 'status', label: 'Status', type: 'select', options: ['published', 'draft'] },
+    ],
+  },
+  churches: {
+    key: 'churches', table: 'churches', singular: 'parish', plural: 'Parishes', titleField: 'name',
+    listColumns: [{ field: 'name', label: 'Parish' }, { field: 'deanery', label: 'Deanery / Zone' }, { field: 'address', label: 'Address' }],
+    orderBy: 'created_at', tags: ['churches', 'content'], status: false,
+    fields: [
+      { name: 'diocese_id', label: 'Where is it?', type: 'diocese', help: 'Choose continent, country, then the archdiocese or diocese. Missing? Add it under Dioceses first.' },
+      { name: 'deanery', label: 'Deanery / Zone (optional)', type: 'text' },
+      { name: 'name', label: 'Parish name', type: 'text', required: true, placeholder: 'e.g. St Leo Catholic Church' },
       { name: 'address', label: 'Address', type: 'textarea', rows: 2, required: true },
       { name: 'map_url', label: 'Google Maps link (optional)', type: 'url' },
       { name: 'status', label: 'Status', type: 'select', options: ['published', 'draft'], half: true },
+    ],
+  },
+  playlists: {
+    key: 'playlists', table: 'music_playlists', singular: 'playlist', plural: 'Music bar playlists', titleField: 'name',
+    listColumns: [{ field: 'name', label: 'Playlist' }, { field: 'days', label: 'Days' }, { field: 'start_time', label: 'From' }, { field: 'end_time', label: 'To' }, { field: 'loop_mode', label: 'At the end' }, { field: 'status', label: 'Status' }],
+    orderBy: 'sort', tags: ['playlists'], status: false,
+    fields: [
+      { name: 'name', label: 'Playlist name', type: 'text', required: true, placeholder: 'e.g. Morning prayers' },
+      { name: 'items', label: 'What plays, in order', type: 'playlist', help: 'Mix songs and audio messages in any order.' },
+      { name: 'h1', label: 'When it plays (by each visitor’s own clock)', type: 'heading' },
+      { name: 'days', label: 'Days', type: 'weekdays', help: 'Tick none for every day.' },
+      { name: 'start_time', label: 'From', type: 'time', half: true, help: 'Leave both times empty for all day.' },
+      { name: 'end_time', label: 'Until', type: 'time', half: true },
+      { name: 'loop_mode', label: 'After the last item', type: 'select', options: ['loop', 'once'], help: 'loop = start again from the top; once = stop.' },
+      { name: 'sort', label: 'Priority if two playlists overlap (1 = wins)', type: 'number' },
+      { name: 'status', label: 'Status', type: 'select', options: ['published', 'draft'] },
     ],
   },
 }

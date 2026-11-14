@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState } from 'react'
 import { saveSettings, type FormState } from '@/app/admin/actions'
 import type { Settings } from '@/lib/types'
@@ -69,6 +70,18 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
           <T name="donate_needs_md" label="Current needs / recent outreach (optional)" s={s} rows={4} />
           <div className="grid gap-4 sm:grid-cols-2"><T name="bank_account_name" label="Account name" s={s} /><T name="bank_name" label="Bank" s={s} /></div>
           <T name="bank_account_number" label="Account number" s={s} help="Bank details only show on the Donate page when filled in." />
+        </section>
+        <section className={card}>
+          <h2 className="m-0 text-xl">Music bar</h2>
+          <label className="flex flex-col gap-1.5 text-sm font-semibold">When no playlist is scheduled, play
+            <select name="music_fallback" defaultValue={s.music_fallback ?? 'songs'} className={input}>
+              <option value="songs">All songs</option>
+              <option value="audio">All audio messages &amp; prayers</option>
+              <option value="all">Everything (songs and audio)</option>
+              <option value="none">Nothing (hide the music bar)</option>
+            </select>
+            <span className="text-[13px] font-normal text-muted">Set up scheduled playlists under <Link href="/admin/playlists">Music bar</Link>.</span>
+          </label>
         </section>
         <section className={card}>
           <h2 className="m-0 text-xl">Page views</h2>

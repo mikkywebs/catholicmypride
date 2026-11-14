@@ -51,6 +51,18 @@ function readField(f: Field, form: FormData): [string, unknown][] {
       const s = raw(f.secondsField)
       return [[f.name, raw(f.name) || null], [f.secondsField, s ? Math.round(Number(s)) || null : null]]
     }
+    case 'place':
+      return [[f.name, raw(f.name) || null], [f.countryName, raw(f.countryName) || null]]
+    case 'weekdays':
+      return [[f.name, form.getAll(f.name).map((d) => Number(d)).filter((d) => d >= 0 && d <= 6).sort()]]
+    case 'time':
+      return [[f.name, /^\d{2}:\d{2}$/.test(raw(f.name)) ? raw(f.name) : null]]
+    case 'playlist': {
+      try {
+        const ids = JSON.parse(raw(f.name) || '[]')
+        return [[f.name, Array.isArray(ids) ? ids.filter((x) => typeof x === 'string' && /^[0-9a-f-]{36}$/i.test(x)) : []]]
+      } catch { return [[f.name, []]] }
+    }
     case 'image':
       return f.altField ? [[f.name, raw(f.name) || null], [f.altField, raw(f.altField) || null]] : [[f.name, raw(f.name) || null]]
     default:
@@ -77,8 +89,9 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
     row.status = row.status || 'draft'
     if (row.status === 'published' && !row.published_at) row.published_at = new Date().toISOString()
   }
-  if ('updated_at' in row || t.status) row.updated_at = new Date().toISOString()
-  if (t.key === 'churches') delete row.updated_at
+  row.updated_at = new Date().toISOString()
+  if (t.key === 'dioceses' && (!row.continent || !row.country)) return { ok: false, message: 'Please choose the continent and country.' }
+  if (t.key === 'churches' && !row.diocese_id) return { ok: false, message: 'Please choose the archdiocese or diocese.' }
 
   const q = id ? db.from(t.table).update(row).eq('id', id).select('id').single() : db.from(t.table).insert(row).select('id').single()
   const { data, error } = await q
@@ -175,6 +188,7 @@ const SETTING_KEYS = [
   'youtube_url', 'facebook_url', 'tiktok_url', 'x_url', 'donate_url',
   'bank_account_name', 'bank_name', 'bank_account_number', 'donate_needs_md',
 ] as const
+const MUSIC_FALLBACKS = ['songs', 'audio', 'all', 'none']
 
 export async function saveSettings(_: FormState, form: FormData): Promise<FormState> {
   const { db } = await requireAdmin()
@@ -184,6 +198,8 @@ export async function saveSettings(_: FormState, form: FormData): Promise<FormSt
   row.tagline ||= 'Apostolate'
   row.mission ||= "Spreading the Gospel, strengthening the Catholic faith and sharing Christ's love."
   row.view_threshold = Math.max(0, Number.parseInt(String(form.get('view_threshold') ?? '50'), 10) || 0)
+  const fb = String(form.get('music_fallback') ?? 'songs')
+  row.music_fallback = MUSIC_FALLBACKS.includes(fb) ? fb : 'songs'
   const { error } = await db.from('settings').update(row).eq('id', 1)
   if (error) return { ok: false, message: error.message }
 

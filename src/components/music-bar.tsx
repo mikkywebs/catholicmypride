@@ -1,22 +1,39 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { announcePlay, onOtherPlay } from './audio-bus'
 import { NextIcon, PauseIcon, PlayIcon, PrevIcon, VolumeIcon } from './icons'
 import { useClientValue } from './use-client'
+import { pickPlaylist, type ScheduledPlaylist } from '@/lib/schedule'
 
-export type Track = { slug: string; title: string; src: string; cover: string | null }
+export type Track = { id: string; slug: string; title: string; src: string; cover: string | null }
 
 const ID = 'music-bar'
+
+// Re-check the schedule every 30 seconds.
+function subscribeClock(cb: () => void) {
+  const t = setInterval(cb, 30_000)
+  return () => clearInterval(t)
+}
+const minuteNow = () => Math.floor(Date.now() / 60_000)
 
 /**
  * Sticky music bar. Browsers block sound until the visitor interacts,
  * so it starts on the first tap or click anywhere. There is no download control.
  */
-export function MusicBar({ tracks }: { tracks: Track[] }) {
+export function MusicBar({ library, playlists, fallback }: { library: Track[]; playlists: ScheduledPlaylist[]; fallback: string[] }) {
   const audio = useRef<HTMLAudioElement>(null)
-  const [i, setI] = useState(0)
+  const minute = useSyncExternalStore(subscribeClock, minuteNow, () => 0)
+  const byId = new Map(library.map((t) => [t.id, t]))
+  const active = minute ? pickPlaylist(playlists, new Date(minute * 60_000)) : null
+  const ids = active ? active.trackIds : fallback
+  const tracks = ids.map((id) => byId.get(id)).filter(Boolean) as Track[]
+  const loop = active ? active.loop : true
+  const queueKey = ids.join(',')
+  const [pos, setPos] = useState({ key: '', i: 0 })
+  const i = pos.key === queueKey && pos.i < tracks.length ? pos.i : 0
+  const setI = (n: number) => setPos({ key: queueKey, i: n })
   const [playing, setPlaying] = useState(false)
   // Remember volume and mute between visits.
   const storedVolume = useClientValue(() => Number(localStorage.getItem('cmp-volume') ?? 0.6), 0.6)
@@ -69,6 +86,11 @@ export function MusicBar({ tracks }: { tracks: Track[] }) {
     setI(n)
     setTimeout(() => { if (playing) play() }, 0)
   }
+  const ended = () => {
+    if (i + 1 < tracks.length) { setI(i + 1); setTimeout(play, 0) }
+    else if (loop) { setI(0); setTimeout(play, 0) }
+    else setPlaying(false)
+  }
 
   return (
     <div data-music-bar role="region" aria-label="Music player" className="sticky bottom-0 z-40 border-t-2 border-gold bg-navy px-5 py-2.5 text-navy-ink shadow-[0_-4px_16px_rgba(0,0,0,0.15)]">
@@ -78,7 +100,7 @@ export function MusicBar({ tracks }: { tracks: Track[] }) {
         preload="none"
         controlsList="nodownload noplaybackrate"
         onContextMenu={(e) => e.preventDefault()}
-        onEnded={() => { const n = (i + 1) % tracks.length; setI(n); setTimeout(play, 0) }}
+        onEnded={ended}
       />
       <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-x-5 gap-y-2">
         <div className="flex min-w-0 flex-1 basis-60 items-center gap-3">

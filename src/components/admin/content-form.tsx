@@ -2,10 +2,13 @@
 
 import { useActionState, useEffect, useRef, useState } from 'react'
 import type { FormState } from '@/app/admin/actions'
-import type { Category } from '@/lib/types'
+import type { Category, Diocese } from '@/lib/types'
 import { publicUrl, type ContentType, type Field } from '@/lib/content-types'
 import { slugify } from '@/lib/text'
 import { AudioUpload, FileUpload, ImageUpload } from './upload'
+import { DioceseField, PlaceField, PlaylistField, TimeField, WeekdaysField, type SongOption } from './fields-extra'
+
+export type FormOptions = { dioceses?: Diocese[]; songs?: SongOption[] }
 
 type Row = Record<string, unknown>
 type Action = (state: FormState, form: FormData) => Promise<FormState>
@@ -79,7 +82,7 @@ function SeoPanel({ form, type }: { form: React.RefObject<HTMLFormElement | null
   )
 }
 
-function FieldInput({ f, row, cats, slugFrom }: { f: Field; row: Row; cats: Category[]; slugFrom?: string }) {
+function FieldInput({ f, row, cats, slugFrom, options }: { f: Field; row: Row; cats: Category[]; slugFrom?: string; options: FormOptions }) {
   const val = (n: string) => (row[n] ?? '') as string
   const help = 'help' in f && f.help ? <span className="text-[13px] font-normal text-muted">{f.help}</span> : null
   switch (f.type) {
@@ -125,6 +128,16 @@ function FieldInput({ f, row, cats, slugFrom }: { f: Field; row: Row; cats: Cate
       return <FileUpload name={f.name} label={f.label} accept={f.accept} initial={val(f.name)} help={f.help} />
     case 'tags':
       return <label className="flex flex-col gap-1.5 text-sm font-semibold">{f.label}<input name={f.name} defaultValue={Array.isArray(row[f.name]) ? (row[f.name] as string[]).join(', ') : ''} placeholder={f.placeholder} className={input} /><span className="text-[13px] font-normal text-muted">Separate with commas.</span></label>
+    case 'place':
+      return <PlaceField name={f.name} countryName={f.countryName} label={f.label} help={f.help} initialContinent={val(f.name)} initialCountry={val(f.countryName)} />
+    case 'diocese':
+      return <DioceseField name={f.name} label={f.label} help={f.help} dioceses={options.dioceses ?? []} initial={val(f.name)} />
+    case 'weekdays':
+      return <WeekdaysField name={f.name} label={f.label} help={f.help} initial={(row[f.name] as number[] | undefined) ?? []} />
+    case 'time':
+      return <TimeField name={f.name} label={f.label} help={f.help} initial={val(f.name)} />
+    case 'playlist':
+      return <PlaylistField name={f.name} label={f.label} help={f.help} songs={options.songs ?? []} initial={(row[f.name] as string[] | undefined) ?? []} />
     case 'boolean':
       return <label className="flex items-center gap-2.5 text-[15px]"><input type="checkbox" name={f.name} defaultChecked={Boolean(row[f.name] ?? (f.name === 'allow_download' || f.name === 'is_free'))} className="size-5 accent-accent" />{f.label}</label>
   }
@@ -180,7 +193,7 @@ function NovenaDaysEditor({ days }: { days: { day: number; title: string | null;
   )
 }
 
-export function ContentForm({ type, row, cats, action, novenaDays }: { type: ContentType; row: Row; cats: Category[]; action: Action; novenaDays?: Parameters<typeof NovenaDaysEditor>[0]['days'] }) {
+export function ContentForm({ type, row, cats, action, novenaDays, options = {} }: { type: ContentType; row: Row; cats: Category[]; action: Action; novenaDays?: Parameters<typeof NovenaDaysEditor>[0]['days']; options?: FormOptions }) {
   const [state, formAction, pending] = useActionState<FormState, FormData>(action, null)
   const ref = useRef<HTMLFormElement>(null)
   const seoNames = new Set(['seo_title', 'seo_description', 'focus_keyword', 'keywords', 'noindex', 'status', 'published_at'])
@@ -194,9 +207,9 @@ export function ContentForm({ type, row, cats, action, novenaDays }: { type: Con
       const half = 'half' in f && f.half
       const next = list[i + 1]
       if (half && next && 'half' in next && next.half) {
-        out.push(<div key={f.name} className="grid gap-4 sm:grid-cols-2"><FieldInput f={f} row={row} cats={cats} slugFrom={type.slugFrom} /><FieldInput f={next} row={row} cats={cats} slugFrom={type.slugFrom} /></div>)
+        out.push(<div key={f.name} className="grid gap-4 sm:grid-cols-2"><FieldInput f={f} row={row} cats={cats} slugFrom={type.slugFrom} options={options} /><FieldInput f={next} row={row} cats={cats} slugFrom={type.slugFrom} options={options} /></div>)
         i++
-      } else out.push(<FieldInput key={f.name} f={f} row={row} cats={cats} slugFrom={type.slugFrom} />)
+      } else out.push(<FieldInput key={f.name} f={f} row={row} cats={cats} slugFrom={type.slugFrom} options={options} />)
     }
     return out
   }

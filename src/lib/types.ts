@@ -22,6 +22,7 @@ export type Settings = {
   bank_account_number: string | null
   donate_needs_md: string | null
   view_threshold: number
+  music_fallback: 'songs' | 'audio' | 'all' | 'none'
 }
 
 export type Category = { id: string; kind: string; name: string; slug: string; seo_title: string | null; seo_description: string | null }
@@ -94,6 +95,10 @@ export type Book = Seo & {
   category?: Category | null
 }
 
-export type Church = { id: string; country: string; state: string; diocese: string; diocese_kind: string; name: string; address: string; map_url: string | null }
+export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null }
+
+export type Church = { id: string; name: string; address: string; map_url: string | null; deanery: string | null; diocese_id: string | null; diocese?: Diocese | null }
+
+export type Playlist = { id: string; name: string; items: string[]; days: number[]; start_time: string | null; end_time: string | null; loop_mode: 'loop' | 'once'; sort: number }
 
 export type PublicPrayerRequest = { id: string; first_name: string; country: string | null; body: string; prayed_count: number; created_at: string; approved_at: string | null }
