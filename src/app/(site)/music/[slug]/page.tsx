@@ -6,9 +6,11 @@ import { JsonLd } from '@/components/article-bits'
 import { AudioPlayer } from '@/components/audio-player'
 import { Reactions, ShareBar, ViewCount, type Kind } from '@/components/engage'
 import { Lyrics } from '@/components/lyrics'
+import { BrandIcon, BRANDS } from '@/components/icons'
 import { Breadcrumb, ButtonLink, Portrait } from '@/components/ui'
 import { getSettings, getSong, getSongs } from '@/lib/data'
 import { duration, slugify, SITE_URL } from '@/lib/format'
+import { isYouTubeUrl } from '@/lib/text'
 
 const SONG_REACTIONS: Kind[] = ['love', 'wow', 'awesome', 'emotional']
 const AUDIO_REACTIONS: Kind[] = ['love', 'amen', 'thumbs']
@@ -37,11 +39,12 @@ async function Content({ params }: { params: PageProps<'/music/[slug]'>['params'
   const more = [...related, ...fill]
   const len = duration(song.duration_seconds)
   const typeLabel = isSong ? 'Song' : 'Audio message'
+  const youtube = song.youtube_url && isYouTubeUrl(song.youtube_url) ? song.youtube_url : null
   return (
     <div className="mx-auto flex max-w-[1100px] flex-col gap-10 px-6 pb-[72px] pt-8">
       <JsonLd data={isSong
-        ? { '@context': 'https://schema.org', '@type': 'MusicRecording', name: song.title, url: `${SITE_URL}/music/${slug}`, byArtist: { '@type': 'MusicGroup', name: 'Catholic My Pride' }, image: song.featured_image ?? undefined }
-        : { '@context': 'https://schema.org', '@type': 'AudioObject', name: song.title, url: `${SITE_URL}/music/${slug}`, contentUrl: song.audio_url ?? undefined, description: song.about ?? undefined, image: song.featured_image ?? undefined }} />
+        ? { '@context': 'https://schema.org', '@type': 'MusicRecording', name: song.title, url: `${SITE_URL}/music/${slug}`, byArtist: { '@type': 'MusicGroup', name: 'Catholic My Pride' }, image: song.featured_image ?? undefined, sameAs: youtube ?? undefined }
+        : { '@context': 'https://schema.org', '@type': 'AudioObject', name: song.title, url: `${SITE_URL}/music/${slug}`, contentUrl: song.audio_url ?? undefined, description: song.about ?? undefined, image: song.featured_image ?? undefined, sameAs: youtube ?? undefined }} />
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Music & Audio', href: '/music' }, { label: song.title }]} />
       <div className="flex flex-wrap items-start gap-8 lg:gap-12">
         <div className="w-full max-w-[380px] flex-[0_1_380px] max-md:mx-auto">
@@ -57,6 +60,11 @@ async function Content({ params }: { params: PageProps<'/music/[slug]'>['params'
           </div>
           {song.lyrics && <Lyrics text={song.lyrics} label={isSong ? 'Lyrics' : 'Transcript'} />}
           {song.audio_url && <AudioPlayer src={song.audio_url} label={song.title} initialSeconds={song.duration_seconds} downloadName={song.allow_download ? `${slugify(song.title)}.mp3` : undefined} />}
+          {youtube && (
+            <a href={youtube} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center gap-2.5 self-start rounded-md border border-line bg-surface px-5 font-semibold text-ink no-underline hover:border-ink hover:text-ink">
+              <BrandIcon icon={BRANDS.youtube} size={22} /> Watch on YouTube
+            </a>
+          )}
           <Reactions
             type="song"
             id={song.id}

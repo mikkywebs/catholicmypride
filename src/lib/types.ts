@@ -44,6 +44,7 @@ export type Song = Seo & {
   audio_url: string | null; duration_seconds: number | null; featured_image: string | null
   image_alt: string | null; category_id: string | null; allow_download: boolean
   kind: 'song' | 'audio'
+  youtube_url: string | null
   on_bar: boolean; bar_days: number[]; bar_start: string | null; bar_end: string | null; bar_order: number
   published_at: string | null
   category?: Category | null

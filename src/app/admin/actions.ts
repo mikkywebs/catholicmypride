@@ -5,6 +5,7 @@ import { updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/admin'
 import { CONTENT_TYPES, type Field } from '@/lib/content-types'
 import { slugify } from '@/lib/format'
+import { isYouTubeUrl } from '@/lib/text'
 import { serverClient } from '@/lib/supabase/server'
 
 export type FormState = { ok: boolean; message: string } | null
@@ -86,6 +87,7 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   for (const f of t.fields) {
     if ('required' in f && f.required && (row[f.name] === null || row[f.name] === '')) return { ok: false, message: `Please fill in “${f.label}”.` }
   }
+  if (typeof row.youtube_url === 'string' && !isYouTubeUrl(row.youtube_url)) return { ok: false, message: 'The YouTube link must be a youtube.com or youtu.be address.' }
   if ('slug' in row) {
     row.slug = slugify(String(row.slug || row[t.slugFrom ?? t.titleField] || ''))
     if (!row.slug) return { ok: false, message: 'Please add a web address (slug).' }

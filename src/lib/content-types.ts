@@ -86,6 +86,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'about', label: 'About this song or message', type: 'textarea', rows: 3 },
       { name: 'lyrics', label: 'Lyrics or transcript (optional)', type: 'textarea', rows: 12 },
       { name: 'audio_url', label: 'MP3 file', type: 'audio', secondsField: 'duration_seconds' },
+      { name: 'youtube_url', label: 'YouTube link (only if it is published on our channel)', type: 'url', placeholder: 'https://www.youtube.com/watch?v=…', help: 'Leave empty if it is not on YouTube. A “Watch on YouTube” button appears only when this is filled in.' },
       { name: 'allow_download', label: 'Show the Download MP3 button on its page', type: 'boolean' },
       { name: 'on_bar', label: 'Music bar', type: 'musicbar' },
       ...SEO_FIELDS,
