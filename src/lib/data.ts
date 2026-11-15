@@ -29,7 +29,7 @@ const DEFAULT_SETTINGS: Settings = {
   bank_name: null,
   bank_account_number: null,
   donate_needs_md: null,
-  view_threshold: 50,
+  view_threshold: 0,
   music_fallback: 'songs',
   music_loop: 'loop',
 }

@@ -93,7 +93,7 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
           <h2 className="m-0 text-xl">Page views</h2>
           <label className="flex flex-col gap-1.5 text-sm font-semibold">Show the view counter once a page has at least
             <input name="view_threshold" type="number" min={0} defaultValue={s.view_threshold} className={input} />
-            <span className="text-[13px] font-normal text-muted">Avoids showing “3 views” on brand-new posts.</span>
+            <span className="text-[13px] font-normal text-muted">0 = always show (recommended). A higher number hides the counter on brand-new pages.</span>
           </label>
         </section>
         <div className="sticky bottom-4 flex items-center gap-3 rounded-2xl border border-line bg-surface p-4 shadow-lg">

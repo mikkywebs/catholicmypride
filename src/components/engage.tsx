@@ -89,9 +89,40 @@ export function ViewCount({ section, threshold }: { section: string; threshold: 
   return <span className="inline-flex items-center gap-1.5"><EyeIcon />{n.toLocaleString()} views</span>
 }
 
+// Batches list view counts into one request per page.
+let pending: Set<string> | null = null
+const waiters = new Map<string, ((n: number | null) => void)[]>()
+function viewsFor(path: string): Promise<number | null> {
+  return new Promise((resolve) => {
+    waiters.set(path, [...(waiters.get(path) ?? []), resolve])
+    if (pending) { pending.add(path); return }
+    pending = new Set([path])
+    setTimeout(() => {
+      const batch = [...(pending ?? [])]
+      pending = null
+      const done = (get: (p: string) => number | null) => batch.forEach((p) => { (waiters.get(p) ?? []).forEach((w) => w(get(p))); waiters.delete(p) })
+      fetch(`/api/views?${batch.map((p) => `p=${encodeURIComponent(p)}`).join('&')}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d: { threshold: number; views: Record<string, number> } | null) => done((p) => {
+          const n = d?.views?.[p] ?? 0
+          return d && n > 0 && n >= d.threshold ? n : null
+        }))
+        .catch(() => done(() => null))
+    }, 30)
+  })
+}
+
+/** Small view total for cards in a list. Does not record a view. */
+export function ListViews({ path }: { path: string }) {
+  const [n, setN] = useState<number | null>(null)
+  useEffect(() => { let alive = true; viewsFor(path).then((v) => { if (alive) setN(v) }); return () => { alive = false } }, [path])
+  if (n === null) return null
+  return <span className="inline-flex items-center gap-1" title={`${n.toLocaleString()} views`}><EyeIcon />{n.toLocaleString()}</span>
+}
+
 export type Kind = 'wow' | 'awesome' | 'emotional' | 'love' | 'amen' | 'thumbs'
 const LABEL: Record<Kind, string> = { wow: 'Wow', awesome: 'Awesome', emotional: 'Emotional', love: 'Love', amen: 'Amen', thumbs: 'Thumbs up' }
-type ContentKind = 'song' | 'reading' | 'post' | 'novena' | 'chaplet'
+type ContentKind = 'song' | 'reading' | 'post' | 'novena' | 'chaplet' | 'saint' | 'prayer' | 'book'
 
 /**
  * Reaction buttons. One reaction per visitor per item, remembered in the browser.

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { JsonLd } from '@/components/article-bits'
-import { ShareBar, ViewCount } from '@/components/engage'
+import { Reactions, ShareBar, ViewCount } from '@/components/engage'
 import { DownloadIcon } from '@/components/icons'
 import { Breadcrumb, ButtonLink, Chip, Cover, Prose } from '@/components/ui'
 import { getBook, getBooks, getSettings } from '@/lib/data'
@@ -59,6 +59,7 @@ async function Content({ params }: { params: PageProps<'/ebooks/[slug]'>['params
           {b.remarks && <div className="mt-1.5 rounded-2xl bg-sky px-5 py-4"><strong>Remarks</strong><p className="m-0 mt-1 text-body">{b.remarks}</p></div>}
         </div>
       </div>
+      <Reactions type="book" id={b.id} kinds={['love', 'amen', 'thumbs']} title="What do you think of this book?" />
       <section className="reveal flex flex-col items-center gap-3 rounded-2xl border border-eyebrow px-7 py-9 text-center">
         <h2 className="m-0 font-serif text-[32px] font-semibold">Support our apostolate</h2>
         <p className="m-0 max-w-[560px] text-muted">Every gift helps us write, publish and share more Catholic resources.</p>

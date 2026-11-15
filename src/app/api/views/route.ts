@@ -1,5 +1,16 @@
 import type { NextRequest } from 'next/server'
 import { publicClient } from '@/lib/supabase/public'
+import { getSettings } from '@/lib/data'
+
+// Totals for a list of pages: GET /api/views?p=/music/a&p=/music/b
+export async function GET(req: NextRequest) {
+  const db = publicClient()
+  const paths = req.nextUrl.searchParams.getAll('p').filter((p) => p.startsWith('/') && p.length <= 300).slice(0, 60)
+  if (!db || !paths.length) return Response.json({ threshold: 0, views: {} })
+  const [{ data }, s] = await Promise.all([db.rpc('view_counts', { p_paths: paths }), getSettings()])
+  const views = Object.fromEntries(((data ?? []) as { path: string; views: number }[]).map((r) => [r.path, Number(r.views)]))
+  return Response.json({ threshold: s.view_threshold, views }, { headers: { 'cache-control': 'public, s-maxage=60, stale-while-revalidate=300' } })
+}
 
 // Records a page view (country only, from Vercel's header) and returns the total.
 export async function POST(req: NextRequest) {

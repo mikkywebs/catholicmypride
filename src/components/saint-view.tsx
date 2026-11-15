@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { JsonLd, articleLd } from './article-bits'
-import { ShareBar, ViewCount } from './engage'
+import { Reactions, ShareBar, ViewCount } from './engage'
 import { Breadcrumb, Chip, Featured, Prose } from './ui'
 import { md, readMinutes } from '@/lib/format'
 import { formatShort } from '@/lib/liturgical'
@@ -52,6 +52,7 @@ export function SaintView({ saint, s, week }: { saint: Saint; s: Settings; week:
           <Prose html={md(saint.prayer_md)} className="prose-on-dark" />
         </section>
       )}
+      <Reactions type="saint" id={saint.id} kinds={['love', 'amen', 'thumbs']} title={`Did ${saint.name}’s story inspire you?`} />
       {week.filter((w) => w.id !== saint.id).length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">Recent saints</h2>

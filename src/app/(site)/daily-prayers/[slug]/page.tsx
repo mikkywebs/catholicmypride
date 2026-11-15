@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { AudioPlayer } from '@/components/audio-player'
-import { ShareBar, ViewCount } from '@/components/engage'
+import { Reactions, ShareBar, ViewCount } from '@/components/engage'
 import { Breadcrumb, Featured, Prose } from '@/components/ui'
 import { getPrayer, getSettings } from '@/lib/data'
 import { md, readMinutes } from '@/lib/format'
@@ -36,6 +36,7 @@ async function Content({ params }: { params: PageProps<'/daily-prayers/[slug]'>[
       <ShareBar title={p.title} />
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen and pray along" initialSeconds={p.audio_seconds} />}
       <Prose html={md(p.body_md)} />
+      <Reactions type="prayer" id={p.id} kinds={['love', 'amen', 'thumbs']} title="Did you pray along?" />
     </div>
   )
 }

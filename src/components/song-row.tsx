@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useEffect, useId, useRef, useState } from 'react'
 import { announcePlay, onOtherPlay } from './audio-bus'
 import { PauseIcon, PlayIcon } from './icons'
+import { ListViews } from './engage'
 
 /** Compact song row with an inline play button (pauses the music bar). */
 export function SongRow({ slug, title, meta, src, cover }: { slug: string; title: string; meta: string; src: string | null; cover: string | null }) {
@@ -28,7 +29,7 @@ export function SongRow({ slug, title, meta, src, cover }: { slug: string; title
       </div>
       <div className="min-w-0 flex-1 basis-52">
         <a href={`/music/${slug}`} className="font-semibold text-ink no-underline">{title}</a>
-        <div className="text-sm text-muted">{meta}</div>
+        <div className="flex flex-wrap items-center gap-x-3 text-sm text-muted"><span>{meta}</span><ListViews path={`/music/${slug}`} /></div>
       </div>
       <a href={`/music/${slug}`} className="inline-flex min-h-10 items-center rounded-md border border-ink px-4 text-[15px] font-semibold text-ink no-underline">Open</a>
     </div>
