@@ -1,7 +1,7 @@
 'use client'
 
 import { createBrowserClient } from '@supabase/ssr'
-import { useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 function browserClient() {
   return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
@@ -35,16 +35,83 @@ async function upload(blob: Blob, folder: string, ext: string) {
 
 const btn = 'inline-flex min-h-10 items-center rounded-md border border-field bg-surface px-4 text-sm font-semibold text-ink'
 
+const FOLDER: Record<keyof typeof SIZES, string> = { '16:9': '16x9', '4:5': '4x5', '2:3': '2x3', square: 'square' }
+type LibImage = { url: string; name: string; created: string; sameShape: boolean | null }
+
+/** Images already uploaded, newest first. Same-shape images first; older uploads are checked when they load. */
+function MediaLibrary({ shape, onPick, onClose }: { shape: keyof typeof SIZES; onPick: (url: string) => void; onClose: () => void }) {
+  const [items, setItems] = useState<LibImage[] | null>(null)
+  const [err, setErr] = useState('')
+  const [limit, setLimit] = useState(48)
+  const [W, H] = SIZES[shape]
+
+  const load = useCallback(async () => {
+    const db = browserClient()
+    const opts = { limit: 1000, sortBy: { column: 'created_at', order: 'desc' } }
+    const [same, older] = await Promise.all([db.storage.from('media').list(`images/${FOLDER[shape]}`, opts), db.storage.from('media').list('images', opts)])
+    if (same.error && older.error) { setErr(same.error.message); setItems([]); return }
+    const pub = (p: string) => db.storage.from('media').getPublicUrl(p).data.publicUrl
+    const files = (rows: { id: string | null; name: string; created_at?: string | null }[] | null) => (rows ?? []).filter((r) => r.id && /\.(webp|jpe?g|png|gif|avif)$/i.test(r.name))
+    setItems([
+      ...files(same.data).map((r) => ({ url: pub(`images/${FOLDER[shape]}/${r.name}`), name: r.name, created: r.created_at ?? '', sameShape: true })),
+      ...files(older.data).map((r) => ({ url: pub(`images/${r.name}`), name: r.name, created: r.created_at ?? '', sameShape: null })),
+    ])
+  }, [shape])
+
+  useEffect(() => { const t = setTimeout(load, 0); return () => clearTimeout(t) }, [load])
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  const checkShape = (url: string, img: HTMLImageElement) => {
+    const ok = Math.abs(img.naturalWidth / img.naturalHeight - W / H) < 0.02
+    setItems((x) => (x ? x.map((i) => (i.url === url && i.sameShape === null ? { ...i, sameShape: ok } : i)) : x))
+  }
+  const sorted = (items ?? []).slice().sort((a, b) => Number(b.sameShape === true) - Number(a.sameShape === true))
+  const cols = shape === '16:9' ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-3 sm:grid-cols-5'
+  const aspect = shape === '16:9' ? 'aspect-video' : shape === '4:5' ? 'aspect-[4/5]' : shape === '2:3' ? 'aspect-[2/3]' : 'aspect-square'
+
+  return (
+    <div role="dialog" aria-modal="true" aria-label="Choose an uploaded image" className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4" onClick={onClose}>
+      <div className="flex max-h-[88vh] w-full max-w-[900px] flex-col gap-4 overflow-hidden rounded-2xl bg-surface p-5 text-ink shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-3">
+          <h2 className="m-0 flex-1 text-xl">Choose an uploaded image</h2>
+          <button type="button" onClick={onClose} className={btn}>Close</button>
+        </div>
+        <p className="m-0 -mt-2 text-[13px] text-muted">Images already in the {shape} shape are shown first. Others will be cropped to fit.</p>
+        <div className="min-h-40 overflow-y-auto">
+          {items === null && <p className="text-muted">Loading images…</p>}
+          {err && <p role="alert" className="text-[#b42318]">{err}</p>}
+          {items?.length === 0 && !err && <p className="text-muted">No images uploaded yet.</p>}
+          <div className={`grid gap-3 ${cols}`}>
+            {sorted.slice(0, limit).map((i) => (
+              <button key={i.url} type="button" onClick={() => onPick(i.url)} className="group relative overflow-hidden rounded-xl border border-line text-left focus-visible:outline-2 focus-visible:outline-accent">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={i.url} alt="" loading="lazy" onLoad={(e) => checkShape(i.url, e.currentTarget)} className={`w-full object-cover transition group-hover:opacity-85 ${aspect}`} />
+                {i.sameShape === false && <span className="absolute left-1.5 top-1.5 rounded bg-black/65 px-1.5 py-0.5 text-[11px] font-semibold text-white">Other shape</span>}
+              </button>
+            ))}
+          </div>
+          {sorted.length > limit && <button type="button" onClick={() => setLimit((n) => n + 48)} className={`${btn} mt-4`}>Show more</button>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function ImageUpload({ name, label, shape, initial, altName, altInitial }: { name: string; label: string; shape: keyof typeof SIZES; initial?: string | null; altName?: string; altInitial?: string | null }) {
   const [url, setUrl] = useState(initial ?? '')
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+  const [library, setLibrary] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const aspect = shape === '16:9' ? 'aspect-video' : shape === '4:5' ? 'aspect-[4/5] max-w-[300px]' : shape === '2:3' ? 'aspect-[2/3] max-w-[240px]' : 'aspect-square max-w-[200px]'
   const pick = async (f: File | undefined) => {
     if (!f) return
     setBusy(true); setErr('')
-    try { setUrl(await upload(await cropImage(f, shape), 'images', 'webp')) } catch (e) { setErr(e instanceof Error ? e.message : 'Upload failed') } finally { setBusy(false) }
+    try { setUrl(await upload(await cropImage(f, shape), `images/${FOLDER[shape]}`, 'webp')) } catch (e) { setErr(e instanceof Error ? e.message : 'Upload failed') } finally { setBusy(false) }
   }
   return (
     <div className="flex flex-col gap-2">
@@ -63,11 +130,13 @@ export function ImageUpload({ name, label, shape, initial, altName, altInitial }
         )}
       </div>
       <div className="flex flex-wrap gap-2">
-        <button type="button" className={btn} onClick={() => input.current?.click()} disabled={busy}>{busy ? 'Uploading…' : url ? 'Replace image' : 'Choose image'}</button>
+        <button type="button" className={btn} onClick={() => setLibrary(true)} disabled={busy}>Choose from uploaded</button>
+        <button type="button" className={btn} onClick={() => input.current?.click()} disabled={busy}>{busy ? 'Uploading…' : 'Upload new'}</button>
         {url && <button type="button" className={btn} onClick={() => setUrl('')}>Remove</button>}
         <input ref={input} type="file" accept="image/*" hidden onChange={(e) => pick(e.target.files?.[0])} />
       </div>
       {err && <span role="alert" className="text-sm text-[#b42318]">{err}</span>}
+      {library && <MediaLibrary shape={shape} onClose={() => setLibrary(false)} onPick={(u) => { setUrl(u); setLibrary(false) }} />}
       {altName && (
         <label className="flex flex-col gap-1.5 text-sm font-semibold">Image description (alt text)
           <input name={altName} defaultValue={altInitial ?? ''} placeholder="Describe what is in the picture" className="min-h-11 rounded-lg border border-field bg-surface px-3 font-normal text-ink" />
