@@ -60,7 +60,7 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       {related.length > 0 && (
         <section className="reveal flex flex-col gap-4 pt-3">
           <h2 className="m-0 border-b border-line pb-3 font-serif text-[32px] font-semibold">Related posts</h2>
-          <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+          <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))]">
             {related.map((r) => (
               <Link key={r.id} href={`/blog/${r.slug}`} className="flex flex-col gap-2 text-ink no-underline">
                 <Featured src={r.featured_image} alt={r.image_alt} rounded="rounded-2xl" />

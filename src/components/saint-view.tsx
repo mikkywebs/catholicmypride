@@ -55,7 +55,7 @@ export function SaintView({ saint, s, week }: { saint: Saint; s: Settings; week:
       {week.filter((w) => w.id !== saint.id).length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">Recent saints</h2>
-          <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
+          <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))]">
             {week.filter((w) => w.id !== saint.id).slice(0, 4).map((w) => (
               <Link key={w.id} href={`/saint-of-the-day/${w.slug}`} className="flex flex-col gap-1.5 text-ink no-underline">
                 <Featured src={w.featured_image} alt={w.image_alt} rounded="rounded-xl" />

@@ -29,7 +29,7 @@ async function Content({ searchParams }: { searchParams: PageProps<'/blog'>['sea
         </nav>
       )}
       {posts.length === 0 ? <EmptyState>No articles here yet.</EmptyState> : (
-        <div className="grid gap-8 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+        <div className="grid gap-8 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
           {posts.map((p) => (
             <Link key={p.id} href={`/blog/${p.slug}`} className="reveal flex flex-col gap-3 text-ink no-underline">
               <Featured src={p.featured_image} alt={p.image_alt} rounded="rounded-2xl" />

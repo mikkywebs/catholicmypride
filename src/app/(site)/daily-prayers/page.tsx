@@ -44,7 +44,7 @@ async function Content() {
       {Object.keys(groups).length > 0 && (
         <section className="reveal flex flex-col gap-4">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[32px] font-semibold">Prayer library</h2>
-          <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+          <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
             {Object.entries(groups).flatMap(([cat, ps]) => ps.map((p) => (
               <Link key={p.id} href={`/daily-prayers/${p.slug}`} className="flex flex-col gap-1 rounded-2xl border border-line bg-surface px-5 py-4 text-ink no-underline">
                 <span className="text-xs font-bold uppercase tracking-[0.12em] text-eyebrow">{cat}</span>

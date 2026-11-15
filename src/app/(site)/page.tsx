@@ -135,7 +135,7 @@ async function LatestPosts() {
     <section className="reveal px-6 pb-16 pt-6">
       <div className="mx-auto max-w-[1200px]">
         <SectionHead title="From the Blog" href="/blog" linkLabel="All articles" />
-        <div className="grid gap-7 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+        <div className="grid gap-7 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
           {posts.map((p) => (
             <Link key={p.id} href={`/blog/${p.slug}`} className="flex flex-col gap-3 text-ink no-underline">
               <Featured src={p.featured_image} alt={p.image_alt} rounded="rounded-2xl" />
@@ -179,7 +179,7 @@ async function Books() {
     <section className="reveal px-6 pb-[72px] pt-16">
       <div className="mx-auto max-w-[1200px]">
         <SectionHead title="Ebooks" href="/ebooks" linkLabel="All ebooks" />
-        <div className="grid gap-7 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
+        <div className="grid gap-7 [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))]">
           {books.slice(0, 4).map((b) => (
             <Link key={b.id} href={`/ebooks/${b.slug}`} className="flex flex-col gap-2.5 text-ink no-underline">
               <Cover src={b.cover_url} alt={b.title} />

@@ -19,7 +19,7 @@ export default async function Page() {
         <p className="mx-auto mt-3 max-w-xl text-muted">Step-by-step guides with the prayers for every bead.</p>
       </div>
       {list.length === 0 ? <EmptyState>Chaplets will be added soon.</EmptyState> : (
-        <div className="grid gap-7 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
+        <div className="grid gap-7 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
           {list.map((c) => (
             <Link key={c.id} href={`/chaplets/${c.slug}`} className="reveal flex flex-col gap-3 text-ink no-underline">
               <Featured src={c.featured_image} alt={c.image_alt} rounded="rounded-2xl" />

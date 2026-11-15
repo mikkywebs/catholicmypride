@@ -20,7 +20,7 @@ export default async function Page() {
       {[...groups, ...(other.length ? [{ c: { id: 'other', name: 'More books' }, list: other }] : [])].map(({ c, list }) => (
         <section key={c.id} className="reveal flex flex-col gap-5">
           <h2 className="m-0 border-b border-line pb-3 font-serif text-[32px] font-semibold">{c.name}</h2>
-          <div className="grid gap-7 [grid-template-columns:repeat(auto-fill,minmax(180px,1fr))]">
+          <div className="grid gap-7 [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))]">
             {list.map((b) => (
               <Link key={b.id} href={`/ebooks/${b.slug}`} className="flex flex-col gap-2.5 text-ink no-underline">
                 <Cover src={b.cover_url} alt={b.title} />

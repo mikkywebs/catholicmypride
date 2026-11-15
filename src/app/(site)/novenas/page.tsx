@@ -21,7 +21,7 @@ export default async function Page() {
         <p className="mx-auto mt-3 max-w-xl text-muted">Each novena begins nine days before its feast. Choose one and pray along day by day.</p>
       </div>
       {list.length === 0 ? <EmptyState>Novenas will be posted soon.</EmptyState> : (
-        <div className="grid gap-7 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+        <div className="grid gap-7 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
           {list.map((n) => (
             <Link key={n.id} href={`/novenas/${n.slug}`} className="reveal flex flex-col gap-3 text-ink no-underline">
               <Featured src={n.featured_image} alt={n.image_alt} rounded="rounded-2xl" />
