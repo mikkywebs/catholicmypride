@@ -98,7 +98,8 @@ export type Book = Seo & {
   category?: Category | null
 }
 
-export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address?: string | null; map_url?: string | null }
+export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address?: string | null; map_url?: string | null; total_parishes?: number | null; total_priests?: number | null; catholic_population?: number | null }
+export type Region = { id: string; continent: string; country: string; province: string | null; total_provinces: number | null; total_dioceses: number | null; total_parishes: number | null; total_priests: number | null; catholic_population: number | null }
 
 export type Church = { id: string; name: string; address: string | null; map_url: string | null; deanery: string | null; diocese_id: string | null; diocese?: Diocese | null }
 

@@ -1,7 +1,7 @@
 import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
-import type { Book, Category, Chaplet, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Settings, Song } from './types'
+import type { Book, Category, Chaplet, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Region, Settings, Song } from './types'
 
 // Every public read is cached and tagged. Admin saves call updateTag(<tag>)
 // so changes appear straight away.
@@ -282,6 +282,16 @@ export async function getChurches(): Promise<Church[]> {
   if (!db) return []
   const { data } = await db.from('churches').select('id, name, address, map_url, deanery, diocese_id, diocese:dioceses(*)').not('diocese_id', 'is', null).order('name').limit(5000)
   return (data as unknown as Church[]) ?? []
+}
+
+export async function getDirectoryRegions(): Promise<Region[]> {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('churches')
+  const db = publicClient()
+  if (!db) return []
+  const { data } = await db.from('directory_regions').select('id, continent, country, province, total_provinces, total_dioceses, total_parishes, total_priests, catholic_population').limit(2000)
+  return (data as Region[]) ?? []
 }
 
 // ---------- Prayer wall ----------

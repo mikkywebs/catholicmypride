@@ -43,7 +43,7 @@ function readField(f: Field, form: FormData): [string, unknown][] {
     case 'boolean':
       return [[f.name, form.get(f.name) === 'on']]
     case 'number': {
-      const v = raw(f.name)
+      const v = raw(f.name).replace(/[,\s]/g, '')
       return [[f.name, v ? Number.parseInt(v, 10) || null : null]]
     }
     case 'tags':
@@ -100,13 +100,15 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
     if (row.status === 'published' && !row.published_at) row.published_at = new Date().toISOString()
   }
   row.updated_at = new Date().toISOString()
-  if (t.key === 'dioceses' && (!row.continent || !row.country)) return { ok: false, message: 'Please choose the continent and country.' }
+  if (t.key === 'regions' && !row.province) row.province = null
+  if (t.key === 'regions' && ['total_provinces', 'total_dioceses', 'total_parishes', 'total_priests', 'catholic_population'].every((k) => row[k] == null)) return { ok: false, message: 'Please fill at least one total.' }
+  if ((t.key === 'dioceses' || t.key === 'regions') && (!row.continent || !row.country)) return { ok: false, message: 'Please choose the continent and country.' }
   if (t.key === 'churches' && !row.diocese_id) return { ok: false, message: 'Please choose the archdiocese or diocese.' }
 
   const q = id ? db.from(t.table).update(row).eq('id', id).select('id').single() : db.from(t.table).insert(row).select('id').single()
   const { data, error } = await q
   if (error) {
-    if (error.code === '23505') return { ok: false, message: 'That web address or date is already used. Please choose another.' }
+    if (error.code === '23505') return { ok: false, message: t.key === 'regions' ? 'Totals for this country or province already exist. Edit the existing entry instead.' : 'That web address or date is already used. Please choose another.' }
     if (error.code === 'PGRST204' || /column .* (does not exist|of .* in the schema cache)/i.test(error.message)) {
       return { ok: false, message: `The database needs an update before this can be saved (${error.message}). Run the latest SQL update in Supabase, then try again.` }
     }
