@@ -6,7 +6,7 @@ import { signOut } from '../actions'
 const NAV = [
   ['Dashboard', '/admin'], ['Blog', '/admin/posts'], ['Novenas', '/admin/novenas'], ['Daily Prayers', '/admin/prayers'], ['Chaplets', '/admin/chaplets'],
   ['Mass Readings', '/admin/readings'], ['Saints', '/admin/saints'], ['Music & Audio', '/admin/songs'], ['Ebooks', '/admin/books'],
-  ['Dioceses', '/admin/dioceses'], ['Parishes', '/admin/churches'], ['Directory Statistics', '/admin/regions'], ['Prayer Requests', '/admin/prayer-requests'], ['Messages', '/admin/messages'],
+  ['Dioceses', '/admin/dioceses'], ['Parishes', '/admin/churches'], ['Countries & Provinces', '/admin/regions'], ['Prayer Requests', '/admin/prayer-requests'], ['Messages', '/admin/messages'],
   ['Categories', '/admin/categories'], ['Settings', '/admin/settings'],
 ]
 

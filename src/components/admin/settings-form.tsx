@@ -6,6 +6,7 @@ import { saveSettings, type FormState } from '@/app/admin/actions'
 import type { Settings } from '@/lib/types'
 import { BrandIcon, BRANDS } from '../icons'
 import { ImageUpload } from './upload'
+import { ExtraSocialField } from './extra-social'
 
 const input = 'min-h-11 w-full rounded-lg border border-field bg-surface px-3 py-2.5 font-normal text-ink'
 const card = 'flex flex-col gap-4 rounded-2xl border border-line bg-surface p-6'
@@ -29,7 +30,11 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
           <h2 className="m-0 text-xl">Logo &amp; name</h2>
           <ImageUpload name="logo_url" label="Site logo (square, at least 512 × 512)" shape="square" initial={s.logo_url} />
           <p className="m-0 text-[13px] text-muted">Leave empty to use the built-in logo. Also used as the browser icon and default share image.</p>
-          <div className="grid gap-4 sm:grid-cols-2"><T name="site_name" label="Site name" s={s} /><T name="tagline" label="Tagline" s={s} /></div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5 text-sm font-semibold">Site name<span className="flex min-h-11 items-center rounded-lg border border-line bg-bg px-3 font-normal text-muted">Catholic My Pride</span></div>
+            <div className="flex flex-col gap-1.5 text-sm font-semibold">Tagline<span className="flex min-h-11 items-center rounded-lg border border-line bg-bg px-3 font-normal text-muted">Apostolate</span></div>
+          </div>
+          <p className="m-0 -mt-2 text-[13px] text-muted">The site name and tagline are fixed.</p>
           <T name="mission" label="Mission line (footer)" s={s} rows={2} />
         </section>
         <section className={card}>
@@ -56,6 +61,7 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
               <input name={n} type="url" defaultValue={s[n] ?? ''} className={input} />
             </label>
           ))}
+          <ExtraSocialField initial={Array.isArray(s.extra_social) ? s.extra_social : []} />
         </section>
         <section className={card}>
           <h2 className="m-0 text-xl">Contact</h2>

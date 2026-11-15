@@ -12,8 +12,8 @@ export type Field =
   | { name: string; label: string; type: 'tags'; help?: string; placeholder?: string }
   | { name: string; label: string; type: 'boolean'; help?: string }
   | { name: string; label: string; type: 'heading' }
-  | { name: string; label: string; type: 'place'; countryName: string; help?: string }
-  | { name: string; label: string; type: 'diocese'; help?: string }
+  | { name: string; label: string; type: 'place'; countryName: string; provinceName?: string; help?: string }
+  | { name: string; label: string; type: 'diocese'; deaneryName?: string; help?: string }
   | { name: string; label: string; type: 'weekdays'; help?: string }
   | { name: string; label: string; type: 'time'; help?: string; half?: boolean }
   | { name: string; label: string; type: 'musicbar' }
@@ -233,10 +233,10 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     listColumns: [{ field: 'name', label: 'Name' }, { field: 'kind', label: 'Type' }, { field: 'province', label: 'Province' }, { field: 'country', label: 'Country' }],
     orderBy: 'created_at', tags: ['churches', 'content'], status: false,
     fields: [
-      { name: 'continent', label: 'Continent and country', type: 'place', countryName: 'country', help: 'Choose the continent first, then the country.' },
+      { name: 'continent', label: 'Continent, country and ecclesiastical province', type: 'place', countryName: 'country', provinceName: 'province', help: 'The province is the group of dioceses under a metropolitan archdiocese, usually named after it.' },
       { name: 'kind', label: 'Type', type: 'select', options: ['Archdiocese', 'Diocese', 'Apostolic Vicariate', 'Prefecture'], half: true },
       { name: 'name', label: 'Name (without the word Diocese)', type: 'text', required: true, half: true, placeholder: 'e.g. Lagos' },
-      { name: 'province', label: 'Ecclesiastical province', type: 'text', placeholder: 'e.g. Lagos', help: 'The group of dioceses under a metropolitan archdiocese. Usually named after the archdiocese.' },
+      { name: 'deaneries', label: 'Deaneries / Zones in this diocese (optional)', type: 'tags', placeholder: 'e.g. Ikeja Deanery, Lekki Deanery, Badagry Deanery', help: 'Listed here, they become a dropdown when adding parishes.' },
       { name: 'address', label: 'Address (optional)', type: 'textarea', rows: 2, help: 'e.g. the cathedral or diocesan secretariat. Shown with a map on the directory.' },
       { name: 'map_url', label: 'Google Maps link (optional)', type: 'url', help: 'Paste a link from Google Maps for exact directions. If empty, directions use the address.' },
       { name: 'stats', label: 'Official totals (optional — shown only when filled)', type: 'heading' },
@@ -247,13 +247,14 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     ],
   },
   regions: {
-    key: 'regions', table: 'directory_regions', singular: 'country / province totals', plural: 'Directory Statistics', titleField: 'country',
-    listColumns: [{ field: 'country', label: 'Country' }, { field: 'province', label: 'Province (empty = whole country)' }, { field: 'total_dioceses', label: 'Dioceses' }, { field: 'total_parishes', label: 'Parishes' }],
+    key: 'regions', table: 'directory_regions', singular: 'country or province', plural: 'Countries & Provinces', titleField: 'country',
+    listColumns: [{ field: 'country', label: 'Country' }, { field: 'province', label: 'Province (empty = country entry)' }, { field: 'province_list', label: 'Provinces listed' }, { field: 'total_dioceses', label: 'Dioceses' }],
     orderBy: 'country', tags: ['churches', 'content'], status: false,
     fields: [
       { name: 'continent', label: 'Continent and country', type: 'place', countryName: 'country', help: 'Choose the continent first, then the country.' },
-      { name: 'province', label: 'Ecclesiastical province (leave empty for whole-country totals)', type: 'text', placeholder: 'e.g. Lagos', help: 'Spell it exactly as on your dioceses so the totals appear under the right heading.' },
-      { name: 'stats', label: 'Official totals — fill only what you know', type: 'heading' },
+      { name: 'province', label: 'Ecclesiastical province (leave empty for a country entry)', type: 'text', placeholder: 'e.g. Lagos', help: 'Only to add official totals for one province. To list provinces, use the box below on the country entry.' },
+      { name: 'province_list', label: 'Provinces in this country (country entry only)', type: 'tags', placeholder: 'e.g. Abuja, Benin City, Calabar, Ibadan, Jos, Kaduna, Lagos, Onitsha, Owerri', help: 'These become the dropdown when adding a diocese.' },
+      { name: 'stats', label: 'Official totals (optional) — fill only what you know', type: 'heading' },
       { name: 'total_provinces', label: 'Ecclesiastical provinces (country only)', type: 'number', half: true },
       { name: 'total_dioceses', label: 'Archdioceses and dioceses', type: 'number', half: true },
       { name: 'total_parishes', label: 'Parishes', type: 'number', half: true },
@@ -267,8 +268,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     listColumns: [{ field: 'name', label: 'Parish' }, { field: 'diocese', label: 'Archdiocese / Diocese' }, { field: 'deanery', label: 'Deanery / Zone' }, { field: 'address', label: 'Address' }],
     orderBy: 'created_at', tags: ['churches', 'content'], status: false,
     fields: [
-      { name: 'diocese_id', label: 'Where is it?', type: 'diocese', help: 'Choose continent, country, then the archdiocese or diocese. Missing? Add it under Dioceses first.' },
-      { name: 'deanery', label: 'Deanery / Zone (optional)', type: 'text' },
+      { name: 'diocese_id', label: 'Where is it?', type: 'diocese', deaneryName: 'deanery', help: 'Choose continent, country, then the archdiocese or diocese. Missing? Add it under Dioceses first.' },
       { name: 'name', label: 'Parish name', type: 'text', required: true, placeholder: 'e.g. St Leo Catholic Church' },
       { name: 'address', label: 'Address (optional)', type: 'textarea', rows: 2, help: 'Shown with a map on the directory.' },
       { name: 'map_url', label: 'Google Maps link (optional)', type: 'url', help: 'Paste a link from Google Maps for exact directions. If empty, directions use the address.' },

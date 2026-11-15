@@ -2,7 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Settings } from '@/lib/types'
 import { CopyrightYear } from './year'
-import { BrandIcon, BRANDS } from './icons'
+import { BrandIcon, BRANDS, EXTRA_BRANDS, LinkIcon } from './icons'
+import { detectPlatform } from '@/lib/social'
 
 type Flags = { blog: boolean; songs: boolean; books: boolean; churches: boolean; saints: boolean }
 
@@ -13,6 +14,10 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
     { name: 'TikTok', url: s.tiktok_url, icon: BRANDS.tiktok },
     { name: 'X', url: s.x_url, icon: BRANDS.x },
   ].filter((x) => x.url)
+  const extras = (Array.isArray(s.extra_social) ? s.extra_social : []).filter((x) => x?.url).map((x) => {
+    const p = detectPlatform(x.url)
+    return { name: x.label || p.name || 'Link', url: x.url, brand: p.key ? EXTRA_BRANDS[p.key] : undefined }
+  })
   const resources = [
     flags.blog && { label: 'Blog', href: '/blog' },
     flags.songs && { label: 'Music & Audio', href: '/music' },
@@ -44,11 +49,16 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
             </div>
             <p className="m-0 max-w-sm">{s.mission}</p>
             {s.contact_email && <a href={`mailto:${s.contact_email}`} className="font-semibold text-ink">{s.contact_email}</a>}
-            {socials.length > 0 && (
+            {socials.length + extras.length > 0 && (
               <nav aria-label="Follow us" className="flex flex-wrap gap-2.5 pt-1.5">
                 {socials.map((x) => (
                   <a key={x.name} href={x.url!} target="_blank" rel="noopener noreferrer" aria-label={x.name} title={x.name} className="flex size-11 items-center justify-center rounded-full border border-footer-line bg-surface text-ink">
                     <BrandIcon icon={x.icon} size={20} color={x.name === 'X' || x.name === 'TikTok' ? 'currentColor' : undefined} />
+                  </a>
+                ))}
+                {extras.map((x) => (
+                  <a key={x.url} href={x.url} target="_blank" rel="noopener noreferrer" aria-label={x.name} title={x.name} className="flex size-11 items-center justify-center rounded-full border border-footer-line bg-surface text-ink">
+                    {x.brand ? <BrandIcon icon={x.brand.icon} size={20} color={x.brand.mono ? 'currentColor' : undefined} /> : <LinkIcon size={19} />}
                   </a>
                 ))}
               </nav>

@@ -24,6 +24,7 @@ const DEFAULT_SETTINGS: Settings = {
   facebook_url: null,
   tiktok_url: null,
   x_url: null,
+  extra_social: [],
   donate_url: 'https://selar.com/showlove/catholicmypride',
   bank_account_name: null,
   bank_name: null,

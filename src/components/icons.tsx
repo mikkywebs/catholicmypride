@@ -1,4 +1,4 @@
-import { siFacebook, siTelegram, siTiktok, siWhatsapp, siX, siYoutube } from 'simple-icons'
+import { siApplemusic, siApplepodcasts, siAudiomack, siBluesky, siDiscord, siFacebook, siGoogleplay, siInstagram, siKick, siLinktree, siPatreon, siPinterest, siReddit, siRumble, siSnapchat, siSoundcloud, siSpotify, siSubstack, siTelegram, siThreads, siTiktok, siTwitch, siVimeo, siWhatsapp, siX, siYoutube } from 'simple-icons'
 
 type SI = { path: string; title: string; hex: string }
 
@@ -11,6 +11,16 @@ export function BrandIcon({ icon, size = 20, color }: { icon: SI; size?: number;
 }
 
 export const BRANDS = { youtube: siYoutube, facebook: siFacebook, tiktok: siTiktok, x: siX, whatsapp: siWhatsapp, telegram: siTelegram }
+
+/** Logos for extra social links, keyed by detectPlatform(). Dark logos use the text colour. */
+export const EXTRA_BRANDS: Record<string, { icon: SI; mono?: boolean }> = {
+  instagram: { icon: siInstagram }, whatsapp: { icon: siWhatsapp }, telegram: { icon: siTelegram }, threads: { icon: siThreads, mono: true },
+  pinterest: { icon: siPinterest }, spotify: { icon: siSpotify }, applemusic: { icon: siApplemusic }, applepodcasts: { icon: siApplepodcasts },
+  soundcloud: { icon: siSoundcloud }, audiomack: { icon: siAudiomack }, snapchat: { icon: siSnapchat, mono: true }, reddit: { icon: siReddit },
+  discord: { icon: siDiscord }, twitch: { icon: siTwitch }, substack: { icon: siSubstack }, patreon: { icon: siPatreon, mono: true },
+  bluesky: { icon: siBluesky }, rumble: { icon: siRumble }, vimeo: { icon: siVimeo }, linktree: { icon: siLinktree }, googleplay: { icon: siGoogleplay }, kick: { icon: siKick },
+}
+
 
 type P = { size?: number; className?: string }
 const base = (size = 18) => ({ width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true })

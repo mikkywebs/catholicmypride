@@ -53,7 +53,9 @@ function readField(f: Field, form: FormData): [string, unknown][] {
       return [[f.name, raw(f.name) || null], [f.secondsField, s ? Math.round(Number(s)) || null : null]]
     }
     case 'place':
-      return [[f.name, raw(f.name) || null], [f.countryName, raw(f.countryName) || null]]
+      return [[f.name, raw(f.name) || null], [f.countryName, raw(f.countryName) || null], ...(f.provinceName ? [[f.provinceName, raw(f.provinceName) || null] as [string, unknown]] : [])]
+    case 'diocese':
+      return [[f.name, raw(f.name) || null], ...(f.deaneryName ? [[f.deaneryName, raw(f.deaneryName) || null] as [string, unknown]] : [])]
     case 'weekdays':
       return [[f.name, form.getAll(f.name).map((d) => Number(d)).filter((d) => d >= 0 && d <= 6).sort()]]
     case 'time':
@@ -101,7 +103,9 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   }
   row.updated_at = new Date().toISOString()
   if (t.key === 'regions' && !row.province) row.province = null
-  if (t.key === 'regions' && ['total_provinces', 'total_dioceses', 'total_parishes', 'total_priests', 'catholic_population'].every((k) => row[k] == null)) return { ok: false, message: 'Please fill at least one total.' }
+  if (t.key === 'regions' && row.province) row.province_list = []
+  if (t.key === 'regions' && Array.isArray(row.province_list)) row.province_list = [...new Set((row.province_list as string[]).map((p) => p.replace(/^(ecclesiastical )?province of /i, '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b))
+  if (t.key === 'dioceses' && Array.isArray(row.deaneries)) row.deaneries = [...new Set(row.deaneries as string[])]
   if ((t.key === 'dioceses' || t.key === 'regions') && (!row.continent || !row.country)) return { ok: false, message: 'Please choose the continent and country.' }
   if (t.key === 'churches' && !row.diocese_id) return { ok: false, message: 'Please choose the archdiocese or diocese.' }
 
@@ -198,7 +202,7 @@ export async function deleteCategory(id: string) {
 
 // ---------------- Settings ----------------
 const SETTING_KEYS = [
-  'site_name', 'tagline', 'mission', 'logo_url', 'hero_image_url', 'hero_title', 'hero_subtitle',
+  'mission', 'logo_url', 'hero_image_url', 'hero_title', 'hero_subtitle',
   'about_image_url', 'about_story_title', 'about_story_md', 'contact_email', 'contact_phone', 'contact_address',
   'youtube_url', 'facebook_url', 'tiktok_url', 'x_url', 'donate_url',
   'bank_account_name', 'bank_name', 'bank_account_number', 'donate_needs_md',
@@ -209,8 +213,15 @@ export async function saveSettings(_: FormState, form: FormData): Promise<FormSt
   const { db } = await requireAdmin()
   const row: Record<string, unknown> = { updated_at: new Date().toISOString() }
   for (const k of SETTING_KEYS) row[k] = String(form.get(k) ?? '').trim() || null
-  row.site_name ||= 'Catholic My Pride'
-  row.tagline ||= 'Apostolate'
+  // The name and tagline are fixed.
+  row.site_name = 'Catholic My Pride'
+  row.tagline = 'Apostolate'
+  let extras: unknown = []
+  try { extras = JSON.parse(String(form.get('extra_social') ?? '[]')) } catch {}
+  row.extra_social = (Array.isArray(extras) ? extras : [])
+    .map((x) => ({ label: String(x?.label ?? '').trim().slice(0, 40), url: String(x?.url ?? '').trim() }))
+    .filter((x) => /^https?:\/\/[^\s]+\.[^\s]+/i.test(x.url))
+    .slice(0, 12)
   row.mission ||= "Spreading the Gospel, strengthening the Catholic faith and sharing Christ's love."
   row.view_threshold = Math.max(0, Number.parseInt(String(form.get('view_threshold') ?? '50'), 10) || 0)
   const fb = String(form.get('music_fallback') ?? 'songs')

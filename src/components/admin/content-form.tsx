@@ -8,7 +8,7 @@ import { slugify } from '@/lib/text'
 import { AudioUpload, FileUpload, ImageUpload } from './upload'
 import { DioceseField, MusicBarField, PlaceField, TimeField, WeekdaysField } from './fields-extra'
 
-export type FormOptions = { dioceses?: Diocese[] }
+export type FormOptions = { dioceses?: Diocese[]; provinces?: Record<string, string[]> }
 
 type Row = Record<string, unknown>
 type Action = (state: FormState, form: FormData) => Promise<FormState>
@@ -129,9 +129,9 @@ function FieldInput({ f, row, cats, slugFrom, options }: { f: Field; row: Row; c
     case 'tags':
       return <label className="flex flex-col gap-1.5 text-sm font-semibold">{f.label}<input name={f.name} defaultValue={Array.isArray(row[f.name]) ? (row[f.name] as string[]).join(', ') : ''} placeholder={f.placeholder} className={input} /><span className="text-[13px] font-normal text-muted">Separate with commas.</span></label>
     case 'place':
-      return <PlaceField name={f.name} countryName={f.countryName} label={f.label} help={f.help} initialContinent={val(f.name)} initialCountry={val(f.countryName)} />
+      return <PlaceField name={f.name} countryName={f.countryName} label={f.label} help={f.help} initialContinent={val(f.name)} initialCountry={val(f.countryName)} provinceName={f.provinceName} provinces={options.provinces} initialProvince={f.provinceName ? val(f.provinceName) : undefined} />
     case 'diocese':
-      return <DioceseField name={f.name} label={f.label} help={f.help} dioceses={options.dioceses ?? []} initial={val(f.name)} />
+      return <DioceseField name={f.name} label={f.label} help={f.help} dioceses={options.dioceses ?? []} initial={val(f.name)} deaneryName={f.deaneryName} initialDeanery={f.deaneryName ? val(f.deaneryName) : undefined} />
     case 'weekdays':
       return <WeekdaysField name={f.name} label={f.label} help={f.help} initial={(row[f.name] as number[] | undefined) ?? []} />
     case 'time':

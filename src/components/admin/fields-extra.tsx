@@ -7,14 +7,39 @@ import type { Diocese } from '@/lib/types'
 
 const input = 'min-h-11 w-full rounded-lg border border-field bg-surface px-3 py-2.5 font-normal text-ink'
 
-/** Continent → country (saved as two fields). */
-export function PlaceField({ name, countryName, label, help, initialContinent, initialCountry }: { name: string; countryName: string; label: string; help?: string; initialContinent?: string; initialCountry?: string }) {
+/** A dropdown from a list, with "Other — type it" for names not on the list yet. */
+function PickOrType({ name, options, initial, placeholder, noneLabel, disabled, ariaLabel }: { name: string; options: string[]; initial: string; placeholder: string; noneLabel?: string; disabled?: boolean; ariaLabel: string }) {
+  const inList = !initial || options.some((o) => o.toLowerCase() === initial.toLowerCase())
+  const [mode, setMode] = useState<'pick' | 'type'>(inList ? 'pick' : 'type')
+  const [value, setValue] = useState(initial)
+  return (
+    <div className="flex flex-col gap-2">
+      <input type="hidden" name={name} value={value} />
+      <select
+        value={mode === 'type' ? '__other' : value}
+        disabled={disabled}
+        aria-label={ariaLabel}
+        onChange={(e) => { if (e.target.value === '__other') { setMode('type'); setValue('') } else { setMode('pick'); setValue(e.target.value) } }}
+        className={input}
+      >
+        <option value="">{noneLabel ?? placeholder}</option>
+        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+        <option value="__other">Other — type it…</option>
+      </select>
+      {mode === 'type' && <input value={value} onChange={(e) => setValue(e.target.value)} placeholder="Type the name" aria-label={`${ariaLabel} (typed)`} className={input} autoFocus />}
+    </div>
+  )
+}
+
+/** Continent → country (→ province from the country's list), saved as separate fields. */
+export function PlaceField({ name, countryName, label, help, initialContinent, initialCountry, provinceName, provinces, initialProvince }: { name: string; countryName: string; label: string; help?: string; initialContinent?: string; initialCountry?: string; provinceName?: string; provinces?: Record<string, string[]>; initialProvince?: string }) {
   const [continent, setContinent] = useState(initialContinent || (initialCountry ? COUNTRY_CONTINENT[initialCountry] ?? '' : ''))
   const [country, setCountry] = useState(initialCountry ?? '')
+  const list = (provinces?.[country] ?? [])
   return (
     <fieldset className="flex flex-col gap-1.5">
       <legend className="pb-1.5 text-sm font-semibold">{label}</legend>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className={`grid items-start gap-4 ${provinceName ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
         <select name={name} value={continent} required onChange={(e) => { setContinent(e.target.value); setCountry('') }} className={input} aria-label="Continent">
           <option value="">Choose continent…</option>
           {CONTINENTS.map((c) => <option key={c}>{c}</option>)}
@@ -23,14 +48,19 @@ export function PlaceField({ name, countryName, label, help, initialContinent, i
           <option value="">{continent ? 'Choose country…' : 'Choose a continent first'}</option>
           {continent && countriesIn(continent).map((c) => <option key={c}>{c}</option>)}
         </select>
+        {provinceName && (
+          <PickOrType key={country} name={provinceName} options={list} initial={country === (initialCountry ?? '') ? initialProvince ?? '' : ''} disabled={!country} ariaLabel="Ecclesiastical province"
+            placeholder={country ? (list.length ? 'Ecclesiastical province…' : 'No provinces listed yet') : 'Choose a country first'} />
+        )}
       </div>
+      {provinceName && country && !list.length && <span className="text-[13px] text-muted">Add this country&apos;s provinces under <a href="/admin/regions" target="_blank">Countries &amp; Provinces</a>, or choose “Other — type it”.</span>}
       {help && <span className="text-[13px] text-muted">{help}</span>}
     </fieldset>
   )
 }
 
 /** Continent → country → archdiocese/diocese. Only the diocese is saved; the rest filters the list. */
-export function DioceseField({ name, label, help, dioceses, initial }: { name: string; label: string; help?: string; dioceses: Diocese[]; initial?: string | null }) {
+export function DioceseField({ name, label, help, dioceses, initial, deaneryName, initialDeanery }: { name: string; label: string; help?: string; dioceses: Diocese[]; initial?: string | null; deaneryName?: string; initialDeanery?: string }) {
   const start = dioceses.find((d) => d.id === initial)
   const [continent, setContinent] = useState(start?.continent ?? '')
   const [country, setCountry] = useState(start?.country ?? '')
@@ -61,6 +91,14 @@ export function DioceseField({ name, label, help, dioceses, initial }: { name: s
         </select>
       </div>
       {chosen && <span className="text-[13px] text-muted">Ecclesiastical province: <strong className="text-ink">{chosen.province || '—'}</strong></span>}
+      {deaneryName && (
+        <div className="flex flex-col gap-1.5 pt-2.5">
+          <span className="text-sm font-semibold">Deanery / Zone (optional)</span>
+          <PickOrType key={id} name={deaneryName} options={chosen?.deaneries ?? []} initial={id === (initial ?? '') ? initialDeanery ?? '' : ''} disabled={!chosen} ariaLabel="Deanery or zone"
+            placeholder="Choose the diocese first" noneLabel={chosen ? (chosen.deaneries?.length ? 'No deanery / zone' : 'None listed — leave empty or type one') : undefined} />
+          {chosen && !chosen.deaneries?.length && <span className="text-[13px] text-muted">List this diocese&apos;s deaneries or zones on its page under Dioceses to choose them here.</span>}
+        </div>
+      )}
       {help && <span className="text-[13px] text-muted">{help} <a href="/admin/dioceses/new" target="_blank">+ Add a diocese</a></span>}
     </fieldset>
   )
