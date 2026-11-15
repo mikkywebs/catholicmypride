@@ -244,7 +244,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   },
   churches: {
     key: 'churches', table: 'churches', singular: 'parish', plural: 'Parishes', titleField: 'name',
-    listColumns: [{ field: 'name', label: 'Parish' }, { field: 'deanery', label: 'Deanery / Zone' }, { field: 'address', label: 'Address' }],
+    listColumns: [{ field: 'name', label: 'Parish' }, { field: 'diocese', label: 'Archdiocese / Diocese' }, { field: 'deanery', label: 'Deanery / Zone' }, { field: 'address', label: 'Address' }],
     orderBy: 'created_at', tags: ['churches', 'content'], status: false,
     fields: [
       { name: 'diocese_id', label: 'Where is it?', type: 'diocese', help: 'Choose continent, country, then the archdiocese or diocese. Missing? Add it under Dioceses first.' },

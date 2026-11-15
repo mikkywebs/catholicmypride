@@ -11,7 +11,7 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
   if (!t) notFound()
   const { db } = await requireAdmin()
   const q = typeof sp.q === 'string' ? sp.q.trim() : ''
-  let query = db.from(t.table).select('*').order(t.orderBy, { ascending: false }).limit(200)
+  let query = db.from(t.table).select((t.table === 'churches' ? '*, diocese:dioceses(kind, name)' : '*') as '*').order(t.orderBy, { ascending: false }).limit(200)
   if (q) query = query.ilike(t.titleField === 'date' ? 'title' : t.titleField, `%${q}%`)
   const { data: rows } = await query
   const fmt = (v: unknown) => (v === true ? 'Yes' : v === false ? '—' : v == null || v === '' ? '—' : typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v) ? new Date(v).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : String(v))
@@ -35,6 +35,7 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
                   <td key={c.field} className="px-4 py-3">
                     {i === 0 ? <Link href={`/admin/${t.key}/${r.id}`} className="font-semibold text-ink">{fmt(r[c.field])}</Link>
                       : c.field === 'status' ? <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${r.status === 'published' ? 'bg-[#e3f1e8] text-[#1f5c38]' : 'bg-[#eef0f3] text-[#4a4f5c]'}`}>{fmt(r[c.field])}</span>
+                      : c.field === 'diocese' ? (r.diocese ? `${(r.diocese as { kind: string }).kind} of ${(r.diocese as { name: string }).name}` : <span className="font-semibold text-[#b42318]">None — hidden on the site</span>)
                       : fmt(r[c.field])}
                   </td>
                 ))}

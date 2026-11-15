@@ -30,7 +30,7 @@ export function ChurchFinder({ churches }: { churches: Church[] }) {
   const [deanery, setDeanery] = useState('')
   const [q, setQ] = useState('')
 
-  const list = inDio.filter((r) => (!deanery || r.deanery === deanery) && (!q || `${r.name} ${r.address ?? ''}`.toLowerCase().includes(q.toLowerCase())))
+  const list = inDio.filter((r) => (!deanery || r.deanery === deanery) && (!q || `${r.name} ${r.address ?? ''} ${r.diocese.name} ${r.deanery ?? ''}`.toLowerCase().includes(q.toLowerCase())))
   const grouped = new Map<string, { d: Diocese; byDeanery: Map<string, Row[]> }>()
   for (const r of list) {
     const g = grouped.get(r.diocese.id) ?? { d: r.diocese, byDeanery: new Map() }
@@ -69,7 +69,7 @@ export function ChurchFinder({ churches }: { churches: Church[] }) {
           </label>
         )}
         <label className="flex flex-col gap-1.5 text-sm font-semibold">Search
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Parish name or town" className={field} />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Parish, town or diocese" className={field} />
         </label>
       </form>
       <p className="m-0 text-[15px] text-muted" aria-live="polite">{list.length} {list.length === 1 ? 'parish' : 'parishes'}{where ? <> in <strong className="text-ink">{where}</strong></> : ''}</p>
@@ -96,6 +96,7 @@ export function ChurchFinder({ churches }: { churches: Church[] }) {
                     <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent"><ChurchIcon /></span>
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <h4 className="m-0 text-lg">{c.name}</h4>
+                      <p className="m-0 text-sm font-semibold text-eyebrow">{[`${d.kind} of ${d.name}`, c.deanery].filter(Boolean).join(' · ')}</p>
                       {c.address && <p className="m-0 whitespace-pre-line text-[15px] text-muted">{c.address}</p>}
                       <div className="pt-1"><PlaceMap name={c.name} address={c.address} country={d.country} mapUrl={c.map_url} /></div>
                     </div>
