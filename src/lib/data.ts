@@ -1,6 +1,7 @@
 import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
+import { lectionaryReading } from './lectionary'
 import type { Book, Category, Chaplet, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Region, Settings, Song } from './types'
 
 // Every public read is cached and tagged. Admin saves call updateTag(<tag>)
@@ -70,7 +71,7 @@ export async function getSectionFlags() {
   }
   const [blog, songs, books, churches, novenas, readings, saints, prayers, chaplets, wall] = await Promise.all([
     head('posts'), head('songs'), head('books'), head('churches'), head('novenas'),
-    head('readings'), head('saints'), head('prayers'), head('chaplets'), head('public_prayer_requests'),
+    Promise.resolve(true), head('saints'), head('prayers'), head('chaplets'), head('public_prayer_requests'),
   ])
   return { blog, songs, books, churches, novenas, readings, saints, prayers, chaplets, wall }
 }
@@ -141,9 +142,10 @@ export async function getReading(date: string): Promise<Reading | null> {
   cacheLife('minutes')
   cacheTag('readings', `reading:${date}`)
   const db = publicClient()
-  if (!db) return null
+  if (!db) return lectionaryReading(date)
   const { data } = await db.from('readings').select('*').eq('date', date).maybeSingle()
-  return (data as Reading) ?? null
+  // Nothing saved by the admin for this date: show the day's readings from the lectionary.
+  return (data as Reading) ?? (await lectionaryReading(date))
 }
 
 export async function getRecentReadings(limit = 14): Promise<Pick<Reading, 'date' | 'title' | 'gospel_ref'>[]> {
@@ -152,8 +154,18 @@ export async function getRecentReadings(limit = 14): Promise<Pick<Reading, 'date
   cacheTag('readings')
   const db = publicClient()
   if (!db) return []
-  const { data } = await db.from('readings').select('date, title, gospel_ref').order('date', { ascending: false }).limit(limit)
-  return data ?? []
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: process.env.SITE_TIMEZONE || 'Africa/Lagos' }).format(new Date())
+  const { data } = await db.from('readings').select('date, title, gospel_ref').lte('date', today).order('date', { ascending: false }).limit(limit)
+  // Fill the days the admin has not saved from the lectionary, so the list never has gaps.
+  const saved = new Map((data ?? []).map((r) => [r.date as string, r]))
+  const out: Pick<Reading, 'date' | 'title' | 'gospel_ref'>[] = []
+  const d = new Date(`${today}T12:00:00Z`)
+  for (let i = 0; i < limit; i++, d.setUTCDate(d.getUTCDate() - 1)) {
+    const iso = d.toISOString().slice(0, 10)
+    const row = saved.get(iso) ?? (await lectionaryReading(iso))
+    if (row) out.push({ date: iso, title: row.title, gospel_ref: row.gospel_ref })
+  }
+  return out
 }
 
 // ---------- Novenas ----------

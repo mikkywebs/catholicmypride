@@ -96,7 +96,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   readings: {
     key: 'readings', table: 'readings', singular: 'Mass readings', plural: 'Mass Readings', titleField: 'date',
     publicBase: '/mass-readings/', publicField: 'date',
-    listColumns: [{ field: 'date', label: 'Date' }, { field: 'title', label: 'Day' }, { field: 'status', label: 'Status' }],
+    listColumns: [{ field: 'date', label: 'Date' }, { field: 'title', label: 'Day' }, { field: 'auto_filled', label: 'Auto-filled' }, { field: 'needs_check', label: 'Please check' }, { field: 'status', label: 'Status' }],
     orderBy: 'date', tags: ['readings', 'content'], seo: true, status: true,
     fields: [
       { name: 'h1', label: '1 · The day', type: 'heading' },
