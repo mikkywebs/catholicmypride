@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import { requireAdmin } from '@/lib/admin'
 import { signOut } from '../actions'
 import { AdminNav } from '@/components/admin/admin-nav'
-import { ensureUpcomingReadings } from '@/lib/admin-readings'
+import { ensureUpcomingReadings, ensureUpcomingSaints } from '@/lib/admin-readings'
 
 const NAV: [string, string][] = [
   ['Dashboard', '/admin'], ['Blog', '/admin/posts'], ['Novenas', '/admin/novenas'], ['Daily Prayers', '/admin/prayers'], ['Chaplets', '/admin/chaplets'],
@@ -37,6 +37,6 @@ export default function Panel({ children }: { children: React.ReactNode }) {
 
 async function Guard({ children }: { children: React.ReactNode }) {
   const { db } = await requireAdmin()
-  await ensureUpcomingReadings(db)
+  await Promise.all([ensureUpcomingReadings(db), ensureUpcomingSaints(db)])
   return <>{children}</>
 }

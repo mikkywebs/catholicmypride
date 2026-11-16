@@ -149,14 +149,14 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   saints: {
     key: 'saints', table: 'saints', singular: 'saint', plural: 'Saint of the Day', titleField: 'name', slugFrom: 'name',
     publicBase: '/saint-of-the-day/', publicField: 'slug',
-    listColumns: [{ field: 'name', label: 'Saint' }, { field: 'show_on', label: 'Shown on' }, { field: 'status', label: 'Status' }],
+    listColumns: [{ field: 'name', label: 'Saint' }, { field: 'show_on', label: 'Shown on' }, { field: 'celebration', label: 'Celebration' }, { field: 'auto_filled', label: 'Auto-filled' }, { field: 'status', label: 'Status' }],
     orderBy: 'show_on', tags: ['saints', 'content'], seo: true, status: true,
     fields: [
       { name: 'name', label: "Saint's name", type: 'text', required: true },
       { name: 'slug', label: 'Web address (slug)', type: 'text', required: true },
       { name: 'show_on', label: 'Show as Saint of the Day on', type: 'date', half: true },
-      { name: 'celebration', label: 'Celebration', type: 'text', half: true, placeholder: 'Memorial / Feast' },
-      featured(),
+      { name: 'celebration', label: 'Celebration', type: 'select', options: ['Solemnity', 'Feast', 'Memorial', 'Optional Memorial'], half: true, empty: '—' },
+      { name: 'featured_image', label: 'Featured image (portrait 4:5, like Instagram)', type: 'image', shape: '4:5', altField: 'image_alt' },
       { name: 'feast_label', label: 'Feast day', type: 'text', placeholder: 'e.g. 14 November' },
       { name: 'born', label: 'Born', type: 'text', half: true },
       { name: 'died', label: 'Died', type: 'text', half: true },

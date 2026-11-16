@@ -106,6 +106,7 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   if (t.key === 'regions' && row.province) row.province_list = []
   if (t.key === 'regions' && Array.isArray(row.province_list)) row.province_list = [...new Set((row.province_list as string[]).map((p) => p.replace(/^(ecclesiastical )?province of /i, '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b))
   if (t.key === 'readings') { row.auto_filled = false; row.needs_check = false }
+  if (t.key === 'saints') row.auto_filled = false
   if (t.key === 'dioceses' && Array.isArray(row.deaneries)) row.deaneries = [...new Set(row.deaneries as string[])]
   if ((t.key === 'dioceses' || t.key === 'regions') && (!row.continent || !row.country)) return { ok: false, message: 'Please choose the continent and country.' }
   if (t.key === 'churches' && !row.diocese_id) return { ok: false, message: 'Please choose the archdiocese or diocese.' }

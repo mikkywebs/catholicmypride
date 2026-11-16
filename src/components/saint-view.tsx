@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { JsonLd, articleLd } from './article-bits'
 import { Reactions, ShareBar, ViewCount } from './engage'
-import { Breadcrumb, Chip, Featured, Prose } from './ui'
+import { Breadcrumb, Chip, Portrait, Prose } from './ui'
 import { md, readMinutes } from '@/lib/format'
 import { formatShort } from '@/lib/liturgical'
 import type { Saint, Settings } from '@/lib/types'
 
-export function SaintView({ saint, s, week }: { saint: Saint; s: Settings; week: Saint[] }) {
+export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Settings; week: Saint[]; others?: Saint[] }) {
   const facts = [
     ['Feast day', saint.feast_label],
     ['Born', saint.born],
@@ -26,18 +26,24 @@ export function SaintView({ saint, s, week }: { saint: Saint; s: Settings; week:
           <ViewCount section="Saint of the Day" threshold={s.view_threshold} />
         </div>
       </div>
-      <Featured src={saint.featured_image} alt={saint.image_alt} priority />
-      <ShareBar title={`Saint of the Day: ${saint.name}`} />
-      {facts.length > 0 && (
-        <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(170px,1fr))]">
-          {facts.map(([k, v]) => (
-            <div key={k} className="rounded-2xl border border-line bg-surface px-4 py-3.5"><span className="text-[13px] text-muted">{k}</span><br /><strong>{v}</strong></div>
-          ))}
+      <div className="flex flex-wrap items-start gap-6">
+        {saint.featured_image && (
+          <div className="w-full max-w-[340px] flex-[1_1_260px]"><Portrait src={saint.featured_image} alt={saint.image_alt} priority sizes="(max-width: 700px) 100vw, 340px" /></div>
+        )}
+        <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4">
+          {facts.length > 0 && (
+            <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
+              {facts.map(([k, v]) => (
+                <div key={k} className="rounded-2xl border border-line bg-surface px-4 py-3.5"><span className="text-[13px] text-muted">{k}</span><br /><strong>{v}</strong></div>
+              ))}
+            </div>
+          )}
+          {saint.patronage.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2"><strong className="mr-1 text-[15px]">Patron of</strong>{saint.patronage.map((p) => <Chip key={p}>{p}</Chip>)}</div>
+          )}
+          <ShareBar title={`Saint of the Day: ${saint.name}`} />
         </div>
-      )}
-      {saint.patronage.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2"><strong className="mr-1 text-[15px]">Patron of</strong>{saint.patronage.map((p) => <Chip key={p}>{p}</Chip>)}</div>
-      )}
+      </div>
       {saint.life_md && (
         <article className="flex flex-col gap-4">
           <h2 className="m-0 font-serif text-[34px] font-semibold">Life story</h2>
@@ -52,14 +58,27 @@ export function SaintView({ saint, s, week }: { saint: Saint; s: Settings; week:
           <Prose html={md(saint.prayer_md)} className="prose-on-dark" />
         </section>
       )}
-      <Reactions type="saint" id={saint.id} kinds={['love', 'amen', 'thumbs']} title={`Did ${saint.name}’s story inspire you?`} />
-      {week.filter((w) => w.id !== saint.id).length > 0 && (
+      {others.length > 0 && (
+        <section className="reveal flex flex-col gap-3.5 rounded-2xl border border-line bg-surface p-5 sm:p-6">
+          <h2 className="m-0 font-serif text-[28px] font-semibold">Also celebrated today</h2>
+          <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
+            {others.map((o) => (
+              <Link key={o.slug} href={`/saint-of-the-day/${o.slug}`} className="flex items-center gap-3 rounded-xl border border-line px-3 py-2.5 text-ink no-underline hover:border-accent">
+                <div className="w-14 shrink-0"><Portrait src={o.featured_image} alt="" sizes="56px" className="!rounded-lg" /></div>
+                <span className="flex min-w-0 flex-col"><strong className="leading-snug">{o.name}</strong>{o.celebration && <span className="text-[13px] text-muted">{o.celebration}</span>}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+      <Reactions type="saint" id={saint.slug} kinds={['love', 'amen', 'thumbs']} title={`Did ${saint.name}’s story inspire you?`} />
+      {week.filter((w) => w.slug !== saint.slug).length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">Recent saints</h2>
           <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))]">
-            {week.filter((w) => w.id !== saint.id).slice(0, 4).map((w) => (
-              <Link key={w.id} href={`/saint-of-the-day/${w.slug}`} className="flex flex-col gap-1.5 text-ink no-underline">
-                <Featured src={w.featured_image} alt={w.image_alt} rounded="rounded-xl" />
+            {week.filter((w) => w.slug !== saint.slug).slice(0, 4).map((w) => (
+              <Link key={w.slug} href={`/saint-of-the-day/${w.slug}`} className="flex flex-col gap-1.5 text-ink no-underline">
+                <Portrait src={w.featured_image} alt={w.image_alt} sizes="200px" className="!rounded-xl" />
                 {w.show_on && <span className="text-[13px] font-semibold text-eyebrow">{formatShort(w.show_on)}</span>}
                 <strong>{w.name}</strong>
               </Link>

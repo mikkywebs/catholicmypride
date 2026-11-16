@@ -2,6 +2,7 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
 import { lectionaryReading } from './lectionary'
+import { calendarSaint, calendarSaintsFor, CELEBRATION_ORDER } from './saints-data'
 import type { Book, Category, Chaplet, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Region, Settings, Song } from './types'
 
 // Every public read is cached and tagged. Admin saves call updateTag(<tag>)
@@ -71,7 +72,7 @@ export async function getSectionFlags() {
   }
   const [blog, songs, books, churches, novenas, readings, saints, prayers, chaplets, wall] = await Promise.all([
     head('posts'), head('songs'), head('books'), head('churches'), head('novenas'),
-    Promise.resolve(true), head('saints'), head('prayers'), head('chaplets'), head('public_prayer_requests'),
+    Promise.resolve(true), Promise.resolve(true), head('prayers'), head('chaplets'), head('public_prayer_requests'),
   ])
   return { blog, songs, books, churches, novenas, readings, saints, prayers, chaplets, wall }
 }
@@ -193,14 +194,37 @@ export async function getNovena(slug: string): Promise<Novena | null> {
 }
 
 // ---------- Saints ----------
-export async function getSaintForDate(date: string): Promise<Saint | null> {
+/** Every saint celebrated on a date: those you saved, plus the calendar's others. Most important first. */
+export async function getSaintsForDate(date: string): Promise<Saint[]> {
   'use cache'
   cacheLife('minutes')
   cacheTag('saints')
   const db = publicClient()
-  if (!db) return null
-  const { data } = await db.from('saints').select('*').lte('show_on', date).order('show_on', { ascending: false }).limit(1).maybeSingle()
-  return (data as Saint) ?? null
+  const saved = db ? (((await db.from('saints').select('*').eq('show_on', date)).data ?? []) as Saint[]) : []
+  const calendar = await calendarSaintsFor(date)
+  const have = new Set(saved.map((s) => s.slug))
+  const rank = (s: Saint) => CELEBRATION_ORDER[s.celebration ?? ''] ?? 9
+  return [...saved, ...calendar.filter((c) => !have.has(c.slug))].sort((a, b) => rank(a) - rank(b))
+}
+
+export async function getSaintForDate(date: string): Promise<Saint | null> {
+  'use cache'
+  cacheLife('minutes')
+  cacheTag('saints')
+  const today = await getSaintsForDate(date)
+  if (today.length) return today[0]
+  // No saint on the calendar today: show the most recent one.
+  const db = publicClient()
+  if (db) {
+    const { data } = await db.from('saints').select('*').lte('show_on', date).order('show_on', { ascending: false }).limit(1).maybeSingle()
+    if (data) return data as Saint
+  }
+  for (let i = 1; i <= 7; i++) {
+    const d = new Date(`${date}T12:00:00Z`); d.setUTCDate(d.getUTCDate() - i)
+    const prev = await calendarSaintsFor(d.toISOString().slice(0, 10))
+    if (prev.length) return prev[0]
+  }
+  return null
 }
 
 export async function getSaint(slug: string): Promise<Saint | null> {
@@ -208,19 +232,25 @@ export async function getSaint(slug: string): Promise<Saint | null> {
   cacheLife('minutes')
   cacheTag('saints', `saint:${slug}`)
   const db = publicClient()
-  if (!db) return null
-  const { data } = await db.from('saints').select('*').eq('slug', slug).maybeSingle()
-  return (data as Saint) ?? null
+  if (db) {
+    const { data } = await db.from('saints').select('*').eq('slug', slug).maybeSingle()
+    if (data) return data as Saint
+  }
+  return calendarSaint(slug, new Date().getUTCFullYear())
 }
 
+/** Saints of the days before a date (one per day, the main celebration). */
 export async function getSaintsAround(date: string): Promise<Saint[]> {
   'use cache'
   cacheLife('minutes')
   cacheTag('saints')
-  const db = publicClient()
-  if (!db) return []
-  const { data } = await db.from('saints').select('*').lte('show_on', date).order('show_on', { ascending: false }).limit(5)
-  return (data as Saint[]) ?? []
+  const out: Saint[] = []
+  for (let i = 1; i <= 10 && out.length < 4; i++) {
+    const d = new Date(`${date}T12:00:00Z`); d.setUTCDate(d.getUTCDate() - i)
+    const first = (await getSaintsForDate(d.toISOString().slice(0, 10)))[0]
+    if (first) out.push(first)
+  }
+  return out
 }
 
 // ---------- Prayers ----------

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { SaintView } from '@/components/saint-view'
-import { getSaint, getSaintsAround, getSettings } from '@/lib/data'
+import { getSaint, getSaintsAround, getSaintsForDate, getSettings } from '@/lib/data'
 
 export async function generateMetadata({ params }: PageProps<'/saint-of-the-day/[slug]'>): Promise<Metadata> {
   const { slug } = await params
@@ -21,6 +21,6 @@ async function Content({ params }: { params: PageProps<'/saint-of-the-day/[slug]
   const { slug } = await params
   const saint = await getSaint(slug)
   if (!saint) notFound()
-  const [s, week] = await Promise.all([getSettings(), getSaintsAround(saint.show_on ?? '9999-12-31')])
-  return <SaintView saint={saint} s={s} week={week} />
+  const [s, week, all] = await Promise.all([getSettings(), getSaintsAround(saint.show_on ?? '9999-12-31'), saint.show_on ? getSaintsForDate(saint.show_on) : Promise.resolve([])])
+  return <SaintView saint={saint} s={s} week={week} others={all.filter((o) => o.slug !== saint.slug)} />
 }

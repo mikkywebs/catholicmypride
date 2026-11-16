@@ -1,6 +1,7 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { lectionaryFields } from './lectionary'
+import { calendarSaintRow, calendarSaintsFor } from './saints-data'
 
 const DAYS_AHEAD = 14
 
@@ -29,5 +30,40 @@ export async function ensureUpcomingReadings(db: SupabaseClient) {
   if (e && (e.code === 'PGRST204' || /auto_filled|needs_check/.test(e.message))) {
     // Database update 0011 not run yet: save without the two marker columns.
     await db.from('readings').insert(rows.map((r) => { const copy: Record<string, unknown> = { ...r }; delete copy.auto_filled; delete copy.needs_check; return copy }))
+  }
+}
+
+/**
+ * Saint of the Day for the next two weeks: adds each calendar saint not yet saved, and moves saints
+ * saved in an earlier year to this year's date. Nothing you wrote is changed.
+ */
+export async function ensureUpcomingSaints(db: SupabaseClient) {
+  const tz = process.env.SITE_TIMEZONE || 'Africa/Lagos'
+  const start = new Date(`${new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date())}T12:00:00Z`)
+  const today = start.toISOString().slice(0, 10)
+  const wanted: { slug: string; date: string }[] = []
+  for (let i = 0; i < DAYS_AHEAD; i++) {
+    const d = new Date(start); d.setUTCDate(d.getUTCDate() + i)
+    const date = d.toISOString().slice(0, 10)
+    for (const s of await calendarSaintsFor(date)) wanted.push({ slug: s.slug, date })
+  }
+  if (!wanted.length) return
+  const { data: existing, error } = await db.from('saints').select('id, slug, show_on').in('slug', wanted.map((w) => w.slug))
+  if (error) return
+  const bySlug = new Map((existing ?? []).map((r) => [r.slug as string, r]))
+  const inserts: Record<string, unknown>[] = []
+  for (const w of wanted) {
+    const row = bySlug.get(w.slug)
+    if (!row) {
+      const r = await calendarSaintRow(w.slug, w.date)
+      if (r) inserts.push({ ...r, status: 'published', published_at: new Date().toISOString(), auto_filled: true })
+    } else if (!row.show_on || (row.show_on as string) < today) {
+      await db.from('saints').update({ show_on: w.date }).eq('id', row.id)
+    }
+  }
+  if (!inserts.length) return
+  const { error: e } = await db.from('saints').insert(inserts)
+  if (e && (e.code === 'PGRST204' || /auto_filled/.test(e.message))) {
+    await db.from('saints').insert(inserts.map((r) => { const c = { ...r }; delete c.auto_filled; return c }))
   }
 }
