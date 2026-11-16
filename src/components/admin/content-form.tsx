@@ -7,6 +7,7 @@ import { publicUrl, type ContentType, type Field } from '@/lib/content-types'
 import { slugify } from '@/lib/text'
 import { AudioUpload, FileUpload, ImageUpload } from './upload'
 import { LectionaryFill } from './lectionary-fill'
+import { RegionFill } from './region-fill'
 import { DioceseField, MusicBarField, PlaceField, TimeField, WeekdaysField } from './fields-extra'
 
 export type FormOptions = { dioceses?: Diocese[]; provinces?: Record<string, string[]> }
@@ -212,6 +213,7 @@ export function ContentForm({ type, row, cats, action, novenaDays, options = {} 
         i++
       } else out.push(<FieldInput key={f.name} f={f} row={row} cats={cats} slugFrom={type.slugFrom} options={options} />)
       if (type.key === 'readings' && f.name === 'date') out.push(<LectionaryFill key="lectionary" />)
+      if (type.key === 'regions' && f.name === 'province') out.push(<RegionFill key="region-fill" />)
     }
     return out
   }
