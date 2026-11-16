@@ -3,6 +3,9 @@
 // from the Catholic Bishops' Conference list (9 provinces, 59 Latin dioceses + 1 Maronite eparchy).
 
 export type CountryFacts = {
+  continent: string
+  /** Jurisdictions outside the provinces, e.g. an Eastern Catholic eparchy. */
+  other?: { name: string; kind: 'Eparchy' | 'Apostolic Vicariate' | 'Prefecture' }[]
   asOf: string
   source: string
   totals: { total_provinces?: number; total_dioceses?: number; total_parishes?: number; total_priests?: number; catholic_population?: number }
@@ -12,6 +15,8 @@ export type CountryFacts = {
 
 export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   Nigeria: {
+    continent: 'Africa',
+    other: [{ name: 'Our Lady of the Annunciation at Ibadan (Maronite)', kind: 'Eparchy' }],
     asOf: '31 December 2023',
     source: 'GCatholic.org',
     totals: { total_provinces: 9, total_dioceses: 60, total_parishes: 4944, total_priests: 10309, catholic_population: 35097000 },

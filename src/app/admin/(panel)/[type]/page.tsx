@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAdmin } from '@/lib/admin'
 import { CONTENT_TYPES, publicUrl } from '@/lib/content-types'
-import { deleteItem } from '../../actions'
+import { deleteItem, seedDioceses } from '../../actions'
+import { DIRECTORY_FACTS } from '@/lib/directory-data'
 
 export default async function Page(props: PageProps<'/admin/[type]'>) {
   const { type } = await props.params
@@ -23,6 +24,21 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
       </div>
       {sp.saved && <p role="status" className="m-0 rounded-lg bg-[#e3f1e8] px-4 py-3 text-[#1f5c38]">Saved. The website has been updated.</p>}
       {sp.deleted && <p role="status" className="m-0 rounded-lg bg-[#eef0f3] px-4 py-3">Deleted.</p>}
+      {sp.seeded !== undefined && (
+        <p role="status" className="m-0 rounded-lg bg-[#e3f1e8] px-4 py-3 text-[#1f5c38]">
+          Added {String(sp.seeded)} {sp.seeded === '1' ? 'diocese' : 'dioceses'}{sp.updated && sp.updated !== '0' ? `, and filled the province on ${String(sp.updated)} you had already entered` : ''}. Nothing you had entered was changed.
+          {sp.failed && sp.failed !== '0' ? ` ${String(sp.failed)} could not be added. If one is the Maronite eparchy, run database update 0012 and click the button again.` : ''}
+        </p>
+      )}
+      {t.key === 'dioceses' && Object.keys(DIRECTORY_FACTS).map((country) => {
+        const n = Object.values(DIRECTORY_FACTS[country].provinces).flat().length + (DIRECTORY_FACTS[country].other?.length ?? 0)
+        return (
+          <form key={country} action={seedDioceses.bind(null, country)} className="flex flex-wrap items-center gap-3 rounded-xl bg-sky px-4 py-3">
+            <button className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">Add {country}&apos;s {n} dioceses</button>
+            <span className="text-[13px] text-muted">Creates every archdiocese, diocese and eparchy with its type and province. Ones you have already entered are skipped. You can edit or delete any of them afterwards.</span>
+          </form>
+        )
+      })}
       <form className="flex gap-2"><input name="q" defaultValue={q} placeholder="Search…" className="min-h-11 flex-1 rounded-lg border border-field bg-surface px-3" /><button className="rounded-md border border-field bg-surface px-4 font-semibold">Search</button></form>
       <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
         <table className="w-full min-w-[640px] border-collapse text-[15px]">

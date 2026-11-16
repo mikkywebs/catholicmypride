@@ -256,3 +256,43 @@ export async function lectionaryForDate(date: string) {
   const { lectionaryFields } = await import('@/lib/lectionary')
   return lectionaryFields(date)
 }
+
+// ---------------- Directory: add a country's dioceses in one go ----------------
+export async function seedDioceses(country: string) {
+  const { db } = await requireAdmin()
+  const { DIRECTORY_FACTS } = await import('@/lib/directory-data')
+  const facts = DIRECTORY_FACTS[country]
+  if (!facts) redirect('/admin/dioceses')
+  const norm = (s: string) => s.toLowerCase().replace(/\s+city$/, '').replace(/[^a-z]/g, '')
+  const { data: existing } = await db.from('dioceses').select('id, name, province').eq('country', country)
+  const have = new Map((existing ?? []).map((d) => [norm(d.name as string), d]))
+  const wanted = [
+    ...Object.entries(facts.provinces).flatMap(([province, list]) =>
+      list.map((name, i) => ({ name, province, kind: i === 0 ? 'Archdiocese' : 'Diocese' }))),
+    ...(facts.other ?? []).map((o) => ({ name: o.name, province: null as string | null, kind: o.kind })),
+  ]
+  let added = 0, updated = 0, failed = 0
+  for (const w of wanted) {
+    const found = have.get(norm(w.name))
+    if (found) {
+      // Already entered: only fill an empty province, never change anything else.
+      if (!found.province && w.province) {
+        const { error } = await db.from('dioceses').update({ province: w.province, updated_at: new Date().toISOString() }).eq('id', found.id)
+        if (!error) updated++
+      }
+      continue
+    }
+    const { error } = await db.from('dioceses').insert({ ...w, continent: facts.continent, country, status: 'published' })
+    if (error) failed++
+    else added++
+  }
+  // Also list the provinces on the country entry, if there is none yet.
+  const { data: region } = await db.from('directory_regions').select('id, province_list').eq('country', country).is('province', null).maybeSingle()
+  if (!region) {
+    await db.from('directory_regions').insert({ continent: facts.continent, country, province_list: Object.keys(facts.provinces), ...facts.totals, status: 'published' })
+  } else if (!(region.province_list as string[] | null)?.length) {
+    await db.from('directory_regions').update({ province_list: Object.keys(facts.provinces) }).eq('id', region.id)
+  }
+  refresh(['churches', 'content'])
+  redirect(`/admin/dioceses?seeded=${added}&updated=${updated}&failed=${failed}`)
+}
