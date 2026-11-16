@@ -1,7 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { updateTag } from 'next/cache'
+import { refresh as refreshPage, updateTag } from 'next/cache'
 import { requireAdmin } from '@/lib/admin'
 import { CONTENT_TYPES, type Field } from '@/lib/content-types'
 import { slugify } from '@/lib/format'
@@ -165,11 +165,20 @@ export async function deleteRequest(id: string) {
 export async function markMessage(id: string, read: boolean) {
   const { db } = await requireAdmin()
   await db.from('contact_messages').update({ is_read: read }).eq('id', id)
+  refreshPage()
 }
 
 export async function deleteMessage(id: string) {
   const { db } = await requireAdmin()
   await db.from('contact_messages').delete().eq('id', id)
+  refreshPage()
+}
+
+/** Deletes every message already marked as read. */
+export async function deleteReadMessages() {
+  const { db } = await requireAdmin()
+  await db.from('contact_messages').delete().eq('is_read', true)
+  refreshPage()
 }
 
 // ---------------- Categories ----------------
