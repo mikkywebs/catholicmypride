@@ -18,7 +18,7 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
       <JsonLd data={articleLd({ title: saint.name, description: saint.seo_description, image: saint.featured_image, path: `/saint-of-the-day/${saint.slug}`, published: saint.show_on })} />
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Saint of the Day', href: '/saint-of-the-day' }, { label: saint.name }]} />
       <div className="flex flex-col items-center gap-3 text-center">
-        <p className="eyebrow m-0">Saint of the Day{saint.show_on ? ` · ${formatShort(saint.show_on)}` : ''}</p>
+        <p className="eyebrow m-0">{saint.kind === 'celebration' ? 'Today in the Church' : 'Saint of the Day'}{saint.show_on ? ` · ${formatShort(saint.show_on)}` : ''}</p>
         <h1 className="m-0 font-serif text-[42px] font-semibold leading-[1.08] sm:text-[54px]">{saint.name}</h1>
         <div className="flex flex-wrap justify-center gap-x-4 text-[15px] text-muted">
           {saint.celebration && <span>{saint.celebration}</span>}
@@ -41,12 +41,12 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
           {saint.patronage.length > 0 && (
             <div className="flex flex-wrap items-center gap-2"><strong className="mr-1 text-[15px]">Patron of</strong>{saint.patronage.map((p) => <Chip key={p}>{p}</Chip>)}</div>
           )}
-          <ShareBar title={`Saint of the Day: ${saint.name}`} />
+          <ShareBar title={saint.kind === 'celebration' ? saint.name : `Saint of the Day: ${saint.name}`} />
         </div>
       </div>
       {saint.life_md && (
         <article className="flex flex-col gap-4">
-          <h2 className="m-0 font-serif text-[34px] font-semibold">Life story</h2>
+          <h2 className="m-0 font-serif text-[34px] font-semibold">{saint.kind === 'celebration' ? 'What we celebrate' : 'Life story'}</h2>
           <Prose html={md(saint.life_md)} />
         </article>
       )}
@@ -54,7 +54,7 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
       {saint.prayer_md && (
         <section className="reveal flex flex-col gap-2.5 rounded-2xl bg-navy px-7 py-7 text-navy-ink">
           <p className="m-0 text-[13px] uppercase tracking-[0.2em] text-gold">Prayer</p>
-          <h2 className="m-0 font-serif text-[30px] font-semibold">Prayer to {saint.name}</h2>
+          <h2 className="m-0 font-serif text-[30px] font-semibold">{saint.kind === 'celebration' ? 'Prayer for today' : `Prayer to ${saint.name}`}</h2>
           <Prose html={md(saint.prayer_md)} className="prose-on-dark" />
         </section>
       )}
@@ -71,7 +71,7 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
           </div>
         </section>
       )}
-      <Reactions type="saint" id={saint.slug} kinds={['love', 'amen', 'thumbs']} title={`Did ${saint.name}’s story inspire you?`} />
+      <Reactions type="saint" id={saint.slug} kinds={['love', 'amen', 'thumbs']} title={saint.kind === 'celebration' ? 'Did today’s celebration speak to you?' : `Did ${saint.name}’s story inspire you?`} />
       {week.filter((w) => w.slug !== saint.slug).length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">Recent saints</h2>

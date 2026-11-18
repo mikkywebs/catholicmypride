@@ -66,7 +66,7 @@ async function TodaySections() {
   const info = liturgicalInfo(today)
   const cards = [
     reading && { key: 'r', tag: 'Mass Readings', title: [reading.first_ref, reading.psalm_ref, reading.gospel_ref].filter(Boolean).join(' · ') || (reading.title ?? 'Today’s readings'), text: reading.reflection_title, img: reading.featured_image, href: `/mass-readings/${today}`, cta: 'Read with reflection' },
-    saint && { key: 's', tag: 'Saint of the Day', title: saint.name, text: saint.celebration, img: saint.featured_image, href: `/saint-of-the-day/${saint.slug}`, cta: 'Read the story' },
+    saint && { key: 's', tag: saint.kind === 'celebration' ? 'Today in the Church' : 'Saint of the Day', title: saint.name, text: saint.celebration, img: saint.featured_image, href: `/saint-of-the-day/${saint.slug}`, cta: saint.kind === 'celebration' ? 'Read more' : 'Read the story' },
     prayer && { key: 'p', tag: 'Daily Prayer', title: prayer.title, text: null, img: prayer.featured_image, href: `/daily-prayers/${prayer.slug}`, cta: 'Pray now' },
   ].filter(Boolean) as { key: string; tag: string; title: string; text: string | null; img: string | null; href: string; cta: string }[]
 
@@ -79,6 +79,24 @@ async function TodaySections() {
               <Eyebrow>Today · {formatLong(today)} · {reading?.title ?? info.season}</Eyebrow>
               <H2 className="mt-1.5">Pray with the Church today</H2>
             </div>
+            {cards.length === 1 && reading ? (
+              // Only the readings today (no saint or feast in the calendar): they take the full width.
+              <article className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface md:flex-row">
+                {reading.featured_image && <div className="md:w-1/2"><Featured src={reading.featured_image} rounded="rounded-none" className="h-full" /></div>}
+                <div className="flex flex-1 flex-col gap-3 px-6 pb-8 pt-7 sm:px-9">
+                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-accent">Mass Readings</p>
+                  <h3 className="m-0 font-serif text-[32px] font-semibold leading-tight">{reading.title ?? 'Today’s readings'}</h3>
+                  <dl className="m-0 grid gap-x-6 gap-y-2 text-[15px] sm:grid-cols-[auto_1fr]">
+                    {([['First Reading', reading.first_ref], ['Psalm', reading.psalm_ref], ['Second Reading', reading.second_ref], ['Gospel', reading.gospel_ref]] as const).filter(([, v]) => v).map(([k, v]) => (
+                      <div key={k} className="contents"><dt className="font-semibold text-muted">{k}</dt><dd className="m-0">{v}</dd></div>
+                    ))}
+                  </dl>
+                  {reading.psalm_response && <p className="m-0 italic text-muted">R. {reading.psalm_response}</p>}
+                  {reading.reflection_title && <p className="m-0 font-semibold">Reflection: {reading.reflection_title}</p>}
+                  <Link href={`/mass-readings/${today}`} className="pt-2 font-semibold">Read today’s Mass readings →</Link>
+                </div>
+              </article>
+            ) : (
             <div className="grid gap-7 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
               {cards.map((c) => (
                 <article key={c.key} className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface">
@@ -92,6 +110,7 @@ async function TodaySections() {
                 </article>
               ))}
             </div>
+            )}
           </div>
         </section>
       )}

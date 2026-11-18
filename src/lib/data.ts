@@ -211,20 +211,8 @@ export async function getSaintForDate(date: string): Promise<Saint | null> {
   'use cache'
   cacheLife('minutes')
   cacheTag('saints')
-  const today = await getSaintsForDate(date)
-  if (today.length) return today[0]
-  // No saint on the calendar today: show the most recent one.
-  const db = publicClient()
-  if (db) {
-    const { data } = await db.from('saints').select('*').lte('show_on', date).order('show_on', { ascending: false }).limit(1).maybeSingle()
-    if (data) return data as Saint
-  }
-  for (let i = 1; i <= 7; i++) {
-    const d = new Date(`${date}T12:00:00Z`); d.setUTCDate(d.getUTCDate() - i)
-    const prev = await calendarSaintsFor(d.toISOString().slice(0, 10))
-    if (prev.length) return prev[0]
-  }
-  return null
+  // Days with no saint or feast in the calendar return nothing: the day's readings take the space instead.
+  return (await getSaintsForDate(date))[0] ?? null
 }
 
 export async function getSaint(slug: string): Promise<Saint | null> {

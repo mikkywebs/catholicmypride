@@ -49,6 +49,7 @@ export type Song = Seo & {
   on_bar: boolean; bar_days: number[]; bar_start: string | null; bar_end: string | null; bar_order: number
   published_at: string | null
   category?: Category | null
+  bar_times?: string[] | null; bar_season?: 'all' | 'easter' | 'not_easter' | null
 }
 
 export type Chaplet = Seo & {
@@ -81,6 +82,7 @@ export type Saint = Seo & {
   celebration: string | null; featured_image: string | null; image_alt: string | null
   born: string | null; died: string | null; canonised: string | null; patronage: string[]
   life_md: string | null; quote: string | null; prayer_md: string | null
+  kind?: 'saint' | 'celebration' | null
 }
 
 export type Prayer = Seo & {

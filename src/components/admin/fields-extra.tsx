@@ -154,6 +154,44 @@ export function MusicBarField({ row }: { row: Record<string, unknown> }) {
           <span className="text-[13px] font-normal text-muted">1 plays first. Items with the same number play in alphabetical order.</span>
         </label>
       </div>
+      <TimedField row={row} />
     </fieldset>
+  )
+}
+
+/** A prayer that plays by itself at set times, e.g. the Angelus at 6:00, 12:00 and 18:00. */
+function TimedField({ row }: { row: Record<string, unknown> }) {
+  const initial = (row.bar_times as string[] | undefined) ?? []
+  const [on, setOn] = useState(initial.length > 0)
+  const [times, setTimes] = useState(initial.join(', '))
+  const preset = (t: string) => { setOn(true); setTimes(t) }
+  return (
+    <div className="flex flex-col gap-3 border-t border-line pt-3">
+      <label className="flex items-center gap-2.5 text-[15px] font-semibold">
+        <input type="checkbox" name="timed" checked={on} onChange={(e) => setOn(e.target.checked)} className="size-5 accent-accent" />
+        Play at set times (prayers like the Angelus or the Divine Mercy)
+      </label>
+      <div className={`flex-col gap-3 ${on ? 'flex' : 'hidden'}`}>
+        <div className="flex flex-wrap gap-2 text-sm">
+          <span className="self-center text-muted">Quick fill:</span>
+          <button type="button" onClick={() => preset('06:00, 12:00, 18:00')} className="rounded-full border border-field bg-surface px-3 py-1.5 font-semibold">Angelus: 6am, 12 noon, 6pm</button>
+          <button type="button" onClick={() => preset('15:00')} className="rounded-full border border-field bg-surface px-3 py-1.5 font-semibold">Divine Mercy: 3pm</button>
+          <button type="button" onClick={() => preset('03:00, 15:00')} className="rounded-full border border-field bg-surface px-3 py-1.5 font-semibold">Divine Mercy: 3am and 3pm</button>
+        </div>
+        <label className="flex flex-col gap-1.5 text-sm font-semibold">Times (24-hour clock, separated by commas)
+          <input name="bar_times" value={times} onChange={(e) => setTimes(e.target.value)} placeholder="06:00, 12:00, 18:00" className={input} />
+          <span className="text-[13px] font-normal text-muted">At each time the music bar pauses, plays this once, then carries on. Each visitor&apos;s own clock is used, so it is noon wherever they are.</span>
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm font-semibold">When in the year
+          <select name="bar_season" defaultValue={(row.bar_season as string) || 'all'} className={input}>
+            <option value="all">All year</option>
+            <option value="not_easter">All year except the Easter season (use for the Angelus)</option>
+            <option value="easter">Only in the Easter season (use for the Regina Caeli)</option>
+          </select>
+          <span className="text-[13px] font-normal text-muted">From Easter Sunday to Pentecost the Regina Caeli replaces the Angelus. Upload it as a separate item if you have it.</span>
+        </label>
+        <p className="m-0 text-[13px] text-muted">A prayer with set times is left out of the ordinary music rotation unless &ldquo;Play this on the music bar&rdquo; above is also ticked.</p>
+      </div>
+    </div>
   )
 }

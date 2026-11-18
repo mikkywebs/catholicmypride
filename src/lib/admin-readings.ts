@@ -63,7 +63,7 @@ export async function ensureUpcomingSaints(db: SupabaseClient) {
   }
   if (!inserts.length) return
   const { error: e } = await db.from('saints').insert(inserts)
-  if (e && (e.code === 'PGRST204' || /auto_filled/.test(e.message))) {
-    await db.from('saints').insert(inserts.map((r) => { const c = { ...r }; delete c.auto_filled; return c }))
+  if (e && (e.code === 'PGRST204' || /auto_filled|kind/.test(e.message))) {
+    await db.from('saints').insert(inserts.map((r) => { const c = { ...r }; delete c.auto_filled; delete c.kind; return c }))
   }
 }

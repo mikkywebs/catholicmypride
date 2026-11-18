@@ -5,15 +5,15 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { announcePlay, onOtherPlay } from './audio-bus'
 import { NextIcon, PauseIcon, PlayIcon, PrevIcon, VolumeIcon } from './icons'
 import { useClientValue } from './use-client'
-import { activeSlots, type BarSlot } from '@/lib/schedule'
+import { activeSlots, dueTimed, type BarSlot, type TimedPrayer } from '@/lib/schedule'
 
 export type Track = { id: string; slug: string; title: string; src: string; cover: string | null }
 
 const ID = 'music-bar'
 
-// Re-check the schedule every 30 seconds.
+// Re-check the schedule every 15 seconds.
 function subscribeClock(cb: () => void) {
-  const t = setInterval(cb, 30_000)
+  const t = setInterval(cb, 15_000)
   return () => clearInterval(t)
 }
 const minuteNow = () => Math.floor(Date.now() / 60_000)
@@ -22,13 +22,15 @@ const minuteNow = () => Math.floor(Date.now() / 60_000)
  * Sticky music bar. Browsers block sound until the visitor interacts,
  * so it starts on the first tap or click anywhere. There is no download control.
  */
-export function MusicBar({ library, slots, loop, fallback }: { library: Track[]; slots: BarSlot[]; loop: boolean; fallback: string[] }) {
+export function MusicBar({ library, slots, loop, fallback, timed = [] }: { library: Track[]; slots: BarSlot[]; loop: boolean; fallback: string[]; timed?: TimedPrayer[] }) {
   const audio = useRef<HTMLAudioElement>(null)
   const minute = useSyncExternalStore(subscribeClock, minuteNow, () => 0)
   const byId = new Map(library.map((t) => [t.id, t]))
   const scheduled = minute ? activeSlots(slots, new Date(minute * 60_000)).map((x) => x.id) : []
   const ids = scheduled.length ? scheduled : fallback
   const tracks = ids.map((id) => byId.get(id)).filter(Boolean) as Track[]
+  // A prayer at its set time (Angelus, Divine Mercy) interrupts the music, then the music carries on.
+  const [prayer, setPrayer] = useState<{ id: string; label: string; resume: boolean; blocked: boolean } | null>(null)
   const queueKey = ids.join(',')
   const [pos, setPos] = useState({ key: '', i: 0 })
   const i = pos.key === queueKey && pos.i < tracks.length ? pos.i : 0
@@ -57,6 +59,7 @@ export function MusicBar({ library, slots, loop, fallback }: { library: Track[];
       announcePlay(ID)
       await audio.current.play()
       setPlaying(true)
+      setPrayer((p) => (p?.blocked ? { ...p, blocked: false } : p))
       userPaused.current = false
       try { sessionStorage.removeItem('cmp-paused') } catch {}
     } catch {
@@ -78,14 +81,51 @@ export function MusicBar({ library, slots, loop, fallback }: { library: Track[];
 
   useEffect(() => onOtherPlay(ID, pause), [])
 
-  if (!tracks.length) return null
-  const t = tracks[i]
+  // Start a prayer when its time comes (once per time, even with several tabs open).
+  useEffect(() => {
+    if (!minute || prayer) return
+    const due = dueTimed(timed, new Date())
+    if (!due || !byId.has(due.id)) return
+    try {
+      if (localStorage.getItem('cmp-timed') === due.key) return
+      localStorage.setItem('cmp-timed', due.key)
+    } catch {}
+    const t = setTimeout(() => setPrayer({ id: due.id, label: due.label, resume: playing, blocked: false }), 0)
+    return () => clearTimeout(t)
+  }, [minute]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // When a prayer is set, play it; if the browser blocks sound (no tap yet), show a button.
+  useEffect(() => {
+    if (!prayer || prayer.blocked || !audio.current) return
+    const a = audio.current
+    announcePlay(ID)
+    a.play().then(() => setPlaying(true)).catch(() => setPrayer((p) => (p ? { ...p, blocked: true } : p)))
+  }, [prayer?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // After the prayer, carry on with the music once the song is back in the player.
+  const resumeAfter = useRef(false)
+  useEffect(() => {
+    if (prayer || !resumeAfter.current) return
+    resumeAfter.current = false
+    play()
+  }, [prayer])
+
+  const prayerTrack = prayer ? byId.get(prayer.id) : undefined
+  if (!tracks.length && !prayerTrack) return null
+  const t = prayerTrack ?? tracks[i]
   const step = (d: number) => {
+    if (prayer) { setPrayer(null); setTimeout(() => { if (playing) play() }, 0); return }
     const n = (i + d + tracks.length) % tracks.length
     setI(n)
     setTimeout(() => { if (playing) play() }, 0)
   }
   const ended = () => {
+    if (prayer) {
+      resumeAfter.current = prayer.resume && tracks.length > 0
+      setPrayer(null)
+      setPlaying(false)
+      return
+    }
     if (i + 1 < tracks.length) { setI(i + 1); setTimeout(play, 0) }
     else if (loop) { setI(0); setTimeout(play, 0) }
     else setPlaying(false)
@@ -108,7 +148,7 @@ export function MusicBar({ library, slots, loop, fallback }: { library: Track[];
           </div>
           <div className="min-w-0">
             <a href={`/music/${t.slug}`} className="block truncate font-semibold text-navy-ink no-underline">{t.title}</a>
-            <div className="text-[13px] text-navy-muted">Catholic My Pride</div>
+            <div className="text-[13px] text-navy-muted">{prayer ? `${prayer.label}${prayer.blocked ? ' · tap play to pray along' : ''}` : 'Catholic My Pride'}</div>
           </div>
         </div>
         <div className="flex items-center gap-1.5">

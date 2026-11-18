@@ -6,6 +6,7 @@ from part1 import DATA as A
 from part2 import DATA as B
 from part3 import DATA as C
 from part4 import DATA as D
+from part5 import CELEBRATIONS as E
 
 SQLITE, OUT = sys.argv[1:3]
 db = sqlite3.connect(SQLITE)
@@ -66,6 +67,18 @@ for mmdd, code, name, born, died, patrons, life in A + B + C + D:
         'name': name, 'date': mmdd, 'feast_label': f'{d} {MONTHS[m - 1]}', 'celebration': LABEL[t],
         'born': born or None, 'died': died or None, 'patronage': patrons, 'life_md': life,
         'prayer_md': prayer(name, code if not name.startswith('Our Lady') else name),
+    }
+    by_date.setdefault(mmdd, []).append(slug)
+    seen.add((mmdd, code))
+for mmdd, code, name, life, pray in E:
+    t = RANK.get((mmdd, code))
+    if t is None:
+        print('NOT IN CALENDAR', mmdd, code); continue
+    slug = slugify(name)
+    m, d = int(mmdd[:2]), int(mmdd[3:])
+    saints[slug] = {
+        'name': name, 'date': mmdd, 'feast_label': f'{d} {MONTHS[m - 1]}', 'celebration': LABEL[t], 'kind': 'celebration',
+        'born': None, 'died': None, 'patronage': [], 'life_md': life, 'prayer_md': pray,
     }
     by_date.setdefault(mmdd, []).append(slug)
     seen.add((mmdd, code))

@@ -5,7 +5,7 @@ import { cacheLife, cacheTag } from 'next/cache'
 import type { Saint } from './types'
 
 // Saints of the Roman calendar (Nigeria), prepared for Saint of the Day. See scripts/saints/.
-type Entry = { name: string; date: string; feast_label: string; celebration: string; born: string | null; died: string | null; patronage: string[]; life_md: string; prayer_md: string }
+type Entry = { kind?: 'celebration'; name: string; date: string; feast_label: string; celebration: string; born: string | null; died: string | null; patronage: string[]; life_md: string; prayer_md: string }
 type File = { saints: Record<string, Entry>; byDate: Record<string, string[]> }
 
 let file: Promise<File> | null = null
@@ -15,11 +15,11 @@ export const CELEBRATION_ORDER: Record<string, number> = { Solemnity: 0, Feast: 
 
 function toSaint(slug: string, e: Entry, year: number): Saint {
   return {
-    id: `calendar-${slug}`, slug, name: e.name, show_on: `${year}-${e.date}`, feast_label: e.feast_label, celebration: e.celebration,
+    id: `calendar-${slug}`, slug, kind: e.kind ?? 'saint', name: e.name, show_on: `${year}-${e.date}`, feast_label: e.feast_label, celebration: e.celebration,
     featured_image: null, image_alt: null, born: e.born, died: e.died, canonised: null, patronage: e.patronage,
     life_md: e.life_md, quote: null, prayer_md: e.prayer_md,
-    seo_title: `${e.name}: Saint of the Day, ${e.feast_label}`.slice(0, 70),
-    seo_description: `${e.name} (${e.celebration}, ${e.feast_label}): life story${e.patronage.length ? `, patron of ${e.patronage.slice(0, 3).join(', ')}` : ''}, and a prayer.`.slice(0, 160),
+    seo_title: `${e.name}: ${e.kind === 'celebration' ? 'Feast' : 'Saint of the Day'}, ${e.feast_label}`.slice(0, 70),
+    seo_description: `${e.name} (${e.celebration}, ${e.feast_label}): ${e.kind === 'celebration' ? 'what the Church celebrates' : 'life story'}${e.patronage.length ? `, patron of ${e.patronage.slice(0, 3).join(', ')}` : ''}, and a prayer.`.slice(0, 160),
   } as Saint
 }
 

@@ -69,6 +69,11 @@ function readField(f: Field, form: FormData): [string, unknown][] {
         ['bar_start', time('bar_start')],
         ['bar_end', time('bar_end')],
         ['bar_order', Number.parseInt(raw('bar_order'), 10) || 0],
+        // Prayers at set times (e.g. the Angelus at 06:00, 12:00, 18:00).
+        ['bar_times', form.get('timed') === 'on'
+          ? [...new Set(raw('bar_times').split(/[\s,;]+/).map((x) => x.trim()).filter((x) => /^([01]?\d|2[0-3]):[0-5]\d$/.test(x)).map((x) => x.padStart(5, '0')))].sort()
+          : []],
+        ['bar_season', ['easter', 'not_easter'].includes(raw('bar_season')) ? raw('bar_season') : 'all'],
       ]
     }
     case 'image':
