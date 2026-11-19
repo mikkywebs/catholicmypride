@@ -31,19 +31,16 @@ function shiftYear(iso: string, years: number) {
 const shifted = (n: Novena, years: number): Novena =>
   ({ ...n, feast_date: shiftYear(n.feast_date, years), start_date: n.start_date ? shiftYear(n.start_date, years) : null })
 
-/** For a novena that repeats every year: this calendar year's dates, changing to next year's on 1 January.
- *  A novena that runs across New Year (e.g. for the Epiphany) switches when its new round begins instead,
- *  so it never changes halfway through. Other novenas are returned unchanged. */
+/** For a novena that repeats every year: the round that begins in the current calendar year, changing on 1 January.
+ *  A round still running on 1 January (e.g. the Epiphany novena, 28 December – 5 January) stays until its feast day has passed.
+ *  Other novenas are returned unchanged. */
 export function currentCycle(n: Novena, today: string): Novena {
   if (!n.repeats_yearly) return n
-  const offset = Number(today.slice(0, 4)) - Number(n.feast_date.slice(0, 4))
+  const offset = Number(today.slice(0, 4)) - Number(novenaFirstDate(n).slice(0, 4))
   const thisYear = shifted(n, offset)
-  const next = shifted(n, offset + 1)
-  return novenaFirstDate(next) <= today ? next : thisYear
+  const previous = shifted(n, offset - 1)
+  return novenaEnd(previous) >= today || previous.feast_date >= today ? previous : thisYear
 }
-
-/** First day of the following round of a yearly novena (for “It returns on …”). */
-export const nextRoundStart = (n: Novena) => novenaFirstDate(shifted(n, 1))
 
 /** “Day 6 of 25” or “Opening day”. */
 export const dayLabel = (n: Novena, day: number) => (day === 0 ? 'Opening day' : `Day ${day} of ${novenaLength(n)}`)
