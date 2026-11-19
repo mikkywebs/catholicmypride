@@ -110,6 +110,13 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
     play()
   }, [prayer])
 
+  // A prayer the browser would not start (no tap yet) is offered for 10 minutes, then removed until its next time.
+  useEffect(() => {
+    if (!prayer?.blocked) return
+    const t = setTimeout(() => setPrayer(null), 10 * 60_000)
+    return () => clearTimeout(t)
+  }, [prayer?.blocked, prayer?.id])
+
   const prayerTrack = prayer ? byId.get(prayer.id) : undefined
   if (!tracks.length && !prayerTrack) return null
   const t = prayerTrack ?? tracks[i]

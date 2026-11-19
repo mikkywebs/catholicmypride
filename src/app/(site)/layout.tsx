@@ -33,7 +33,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const timedIds = new Set(playable.filter((x) => x.bar_times?.length).map((x) => x.id))
   const timed = playable.filter((x) => x.bar_times?.length).map((x) => ({ id: x.id, title: x.title, times: x.bar_times ?? [], season: x.bar_season ?? 'all' }))
   const fallback = s.music_fallback === 'none' ? [] : playable.filter((x) => !timedIds.has(x.id)).filter((x) => s.music_fallback === 'all' || (s.music_fallback === 'audio' ? x.kind === 'audio' : x.kind !== 'audio')).map((x) => x.id)
-  const slots = playable.filter((x) => x.on_bar).map((x) => ({ id: x.id, title: x.title, days: x.bar_days ?? [], start: x.bar_start, end: x.bar_end, order: x.bar_order ?? 0 }))
+  // Prayers with set times (Angelus, Divine Mercy) only ever play at their times.
+  const slots = playable.filter((x) => x.on_bar && !timedIds.has(x.id)).map((x) => ({ id: x.id, title: x.title, days: x.bar_days ?? [], start: x.bar_start, end: x.bar_end, order: x.bar_order ?? 0 }))
 
   return (
     <div id="top" className="flex min-h-screen flex-col">

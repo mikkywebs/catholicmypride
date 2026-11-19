@@ -61,7 +61,8 @@ function readField(f: Field, form: FormData): [string, unknown][] {
     case 'time':
       return [[f.name, /^\d{2}:\d{2}$/.test(raw(f.name)) ? raw(f.name) : null]]
     case 'musicbar': {
-      const on = form.get('on_bar') === 'on'
+      // A prayer with set times is never part of the ordinary music rotation.
+      const on = form.get('on_bar') === 'on' && form.get('timed') !== 'on'
       const time = (n: string) => (/^\d{2}:\d{2}$/.test(raw(n)) ? raw(n) : null)
       return [
         ['on_bar', on],

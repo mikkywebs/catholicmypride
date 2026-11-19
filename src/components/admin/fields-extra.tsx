@@ -190,7 +190,7 @@ function TimedField({ row }: { row: Record<string, unknown> }) {
           </select>
           <span className="text-[13px] font-normal text-muted">From Easter Sunday to Pentecost the Regina Caeli replaces the Angelus. Upload it as a separate item if you have it.</span>
         </label>
-        <p className="m-0 text-[13px] text-muted">A prayer with set times is left out of the ordinary music rotation unless &ldquo;Play this on the music bar&rdquo; above is also ticked.</p>
+        <p className="m-0 text-[13px] text-muted">A prayer with set times plays only at those times, once, and is never part of the ordinary music. &ldquo;Play this on the music bar&rdquo; above is switched off for it automatically.</p>
       </div>
     </div>
   )
