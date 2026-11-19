@@ -1,12 +1,13 @@
 import 'server-only'
-import { getDailyPrayer, getReading, getSaintsForDate } from './data'
+import { getDailyPrayer, getNovenas, getPosts, getReading, getSaintsForDate } from './data'
+import { activeNovenas } from './novena-days'
 import { formatLong } from './liturgical'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.catholicmypride.org').replace(/\/$/, '').replace('://catholicmypride.org', '://www.catholicmypride.org')
 
 /** Today's message for the WhatsApp Channel, in WhatsApp formatting (*bold*, _italic_). */
 export async function whatsappBriefing(date: string): Promise<string> {
-  const [r, saints, prayer] = await Promise.all([getReading(date), getSaintsForDate(date), getDailyPrayer(date)])
+  const [r, saints, prayer, novenas, posts] = await Promise.all([getReading(date), getSaintsForDate(date), getDailyPrayer(date), getNovenas(), getPosts(1)])
   const lines: string[] = [`✝️ *Catholic My Pride · ${formatLong(date)}*`]
   if (r?.title) lines.push(`_${r.title}_${r.vestment ? ` · ${r.vestment}` : ''}`)
   if (r) {
@@ -29,6 +30,14 @@ export async function whatsappBriefing(date: string): Promise<string> {
   if (prayer) {
     lines.push('', '🙏 *Daily Prayer*', prayer.title, `👉 ${SITE}/daily-prayers/${prayer.slug}`)
   }
+  const running = activeNovenas(novenas, date)
+  if (running.length) {
+    lines.push('', running.length > 1 ? '🕯️ *Novenas in progress*' : '🕯️ *Novena in progress*')
+    for (const { novena, day } of running) lines.push(`• ${novena.title}: Day ${day} of 9`, `  👉 ${SITE}/novenas/${novena.slug}?day=${day}`)
+  }
+  const post = posts[0]
+  if (post) lines.push('', '📝 *From our blog*', post.title, `👉 ${SITE}/blog/${post.slug}`)
+  lines.push('', `🧠 Test your faith in *Quiz Time*: ${SITE}/quiz`)
   lines.push('', 'Please share with family and friends. God bless you! 🕊️')
   return lines.join('\n')
 }

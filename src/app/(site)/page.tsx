@@ -8,7 +8,8 @@ import { SongRow } from '@/components/song-row'
 import { ButtonLink, Cover, Eyebrow, Featured, H2, SectionHead } from '@/components/ui'
 import { getBooks, getDailyPrayer, getHomeImages, getNovenas, getPosts, getPrayers, getReading, getSaintForDate, getSettings, getSongs } from '@/lib/data'
 import { dateLabel, duration } from '@/lib/format'
-import { addDays, formatLong, liturgicalInfo, todayISO } from '@/lib/liturgical'
+import { formatLong, liturgicalInfo, todayISO } from '@/lib/liturgical'
+import { activeNovenas } from '@/lib/novena-days'
 import type { Novena } from '@/lib/types'
 
 export default function Home() {
@@ -53,16 +54,13 @@ async function Hero() {
   )
 }
 
-function activeNovena(list: Novena[], today: string) {
-  return list.find((n) => today >= addDays(n.feast_date, -9) && today <= addDays(n.feast_date, -1)) ?? null
-}
 
 async function TodaySections() {
   await connection()
   const today = todayISO()
   const [reading, saint, prayers, novenas, daily, s] = await Promise.all([getReading(today), getSaintForDate(today), getPrayers(), getNovenas(), getDailyPrayer(today), getSettings()])
   const prayer = prayers.find((p) => p.show_on === today) ?? daily
-  const novena = activeNovena(novenas, today)
+  const running = activeNovenas(novenas, today)
   const info = liturgicalInfo(today)
   const cards = [
     reading && { key: 'r', tag: 'Mass Readings', title: [reading.first_ref, reading.psalm_ref, reading.gospel_ref].filter(Boolean).join(' · ') || (reading.title ?? 'Today’s readings'), text: reading.reflection_title, img: reading.featured_image || s.default_reading_image, href: `/mass-readings/${today}`, cta: 'Read with reflection' },
@@ -114,15 +112,14 @@ async function TodaySections() {
           </div>
         </section>
       )}
-      {novena && <NovenaBlock novena={novena} today={today} />}
+      {running.length > 0 && <NovenaBlock running={running} />}
     </>
   )
 }
 
-function NovenaBlock({ novena, today }: { novena: Novena; today: string }) {
-  const start = addDays(novena.feast_date, -9)
-  let day = 1
-  for (let d = 1; d <= 9; d++) if (addDays(start, d - 1) <= today) day = d
+function NovenaBlock({ running }: { running: { novena: Novena; day: number }[] }) {
+  // The novena closest to its feast gets the big block; any others are listed underneath it.
+  const [{ novena, day }, ...others] = running
   return (
     <section className="reveal px-6 py-16">
       <div className="mx-auto flex max-w-[1200px] flex-wrap overflow-hidden rounded-[18px] bg-navy text-navy-ink">
@@ -142,6 +139,21 @@ function NovenaBlock({ novena, today }: { novena: Novena; today: string }) {
             <ButtonLink href={`/novenas/${novena.slug}?day=${day}`} variant="gold">Pray Day {day}</ButtonLink>
             <Link href="/novenas" className="inline-flex min-h-12 items-center rounded-md border border-navy-ink px-6 font-semibold text-navy-ink no-underline">All novenas</Link>
           </div>
+          {others.length > 0 && (
+            <div className="mt-3 border-t border-[#3a4150] pt-5">
+              <p className="m-0 mb-2.5 text-[13px] uppercase tracking-[0.2em] text-gold">Also in progress</p>
+              <ul className="m-0 flex list-none flex-col gap-2 p-0">
+                {others.map((o) => (
+                  <li key={o.novena.id}>
+                    <Link href={`/novenas/${o.novena.slug}?day=${o.day}`} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-lg bg-[#2c3240] px-4 py-3 text-navy-ink no-underline hover:bg-[#353c4b]">
+                      <span className="font-serif text-[20px] font-semibold">{o.novena.title}</span>
+                      <span className="text-sm text-gold">Day {o.day} of 9 · Pray now →</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -195,7 +207,8 @@ async function Songs() {
 
 async function Books() {
   const books = await getBooks()
-  if (!books.length) return null
+  // Hidden on the home page until there are at least 5 ebooks; the Ebooks page still lists them all.
+  if (books.length < 5) return null
   return (
     <section className="reveal px-6 pb-[72px] pt-16">
       <div className="mx-auto max-w-[1200px]">
