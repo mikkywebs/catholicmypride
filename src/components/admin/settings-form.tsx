@@ -89,6 +89,22 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
           <T name="bank_account_number" label="Account number" s={s} help="Bank details only show on the Donate page when filled in." />
         </section>
         <section className={card}>
+          <h2 className="m-0 text-xl">Seasonal decorations</h2>
+          <label className="flex flex-col gap-1.5 text-sm font-semibold">Decorate the website for the Church season
+            <select name="seasonal_theme" defaultValue={s.seasonal_theme ?? 'auto'} className={input}>
+              <option value="auto">Automatic: follow the Church calendar (recommended)</option>
+              <option value="off">Off: no seasonal decorations</option>
+              <option value="advent">Always show Advent</option>
+              <option value="christmas">Always show Christmas</option>
+              <option value="lent">Always show Lent</option>
+              <option value="holyweek">Always show Holy Week</option>
+              <option value="easter">Always show Easter</option>
+              <option value="pentecost">Always show Pentecost</option>
+            </select>
+            <span className="text-[13px] font-normal text-muted">Automatic changes by itself every year: Advent wreath (one more candle each week), Christmas star, New Year blessing, a plain Lent, Holy Week, Easter and Pentecost. In Ordinary Time nothing is added. If you pick one season by hand, remember to set it back to Automatic.</span>
+          </label>
+        </section>
+        <section className={card}>
           <h2 className="m-0 text-xl">Music bar</h2>
           <label className="flex flex-col gap-1.5 text-sm font-semibold">When no playlist is scheduled, play
             <select name="music_fallback" defaultValue={s.music_fallback ?? 'songs'} className={input}>

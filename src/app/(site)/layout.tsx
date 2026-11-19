@@ -4,6 +4,10 @@ import { Header, HeaderShell, type NavData } from '@/components/header'
 import { MusicBar } from '@/components/music-bar'
 import { ScrollTools } from '@/components/engage'
 import { Ticker } from '@/components/ticker'
+import { SeasonRibbon } from '@/components/season'
+import { seasonTheme } from '@/lib/season-theme'
+import { todayISO } from '@/lib/liturgical'
+import { connection } from 'next/server'
 import { getSectionFlags, getSettings, getSongs } from '@/lib/data'
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -45,10 +49,19 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Suspense fallback={<HeaderShell nav={nav} path="" />}>
         <Header nav={nav} />
       </Suspense>
+      <Suspense fallback={null}><Season /></Suspense>
       <ScrollTools />
       <main id="main" className="flex-1">{children}</main>
       <Footer s={s} flags={flags} />
       <MusicBar library={library} slots={slots} loop={s.music_loop !== 'once'} fallback={fallback} timed={timed} />
     </div>
   )
+}
+
+/** Seasonal ribbon under the menu, following the Church calendar (or the admin's choice). */
+async function Season() {
+  await connection()
+  const s = await getSettings()
+  const theme = seasonTheme(todayISO(), s.seasonal_theme ?? 'auto')
+  return theme ? <SeasonRibbon theme={theme} /> : null
 }

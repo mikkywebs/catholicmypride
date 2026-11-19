@@ -37,6 +37,7 @@ const DEFAULT_SETTINGS: Settings = {
   view_threshold: 0,
   music_fallback: 'songs',
   music_loop: 'loop',
+  seasonal_theme: 'auto',
 }
 
 

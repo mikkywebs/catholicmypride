@@ -10,6 +10,8 @@ import { getBooks, getDailyPrayer, getHomeImages, getNovenas, getPosts, getPraye
 import { dateLabel, duration } from '@/lib/format'
 import { formatLong, liturgicalInfo, todayISO } from '@/lib/liturgical'
 import { activeNovenas, dayLabel, novenaLength } from '@/lib/novena-days'
+import { SeasonBanner } from '@/components/season'
+import { seasonTheme } from '@/lib/season-theme'
 import type { Novena } from '@/lib/types'
 
 export default function Home() {
@@ -40,7 +42,7 @@ async function Hero() {
         ) : (
           <div className="h-10" />
         )}
-        <div className={`relative mx-auto max-w-[760px] rounded-[14px] bg-bg px-6 py-9 text-center sm:px-10 ${img ? '-mt-28 border-t-[3px] border-eyebrow' : ''}`}>
+        <div className={`relative mx-auto max-w-[760px] rounded-[14px] bg-bg px-6 py-9 text-center sm:px-10 ${img ? '-mt-28 border-t-[3px] season-accent' : ''}`}>
           <Eyebrow className="mb-2">Welcome</Eyebrow>
           <h1 className="m-0 font-serif text-[40px] font-semibold leading-[1.1] sm:text-[52px]">{s.hero_title}</h1>
           <p className="mx-0 mb-6 mt-4 text-muted">{s.hero_subtitle}</p>
@@ -62,6 +64,7 @@ async function TodaySections() {
   const prayer = prayers.find((p) => p.show_on === today) ?? daily
   const running = activeNovenas(novenas, today)
   const info = liturgicalInfo(today)
+  const season = seasonTheme(today, s.seasonal_theme ?? 'auto')
   const cards = [
     reading && { key: 'r', tag: 'Mass Readings', title: [reading.first_ref, reading.psalm_ref, reading.gospel_ref].filter(Boolean).join(' · ') || (reading.title ?? 'Today’s readings'), text: reading.reflection_title, img: reading.featured_image || s.default_reading_image, href: `/mass-readings/${today}`, cta: 'Read with reflection' },
     saint && { key: 's', tag: saint.kind === 'celebration' ? 'Today in the Church' : 'Saint of the Day', title: saint.name, text: saint.celebration, img: saint.featured_image, href: `/saint-of-the-day/${saint.slug}`, cta: saint.kind === 'celebration' ? 'Read more' : 'Read the story' },
@@ -70,6 +73,7 @@ async function TodaySections() {
 
   return (
     <>
+      {season && <SeasonBanner theme={season} />}
       {cards.length > 0 && (
         <section className="reveal px-6 pb-6 pt-[72px]">
           <div className="mx-auto max-w-[1200px]">

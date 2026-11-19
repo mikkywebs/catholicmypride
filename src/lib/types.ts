@@ -27,6 +27,7 @@ export type Settings = {
   donate_needs_md: string | null
   view_threshold: number
   music_fallback: 'songs' | 'audio' | 'all' | 'none'
+  seasonal_theme?: import('./season-theme').SeasonMode | null
   music_loop: 'loop' | 'once'
 }
 

@@ -7,6 +7,7 @@ import { CONTENT_TYPES, type Field } from '@/lib/content-types'
 import { slugify } from '@/lib/format'
 import { cleanYouTubeUrl, isYouTubeUrl } from '@/lib/text'
 import { serverClient } from '@/lib/supabase/server'
+import { SEASON_MODES } from '@/lib/season-theme'
 
 export type FormState = { ok: boolean; message: string } | null
 
@@ -258,6 +259,8 @@ export async function saveSettings(_: FormState, form: FormData): Promise<FormSt
   const fb = String(form.get('music_fallback') ?? 'songs')
   row.music_fallback = MUSIC_FALLBACKS.includes(fb) ? fb : 'songs'
   row.music_loop = form.get('music_loop') === 'once' ? 'once' : 'loop'
+  const season = String(form.get('seasonal_theme') ?? 'auto')
+  row.seasonal_theme = (SEASON_MODES as string[]).includes(season) ? season : 'auto'
   const { error } = await db.from('settings').update(row).eq('id', 1)
   if (error) return { ok: false, message: error.message }
 

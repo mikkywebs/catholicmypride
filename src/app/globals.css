@@ -168,3 +168,14 @@
   outline-offset: 6px;
 }
 .vintage-img { filter: sepia(0.35) saturate(0.9) contrast(1.02); }
+
+/* Seasonal decoration (Advent, Christmas, Lent, Easter…). Colours come from SeasonVars. */
+.season-ribbon { background: var(--season-tint); border-color: color-mix(in srgb, var(--season) 35%, transparent); }
+.season-banner { background: var(--season-tint); border-color: color-mix(in srgb, var(--season) 30%, transparent); }
+.dark .season-ribbon, .dark .season-banner { background: color-mix(in srgb, var(--season) 18%, var(--surface)); }
+.season-text { color: var(--season); }
+.dark .season-text { color: var(--season-on-dark); }
+.season-accent { border-color: var(--season, var(--eyebrow)); }
+@keyframes cmp-flicker { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.08, 0.93); } }
+.cmp-flame { transform-box: fill-box; transform-origin: center bottom; animation: cmp-flicker 1.8s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .cmp-flame { animation: none; } }
