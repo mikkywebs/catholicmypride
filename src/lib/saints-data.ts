@@ -4,7 +4,7 @@ import path from 'node:path'
 import { cacheLife, cacheTag } from 'next/cache'
 import type { Saint } from './types'
 
-// Saints of the Roman calendar (Nigeria), prepared for Saint of the Day. See scripts/saints/.
+// Saints of the General Roman Calendar, prepared for Saint of the Day. See scripts/saints/.
 type Entry = { kind?: 'celebration'; name: string; date: string; feast_label: string; celebration: string; born: string | null; died: string | null; patronage: string[]; life_md: string; prayer_md: string }
 type File = { saints: Record<string, Entry>; byDate: Record<string, string[]> }
 

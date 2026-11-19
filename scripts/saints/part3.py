@@ -121,7 +121,7 @@ DATA = [
 ('09-26', 'Saints Cosmas and Damian, martyrs', 'Saints Cosmas and Damian', 'Arabia', 'c. 287, Syria', ['doctors', 'pharmacists'],
  'Cosmas and Damian were twin brothers and doctors who treated the sick without charge. They were martyred under Diocletian and are named in the Roman Canon.'),
 ('09-27', 'Saint Vincent de Paul, priest', 'Saint Vincent de Paul', '1581, France', '1660, Paris', ['charities'],
- 'Vincent de Paul dedicated his life to the poor. He founded the Congregation of the Mission and, with Saint Louise de Marillac, the Daughters of Charity.\n\nThe Society of Saint Vincent de Paul, active in many Nigerian parishes, carries on his work.'),
+ 'Vincent de Paul dedicated his life to the poor. He founded the Congregation of the Mission and, with Saint Louise de Marillac, the Daughters of Charity.\n\nThe Society of Saint Vincent de Paul carries on his work in parishes around the world.'),
 ('09-28', 'Saint Wenceslaus, martyr', 'Saint Wenceslaus', 'c. 907, Bohemia', '935, Bohemia', ['the Czech Republic'],
  'Wenceslaus was Duke of Bohemia, known for his faith and charity to the poor. He was murdered by his brother on the way to Mass.'),
 ('09-28', 'Saints Lawrence Ruiz and companions, martyrs', 'Saint Lorenzo Ruiz and Companions', 'Manila, Philippines', '1637, Nagasaki, Japan', ['the Philippines'],

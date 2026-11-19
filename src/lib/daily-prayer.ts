@@ -78,7 +78,7 @@ const AFTER_GOSPEL = [
 ]
 const INTERCESSIONS = [
   'For the Church throughout the world, for Pope Leo, our bishops, priests and religious: keep them faithful and joyful in your service.',
-  'For our dear country Nigeria and for all nations: grant us peace, justice, honest leaders and an end to violence and insecurity.',
+  'For our countries and for all the nations of the world: grant us peace, justice, honest leaders and an end to war, violence and insecurity.',
   'For our families: bless parents and children, heal divisions, and make every home a place of prayer and love.',
   'For the sick, the poor, the unemployed and all who suffer: be their strength, and move us to help them.',
   'For our beloved dead: grant them eternal rest, and let perpetual light shine upon them.',

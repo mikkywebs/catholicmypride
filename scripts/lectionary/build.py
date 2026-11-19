@@ -4,9 +4,8 @@ Builds the daily Mass readings data used by the website.
 
 Sources (all free to use):
   - Calendar and reading references: Tamil-Catholic-Lectionary by Br. Jayarathina Madharasan SDR
-    (public domain, github.com/jayarathina/Tamil-Catholic-Lectionary), run with Nigeria's settings:
-    Epiphany on Sunday, Ascension on Thursday, Corpus Christi on Sunday, and Blessed Cyprian
-    Michael Iwene Tansi (20 January) as a Feast.
+    (public domain, github.com/jayarathina/Tamil-Catholic-Lectionary), run with the General Roman Calendar (no national feasts):
+    Epiphany and Corpus Christi on Sunday, Ascension on Thursday.
   - Text: Douay-Rheims Bible, 1899 American edition (public domain), with the Challoner text
     filling the few chapters missing from that copy.
 
@@ -574,6 +573,13 @@ def build_day(d, entries):
     optional = [e['code'] for e in entries[1:] if e.get('type') == 'OpMem' and not e['code'].startswith('LW06-4Thu')]
     if any(e['code'] == 'LW06-4Thu~Chrism' for e in entries):
         remarks.append('The Chrism Mass (Isaiah 61; Psalm 89; Revelation 1:5-8; Luke 4:16-21) is celebrated by the bishop, usually this morning.')
+    VARIES = {
+        'CW03-Epiphany': 'In countries where the Epiphany is a holy day on 6 January, it is celebrated on that date instead.',
+        'EW07-Ascension': 'In many countries the Ascension is moved to the following Sunday (the Seventh Sunday of Easter). Please follow your local diocese.',
+        'OW00-CorpusChristi': 'In some countries Corpus Christi is celebrated on the Thursday before this Sunday.',
+    }
+    if code in VARIES:
+        remarks.append(VARIES[code])
     if optional:
         remarks.append('Optional memorial: ' + '; '.join(c[0].upper() + c[1:] for c in optional) + '.')
 
