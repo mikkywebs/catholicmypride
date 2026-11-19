@@ -8,7 +8,9 @@ def scripture(r):
     book, name, ch, a, b, override = r
     text = override or get(book, ch, a, b)
     text = re.sub(r'[:;,]\s*$', '.', text.strip()).replace('CHILD IS BORN', 'child is born')
-    return f"{name} {ch}:{a}" + (f"–{b}" if b else ''), text
+    # Douay-Rheims psalm numbers are usually one lower than in modern Bibles: show both, e.g. “Psalm 71 (72)”.
+    chap = f"{ch} ({ch + 1})" if book == 'Psalms' and 10 <= ch <= 146 else ch
+    return f"{name} {chap}:{a}" + (f"–{b}" if b else ''), text
 
 def day_md(title, r, reflection, prayer, opening=False):
     ref, text = scripture(r)
