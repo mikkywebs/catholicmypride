@@ -112,6 +112,7 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   if (t.key === 'regions' && Array.isArray(row.province_list)) row.province_list = [...new Set((row.province_list as string[]).map((p) => p.replace(/^(ecclesiastical )?province of /i, '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b))
   if (t.key === 'readings') { row.auto_filled = false; row.needs_check = false }
   if (t.key === 'saints') row.auto_filled = false
+  if (t.key === 'prayers') row.auto_filled = false
   if (t.key === 'dioceses' && Array.isArray(row.deaneries)) row.deaneries = [...new Set(row.deaneries as string[])]
   if ((t.key === 'dioceses' || t.key === 'regions') && (!row.continent || !row.country)) return { ok: false, message: 'Please choose the continent and country.' }
   if (t.key === 'churches' && !row.diocese_id) return { ok: false, message: 'Please choose the archdiocese or diocese.' }
@@ -222,6 +223,7 @@ const SETTING_KEYS = [
   'about_image_url', 'about_story_title', 'about_story_md', 'contact_email', 'contact_phone', 'contact_address',
   'youtube_url', 'facebook_url', 'tiktok_url', 'x_url', 'donate_url',
   'bank_account_name', 'bank_name', 'bank_account_number', 'donate_needs_md',
+  'default_reading_image', 'default_reading_alt', 'default_prayer_image', 'default_prayer_alt',
 ] as const
 const MUSIC_FALLBACKS = ['songs', 'audio', 'all', 'none']
 

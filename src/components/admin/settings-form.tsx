@@ -38,6 +38,12 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
           <T name="mission" label="Mission line (footer)" s={s} rows={2} />
         </section>
         <section className={card}>
+          <h2 className="m-0 text-xl">Default images</h2>
+          <p className="m-0 -mt-2 text-sm text-muted">Used on every day that has no image of its own. You can still give any single day its own image.</p>
+          <ImageUpload name="default_reading_image" label="Mass readings and reflection" shape="16:9" initial={s.default_reading_image} altName="default_reading_alt" altInitial={s.default_reading_alt} />
+          <ImageUpload name="default_prayer_image" label="Daily prayer" shape="16:9" initial={s.default_prayer_image} altName="default_prayer_alt" altInitial={s.default_prayer_alt} />
+        </section>
+        <section className={card}>
           <h2 className="m-0 text-xl">Home page</h2>
           <ImageUpload name="img_hero" label="Hero image" shape="16:9" initial={images.hero?.url ?? s.hero_image_url} altName="img_hero_alt" altInitial={images.hero?.alt} />
           <T name="hero_title" label="Hero heading" s={s} />

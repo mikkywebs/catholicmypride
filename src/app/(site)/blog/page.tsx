@@ -36,8 +36,8 @@ async function Content({ searchParams }: { searchParams: PageProps<'/blog'>['sea
               <Featured src={p.featured_image} alt={p.image_alt} rounded="rounded-2xl" />
               <p className="m-0 text-[13px] uppercase tracking-[0.1em] text-eyebrow">{[p.category?.name, dateLabel(p.published_at), `${readMinutes(p.body_md)} min read`].filter(Boolean).join(' · ')}</p>
               <span className="-mt-1.5 text-sm text-muted empty:hidden"><ListViews path={`/blog/${p.slug}`} /></span>
-              <h2 className="m-0 font-serif text-[26px] font-semibold leading-tight">{p.title}</h2>
-              {p.excerpt && <p className="m-0 text-muted">{p.excerpt}</p>}
+              <h2 className="m-0 line-clamp-2 font-serif text-[26px] font-semibold leading-tight" title={p.title}>{p.title}</h2>
+              {p.excerpt && <p className="m-0 line-clamp-3 text-muted">{p.excerpt}</p>}
             </Link>
           ))}
         </div>

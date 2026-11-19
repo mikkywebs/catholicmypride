@@ -4,7 +4,9 @@ import { Suspense } from 'react'
 import { connection } from 'next/server'
 import { PrayerTabs, type TabPrayer } from '@/components/prayer-tabs'
 import { EmptyState, Eyebrow, H1 } from '@/components/ui'
-import { getPrayers } from '@/lib/data'
+import { getDailyPrayer, getPrayers, getSettings } from '@/lib/data'
+import { Featured } from '@/components/ui'
+import { addDays, formatLong } from '@/lib/liturgical'
 import { md, readMinutes } from '@/lib/format'
 import { formatShort, todayISO } from '@/lib/liturgical'
 import type { Prayer } from '@/lib/types'
@@ -22,7 +24,7 @@ export default function Page() {
 async function Content() {
   await connection()
   const today = todayISO()
-  const all = await getPrayers()
+  const [all, daily, s] = await Promise.all([getPrayers(), getDailyPrayer(today), getSettings()])
   const pick = (k: Prayer['time_of_day']): TabPrayer => {
     const list = all.filter((p) => p.time_of_day === k)
     const p = list.find((x) => x.show_on === today) ?? list.sort((a, b) => (b.show_on ?? '').localeCompare(a.show_on ?? ''))[0]
@@ -39,7 +41,23 @@ async function Content() {
         <Eyebrow>Daily Prayers · {formatShort(today)}</Eyebrow>
         <H1 className="mt-2">Pray through the day</H1>
       </div>
-      {all.length === 0 && <EmptyState>Prayers will be posted soon.</EmptyState>}
+      {daily && (
+        <Link href={`/daily-prayers/${daily.slug}`} className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface text-ink no-underline md:flex-row">
+          {(daily.featured_image || s.default_prayer_image) && <div className="md:w-[45%]"><Featured src={daily.featured_image || s.default_prayer_image} alt={daily.featured_image ? daily.image_alt : s.default_prayer_alt} rounded="rounded-none" className="h-full" /></div>}
+          <div className="flex flex-1 flex-col gap-2.5 px-6 py-7 sm:px-8">
+            <p className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-accent">Today&apos;s prayer from the Word</p>
+            <h2 className="m-0 font-serif text-[32px] font-semibold leading-tight">{daily.title}</h2>
+            <p className="m-0 text-muted">{daily.seo_description}</p>
+            <span className="pt-1 font-semibold text-accent">Pray now · {readMinutes(daily.body_md)} min →</span>
+          </div>
+        </Link>
+      )}
+      {daily && (
+        <p className="m-0 text-center text-[15px] text-muted">Earlier days: {[1, 2, 3, 4, 5, 6].map((n, i) => (
+          <span key={n}>{i > 0 && ' · '}<Link href={`/daily-prayers/prayer-${addDays(today, -n)}`}>{formatLong(addDays(today, -n)).replace(/, \d{4}$/, '').replace(/ \d{4}$/, '')}</Link></span>
+        ))}</p>
+      )}
+      {all.length === 0 && !daily && <EmptyState>Prayers will be posted soon.</EmptyState>}
       <PrayerTabs tabs={tabs} />
       {Object.keys(groups).length > 0 && (
         <section className="reveal flex flex-col gap-4">

@@ -5,6 +5,9 @@ import { AudioPlayer } from '@/components/audio-player'
 import { Reactions, ShareBar, ViewCount } from '@/components/engage'
 import { Breadcrumb, Featured, Prose } from '@/components/ui'
 import { getPrayer, getSettings } from '@/lib/data'
+import { dateFromPrayerSlug } from '@/lib/daily-prayer'
+import { addDays, formatLong } from '@/lib/liturgical'
+import Link from 'next/link'
 import { md, readMinutes } from '@/lib/format'
 
 export async function generateMetadata({ params }: PageProps<'/daily-prayers/[slug]'>): Promise<Metadata> {
@@ -29,14 +32,24 @@ async function Content({ params }: { params: PageProps<'/daily-prayers/[slug]'>[
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Daily Prayers', href: '/daily-prayers' }, { label: p.title }]} />
       <div className="flex flex-col items-center gap-3 text-center">
         {p.category && <p className="eyebrow m-0">{p.category.name}</p>}
+        {!p.category && dateFromPrayerSlug(p.slug) && <p className="eyebrow m-0">Daily Prayer from the Word</p>}
         <h1 className="m-0 font-serif text-[40px] font-semibold leading-[1.1] sm:text-[50px]">{p.title}</h1>
         <div className="flex flex-wrap justify-center gap-x-4 text-[15px] text-muted"><span>{readMinutes(p.body_md)} min</span><ViewCount section="Daily Prayers" threshold={s.view_threshold} /></div>
       </div>
-      <Featured src={p.featured_image} alt={p.image_alt} priority />
+      <Featured src={p.featured_image || (dateFromPrayerSlug(p.slug) ? s.default_prayer_image : null)} alt={p.featured_image ? p.image_alt : s.default_prayer_alt} priority />
       <ShareBar title={p.title} />
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen and pray along" initialSeconds={p.audio_seconds} />}
       <Prose html={md(p.body_md)} />
-      <Reactions type="prayer" id={p.id} kinds={['love', 'amen', 'thumbs']} title="Did you pray along?" />
+      <Reactions type="prayer" id={p.slug} kinds={['love', 'amen', 'thumbs']} title="Did you pray along?" />
+      {dateFromPrayerSlug(p.slug) && (() => {
+        const d = dateFromPrayerSlug(p.slug)!
+        return (
+          <nav aria-label="Other days" className="flex flex-wrap justify-between gap-3.5 border-t border-line pt-5">
+            <Link href={`/daily-prayers/prayer-${addDays(d, -1)}`} className="flex flex-col py-1.5 text-ink no-underline"><span className="text-[13px] text-muted">← Previous day</span><span className="font-semibold">{formatLong(addDays(d, -1))}</span></Link>
+            <Link href={`/daily-prayers/prayer-${addDays(d, 1)}`} className="flex flex-col items-end py-1.5 text-ink no-underline"><span className="text-[13px] text-muted">Next day →</span><span className="font-semibold">{formatLong(addDays(d, 1))}</span></Link>
+          </nav>
+        )
+      })()}
     </div>
   )
 }

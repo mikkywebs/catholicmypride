@@ -2,6 +2,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { lectionaryFields } from './lectionary'
 import { calendarSaintRow, calendarSaintsFor } from './saints-data'
+import { dailyPrayerFor, dailyPrayerSlug } from './daily-prayer'
 
 const DAYS_AHEAD = 14
 
@@ -65,5 +66,27 @@ export async function ensureUpcomingSaints(db: SupabaseClient) {
   const { error: e } = await db.from('saints').insert(inserts)
   if (e && (e.code === 'PGRST204' || /auto_filled|kind/.test(e.message))) {
     await db.from('saints').insert(inserts.map((r) => { const c = { ...r }; delete c.auto_filled; delete c.kind; return c }))
+  }
+}
+
+/** Daily prayers for the next two weeks, drawn from each day's readings. Never touches a saved prayer. */
+export async function ensureUpcomingPrayers(db: SupabaseClient) {
+  const tz = process.env.SITE_TIMEZONE || 'Africa/Lagos'
+  const start = new Date(`${new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date())}T12:00:00Z`)
+  const dates = Array.from({ length: DAYS_AHEAD }, (_, i) => { const d = new Date(start); d.setUTCDate(d.getUTCDate() + i); return d.toISOString().slice(0, 10) })
+  const { data: existing, error } = await db.from('prayers').select('slug').in('slug', dates.map(dailyPrayerSlug))
+  if (error) return
+  const have = new Set((existing ?? []).map((r) => r.slug as string))
+  const rows: Record<string, unknown>[] = []
+  for (const date of dates) {
+    if (have.has(dailyPrayerSlug(date))) continue
+    const p = await dailyPrayerFor(date)
+    if (!p) continue
+    rows.push({ slug: p.slug, title: p.title, body_md: p.body_md, show_on: date, seo_title: p.seo_title, seo_description: p.seo_description, status: 'published', published_at: new Date().toISOString(), auto_filled: true })
+  }
+  if (!rows.length) return
+  const { error: e } = await db.from('prayers').insert(rows)
+  if (e && (e.code === 'PGRST204' || /auto_filled/.test(e.message))) {
+    await db.from('prayers').insert(rows.map((r) => { const c = { ...r }; delete c.auto_filled; return c }))
   }
 }

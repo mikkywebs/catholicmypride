@@ -7,6 +7,8 @@ export type Settings = {
   hero_title: string | null
   hero_subtitle: string | null
   about_image_url: string | null
+  default_reading_image?: string | null; default_reading_alt?: string | null
+  default_prayer_image?: string | null; default_prayer_alt?: string | null
   about_story_title: string | null
   about_story_md: string | null
   contact_email: string | null

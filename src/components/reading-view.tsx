@@ -24,6 +24,8 @@ function Part({ id, title, refText, body, response, closing }: { id: string; tit
 export function ReadingView({ r, s }: { r: Reading; s: Settings }) {
   const info = liturgicalInfo(r.date)
   const vest = r.vestment ?? info.vestment
+  const image = r.featured_image || s.default_reading_image || null
+  const imageAlt = r.featured_image ? r.image_alt : s.default_reading_alt
   const mins = readMinutes(r.first_text, r.psalm_text, r.second_text, r.gospel_text, r.reflection_md)
   const word = 'The word of the Lord. — Thanks be to God.'
   const jumps = [
@@ -38,7 +40,7 @@ export function ReadingView({ r, s }: { r: Reading; s: Settings }) {
 
   return (
     <div className="mx-auto flex max-w-[820px] flex-col gap-7 px-6 pb-[72px] pt-8">
-      <JsonLd data={articleLd({ title, description: r.seo_description, image: r.featured_image, path: `/mass-readings/${r.date}`, published: r.date })} />
+      <JsonLd data={articleLd({ title, description: r.seo_description, image, path: `/mass-readings/${r.date}`, published: r.date })} />
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Mass Readings', href: '/mass-readings' }, { label: formatLong(r.date) }]} />
       <div className="flex flex-col items-center gap-3 text-center">
         <p className="eyebrow m-0">{formatLong(r.date)}</p>
@@ -53,7 +55,7 @@ export function ReadingView({ r, s }: { r: Reading; s: Settings }) {
         </div>
         <div className="flex flex-wrap justify-center gap-x-4 text-[15px] text-muted"><span>{mins} min read</span><ViewCount section="Mass Readings" threshold={s.view_threshold} /></div>
       </div>
-      <Featured src={r.featured_image} alt={r.image_alt} priority />
+      <Featured src={image} alt={imageAlt} priority />
       <ShareBar title={title} />
       {jumps.length > 1 && (
         <nav aria-label="On this page" className="flex flex-wrap justify-center gap-2 text-[15px]">

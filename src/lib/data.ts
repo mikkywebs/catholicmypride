@@ -2,6 +2,7 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
 import { lectionaryReading } from './lectionary'
+import { dailyPrayerFor, dailyPrayerSlug, dateFromPrayerSlug } from './daily-prayer'
 import { calendarSaint, calendarSaintsFor, CELEBRATION_ORDER } from './saints-data'
 import type { Book, Category, Chaplet, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Region, Settings, Song } from './types'
 
@@ -17,6 +18,7 @@ const DEFAULT_SETTINGS: Settings = {
   hero_title: "Spreading the Gospel, sharing Christ's love",
   hero_subtitle: 'Prayers, novenas, Scripture reflections and hymns for every day of the Church year.',
   about_image_url: null,
+  default_reading_image: null, default_reading_alt: null, default_prayer_image: null, default_prayer_alt: null,
   about_story_title: null,
   about_story_md: null,
   contact_email: 'cmpapostolate@gmail.com',
@@ -72,7 +74,7 @@ export async function getSectionFlags() {
   }
   const [blog, songs, books, churches, novenas, readings, saints, prayers, chaplets, wall] = await Promise.all([
     head('posts'), head('songs'), head('books'), head('churches'), head('novenas'),
-    Promise.resolve(true), Promise.resolve(true), head('prayers'), head('chaplets'), head('public_prayer_requests'),
+    Promise.resolve(true), Promise.resolve(true), Promise.resolve(true), head('chaplets'), head('public_prayer_requests'),
   ])
   return { blog, songs, books, churches, novenas, readings, saints, prayers, chaplets, wall }
 }
@@ -248,7 +250,7 @@ export async function getPrayers(): Promise<Prayer[]> {
   cacheTag('prayers')
   const db = publicClient()
   if (!db) return []
-  const { data } = await db.from('prayers').select('*, category:categories(*)').order('title')
+  const { data } = await db.from('prayers').select('*, category:categories(*)').not('slug', 'like', 'prayer-____-__-__').order('title')
   return (data as Prayer[]) ?? []
 }
 
@@ -257,9 +259,16 @@ export async function getPrayer(slug: string): Promise<Prayer | null> {
   cacheLife('minutes')
   cacheTag('prayers', `prayer:${slug}`)
   const db = publicClient()
-  if (!db) return null
+  if (!db) { const d = dateFromPrayerSlug(slug); return d ? dailyPrayerFor(d) : null }
   const { data } = await db.from('prayers').select('*, category:categories(*)').eq('slug', slug).maybeSingle()
-  return (data as Prayer) ?? null
+  if (data) return data as Prayer
+  const date = dateFromPrayerSlug(slug)
+  return date ? dailyPrayerFor(date) : null
+}
+
+/** The prayer drawn from a day's readings: the admin's saved version if there is one. */
+export async function getDailyPrayer(date: string): Promise<Prayer | null> {
+  return getPrayer(dailyPrayerSlug(date))
 }
 
 // ---------- Chaplets ----------

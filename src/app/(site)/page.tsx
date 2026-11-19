@@ -6,7 +6,7 @@ import { connection } from 'next/server'
 import { PrayerForm } from '@/components/prayer-form'
 import { SongRow } from '@/components/song-row'
 import { ButtonLink, Cover, Eyebrow, Featured, H2, SectionHead } from '@/components/ui'
-import { getBooks, getHomeImages, getNovenas, getPosts, getPrayers, getReading, getSaintForDate, getSettings, getSongs } from '@/lib/data'
+import { getBooks, getDailyPrayer, getHomeImages, getNovenas, getPosts, getPrayers, getReading, getSaintForDate, getSettings, getSongs } from '@/lib/data'
 import { dateLabel, duration } from '@/lib/format'
 import { addDays, formatLong, liturgicalInfo, todayISO } from '@/lib/liturgical'
 import type { Novena } from '@/lib/types'
@@ -60,14 +60,14 @@ function activeNovena(list: Novena[], today: string) {
 async function TodaySections() {
   await connection()
   const today = todayISO()
-  const [reading, saint, prayers, novenas] = await Promise.all([getReading(today), getSaintForDate(today), getPrayers(), getNovenas()])
-  const prayer = prayers.find((p) => p.show_on === today) ?? null
+  const [reading, saint, prayers, novenas, daily, s] = await Promise.all([getReading(today), getSaintForDate(today), getPrayers(), getNovenas(), getDailyPrayer(today), getSettings()])
+  const prayer = prayers.find((p) => p.show_on === today) ?? daily
   const novena = activeNovena(novenas, today)
   const info = liturgicalInfo(today)
   const cards = [
-    reading && { key: 'r', tag: 'Mass Readings', title: [reading.first_ref, reading.psalm_ref, reading.gospel_ref].filter(Boolean).join(' · ') || (reading.title ?? 'Today’s readings'), text: reading.reflection_title, img: reading.featured_image, href: `/mass-readings/${today}`, cta: 'Read with reflection' },
+    reading && { key: 'r', tag: 'Mass Readings', title: [reading.first_ref, reading.psalm_ref, reading.gospel_ref].filter(Boolean).join(' · ') || (reading.title ?? 'Today’s readings'), text: reading.reflection_title, img: reading.featured_image || s.default_reading_image, href: `/mass-readings/${today}`, cta: 'Read with reflection' },
     saint && { key: 's', tag: saint.kind === 'celebration' ? 'Today in the Church' : 'Saint of the Day', title: saint.name, text: saint.celebration, img: saint.featured_image, href: `/saint-of-the-day/${saint.slug}`, cta: saint.kind === 'celebration' ? 'Read more' : 'Read the story' },
-    prayer && { key: 'p', tag: 'Daily Prayer', title: prayer.title, text: null, img: prayer.featured_image, href: `/daily-prayers/${prayer.slug}`, cta: 'Pray now' },
+    prayer && { key: 'p', tag: 'Daily Prayer', title: prayer.title, text: null, img: prayer.featured_image || (prayer === daily ? s.default_prayer_image : null), href: `/daily-prayers/${prayer.slug}`, cta: 'Pray now' },
   ].filter(Boolean) as { key: string; tag: string; title: string; text: string | null; img: string | null; href: string; cta: string }[]
 
   return (
@@ -82,7 +82,7 @@ async function TodaySections() {
             {cards.length === 1 && reading ? (
               // Only the readings today (no saint or feast in the calendar): they take the full width.
               <article className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface md:flex-row">
-                {reading.featured_image && <div className="md:w-1/2"><Featured src={reading.featured_image} rounded="rounded-none" className="h-full" /></div>}
+                {(reading.featured_image || s.default_reading_image) && <div className="md:w-1/2"><Featured src={reading.featured_image || s.default_reading_image} rounded="rounded-none" className="h-full" /></div>}
                 <div className="flex flex-1 flex-col gap-3 px-6 pb-8 pt-7 sm:px-9">
                   <p className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-accent">Mass Readings</p>
                   <h3 className="m-0 font-serif text-[32px] font-semibold leading-tight">{reading.title ?? 'Today’s readings'}</h3>
@@ -161,8 +161,8 @@ async function LatestPosts() {
               <Featured src={p.featured_image} alt={p.image_alt} rounded="rounded-2xl" />
               <p className="m-0 text-[13px] uppercase tracking-[0.1em] text-eyebrow">{[p.category?.name, dateLabel(p.published_at)].filter(Boolean).join(' · ')}</p>
               <span className="-mt-1.5 text-sm text-muted empty:hidden"><ListViews path={`/blog/${p.slug}`} /></span>
-              <h3 className="m-0 font-serif text-[26px] font-semibold leading-tight">{p.title}</h3>
-              {p.excerpt && <p className="m-0 text-muted">{p.excerpt}</p>}
+              <h3 className="m-0 line-clamp-2 font-serif text-[26px] font-semibold leading-tight" title={p.title}>{p.title}</h3>
+              {p.excerpt && <p className="m-0 line-clamp-3 text-muted">{p.excerpt}</p>}
             </Link>
           ))}
         </div>

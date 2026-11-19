@@ -172,8 +172,8 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   prayers: {
     key: 'prayers', table: 'prayers', singular: 'prayer', plural: 'Daily Prayers', titleField: 'title', slugFrom: 'title',
     publicBase: '/daily-prayers/', publicField: 'slug',
-    listColumns: [{ field: 'title', label: 'Title' }, { field: 'time_of_day', label: 'Time' }, { field: 'show_on', label: 'Date' }, { field: 'status', label: 'Status' }],
-    orderBy: 'created_at', tags: ['prayers', 'content'], seo: true, status: true,
+    listColumns: [{ field: 'title', label: 'Title' }, { field: 'time_of_day', label: 'Time' }, { field: 'show_on', label: 'Date' }, { field: 'auto_filled', label: 'Auto-filled' }, { field: 'status', label: 'Status' }],
+    orderBy: 'show_on', tags: ['prayers', 'content'], seo: true, status: true,
     fields: [
       { name: 'title', label: 'Prayer title', type: 'text', required: true },
       { name: 'slug', label: 'Web address (slug)', type: 'text', required: true },
