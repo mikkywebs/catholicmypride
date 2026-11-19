@@ -329,6 +329,44 @@ export async function answerSubmission(id: string, question: string) {
   redirect(`/admin/faqs/new?question=${encodeURIComponent(question)}`)
 }
 
+/** Article sent by a reader: turn it into a draft blog post (once) and open it in the blog editor. */
+export async function openArticle(id: string) {
+  const { db } = await requireAdmin()
+  const { data: a } = await db.from('article_submissions').select('*').eq('id', id).maybeSingle()
+  if (!a) redirect('/admin/submissions')
+  if (a.post_id) {
+    const { data: existing } = await db.from('posts').select('id').eq('id', a.post_id).maybeSingle()
+    if (existing) redirect(`/admin/posts/${a.post_id}`)
+  }
+  // Paragraphs as written; sources listed at the end in plain text.
+  const sources = String(a.sources ?? '').split('\n').map((x: string) => x.trim()).filter(Boolean)
+  const body = a.body + (sources.length ? `\n\n### Sources\n\n${sources.map((x: string) => `- ${x}`).join('\n')}` : '')
+  const plain = a.body.replace(/[#*_>`]/g, '').replace(/\s+/g, ' ').trim()
+  const excerpt = plain.length > 180 ? `${plain.slice(0, plain.lastIndexOf(' ', 177))}…` : plain
+  let slug = slugify(a.title).slice(0, 80) || `article-${Date.now()}`
+  const { data: clash } = await db.from('posts').select('id').eq('slug', slug).maybeSingle()
+  if (clash) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`
+  const { data: post, error } = await db.from('posts').insert({
+    title: a.title, slug, body_md: body, excerpt, author: a.name, author_country: a.country, is_contributor: true,
+    status: 'draft', updated_at: new Date().toISOString(),
+  }).select('id').single()
+  if (error || !post) redirect(`/admin/submissions?error=${encodeURIComponent(error?.message ?? 'Could not create the post')}`)
+  await db.from('article_submissions').update({ status: 'approved', post_id: post.id }).eq('id', id)
+  redirect(`/admin/posts/${post.id}?from=submission`)
+}
+
+export async function setArticleStatus(id: string, status: 'new' | 'declined') {
+  const { db } = await requireAdmin()
+  await db.from('article_submissions').update({ status }).eq('id', id)
+  refreshPage()
+}
+
+export async function deleteArticle(id: string) {
+  const { db } = await requireAdmin()
+  await db.from('article_submissions').delete().eq('id', id)
+  refreshPage()
+}
+
 export async function setSubmissionStatus(id: string, status: 'new' | 'ignored') {
   const { db } = await requireAdmin()
   await db.from('faq_submissions').update({ status }).eq('id', id)

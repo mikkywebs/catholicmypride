@@ -60,6 +60,8 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'slug', label: 'Web address (slug)', type: 'text', required: true, help: 'Made from the title. Avoid changing it after publishing.' },
       { name: 'category_id', label: 'Category', type: 'category', kind: 'blog', half: true },
       { name: 'author', label: 'Author', type: 'text', half: true },
+      { name: 'author_country', label: 'Author’s country (for contributors)', type: 'text', half: true },
+      { name: 'is_contributor', label: 'Written by a reader (shows a “Contributor” label)', type: 'boolean' },
       featured(),
       { name: 'excerpt', label: 'Short summary', type: 'textarea', rows: 2, help: 'Shown on cards and in search results if no meta description.' },
       { name: 'body_md', label: 'Article', type: 'markdown', rows: 18, required: true },

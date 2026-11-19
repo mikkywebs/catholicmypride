@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useClientValue } from './use-client'
+import { countries, countryName, flag } from '@/lib/country-codes'
 import type { QuizQuestion } from '@/lib/types'
 
 // Quiz Time: 10 questions, 30 seconds each, 8 correct to win.
@@ -15,21 +16,6 @@ type Profile = { first: string; last: string; country: string }
 type Certificate = { code: string; date: string; name: string; country: string }
 type Saved = { profile: Profile | null; streak: number; wins: number; played: number; certificate: Certificate | null }
 const EMPTY: Saved = { profile: null, streak: 0, wins: 0, played: 0, certificate: null }
-
-const flag = (code: string) => (/^[A-Z]{2}$/.test(code) ? String.fromCodePoint(...[...code].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)) : '🌍')
-function countries() {
-  const names = new Intl.DisplayNames(['en'], { type: 'region' })
-  const out: { code: string; name: string }[] = []
-  for (let a = 65; a <= 90; a++) for (let b = 65; b <= 90; b++) {
-    const code = String.fromCharCode(a, b)
-    if (['EU', 'EZ', 'UN', 'ZZ', 'QO', 'XA', 'XB', 'AA'].includes(code)) continue
-    let n: string | undefined
-    try { n = names.of(code) } catch { n = undefined }
-    if (n && n !== code && !/unknown/i.test(n)) out.push({ code, name: n })
-  }
-  return out.sort((x, y) => x.name.localeCompare(y.name))
-}
-const countryName = (code: string) => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) ?? code } catch { return code } }
 
 function save(s: Saved) { try { localStorage.setItem(KEY, JSON.stringify(s)) } catch {} }
 

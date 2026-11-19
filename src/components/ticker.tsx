@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { mysteriesFor } from '@/lib/rosary'
 
 type Today = {
   date: string
@@ -42,11 +43,16 @@ export function Ticker() {
   const items = useMemo(() => {
     if (!today) return []
     const head = `${today.title ?? today.season} · Year ${today.cycle} · Weekday Cycle ${today.weekdayCycle}`
-    const list = [{ label: 'Today', text: head }]
+    const list: { label: string; text: string; href?: string }[] = [{ label: 'Today', text: head }]
     if (today.first) list.push({ label: 'First Reading', text: today.first })
     if (today.psalm) list.push({ label: 'Psalm', text: today.psalm })
     if (today.second) list.push({ label: 'Second Reading', text: today.second })
     if (today.gospel) list.push({ label: 'Gospel', text: today.gospel })
+    // Holy Rosary: today's mysteries, each with its Scripture passage.
+    const r = mysteriesFor(today.date)
+    const short = r.name.split(' ')[0]
+    list.push({ label: 'Holy Rosary', text: `${r.weekday}: the ${r.name}`, href: '/rosary' })
+    r.mysteries.forEach((m, n) => list.push({ label: `${['1st', '2nd', '3rd', '4th', '5th'][n]} ${short} Mystery`, text: `${m.title} · ${m.passage}`, href: '/rosary' }))
     return list
   }, [today])
 
@@ -77,7 +83,7 @@ export function Ticker() {
           {item && (
             <div className={`flex min-w-0 items-baseline gap-2.5 transition duration-300 ${shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}>
               <span className="shrink-0 text-xs font-bold uppercase tracking-[0.12em] text-gold">{item.label}</span>
-              <span className="truncate">{item.text}</span>
+              {item.href ? <Link href={item.href} className="truncate text-navy-ink no-underline hover:underline">{item.text}</Link> : <span className="truncate">{item.text}</span>}
             </div>
           )}
         </div>
@@ -88,7 +94,7 @@ export function Ticker() {
               type="button"
               aria-label={`Show ${it.label}`}
               onClick={() => { if (timer.current) clearInterval(timer.current); go(n) }}
-              className={`h-2 rounded-full transition-all ${n === i ? 'w-[18px] bg-gold' : 'w-2 bg-[#5b6272]'}`}
+              className={`hidden h-2 rounded-full transition-all sm:block ${n === i ? 'w-[18px] bg-gold' : 'w-2 bg-[#5b6272]'}`}
             />
           ))}
           {today?.hasReading && <Link href={`/mass-readings/${today.date}`} className="ml-2 whitespace-nowrap font-semibold text-navy-ink">Today&apos;s readings →</Link>}

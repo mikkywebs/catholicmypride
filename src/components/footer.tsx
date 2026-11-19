@@ -25,7 +25,9 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
     flags.books && { label: 'Ebooks', href: '/ebooks' },
     flags.churches && { label: 'Church Directory', href: '/churches' },
     { label: 'Questions & Answers', href: '/faith-questions' },
+    { label: 'Holy Rosary', href: '/rosary' },
     { label: 'Quiz Time', href: '/quiz' },
+    { label: 'Write for Us', href: '/write-for-us' },
   ].filter(Boolean) as { label: string; href: string }[]
   const col = 'flex flex-1 basis-40 flex-col gap-1.5'
   const head = 'pb-1 text-[13px] font-semibold uppercase tracking-[0.12em] text-ink'

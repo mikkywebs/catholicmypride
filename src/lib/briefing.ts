@@ -1,6 +1,7 @@
 import 'server-only'
 import { getDailyPrayer, getNovenas, getPosts, getReading, getSaintsForDate } from './data'
 import { activeNovenas, dayLabel } from './novena-days'
+import { mysteriesFor } from './rosary'
 import { formatLong } from './liturgical'
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.catholicmypride.org').replace(/\/$/, '').replace('://catholicmypride.org', '://www.catholicmypride.org')
@@ -30,6 +31,10 @@ export async function whatsappBriefing(date: string): Promise<string> {
   if (prayer) {
     lines.push('', '🙏 *Daily Prayer*', prayer.title, `👉 ${SITE}/daily-prayers/${prayer.slug}`)
   }
+  const rosary = mysteriesFor(date)
+  lines.push('', `📿 *Holy Rosary: the ${rosary.name}*`)
+  rosary.mysteries.forEach((m, n) => lines.push(`${n + 1}. ${m.title} (${m.passage})`))
+  lines.push(`👉 ${SITE}/rosary`)
   const running = activeNovenas(novenas, date)
   if (running.length) {
     lines.push('', running.length > 1 ? '🕯️ *Novenas in progress*' : '🕯️ *Novena in progress*')

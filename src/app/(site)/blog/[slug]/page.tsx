@@ -44,7 +44,8 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
         {p.category && <p className="eyebrow m-0">{p.category.name}</p>}
         <h1 className="m-0 font-serif text-[40px] font-semibold leading-[1.1] sm:text-[52px]">{p.title}</h1>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[15px] text-muted">
-          {p.author && <strong className="text-ink">{p.author}</strong>}
+          {p.author && <span><span className="text-muted">By </span><strong className="text-ink">{p.author}</strong>{p.author_country && <span> · {p.author_country}</span>}</span>}
+          {p.is_contributor && <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-bold uppercase tracking-[0.1em] text-eyebrow">Contributor</span>}
           <span>{dateLabel(p.published_at)}</span>
           <ReadTime minutes={readMinutes(p.body_md)} />
           {listen && <span>{listen} listen</span>}
@@ -58,6 +59,7 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       {p.tags.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Tags">{p.tags.map((t) => <Chip key={t}>{t}</Chip>)}</div>}
       <Reactions type="post" id={p.id} kinds={['love', 'amen', 'thumbs']} title="Did this bless you?" />
       <WhatsAppJoin url={s.whatsapp_channel_url} />
+      <p className="m-0 rounded-2xl border border-line bg-surface px-6 py-4 text-center text-[15px] text-muted">✍️ Would you like to write for Catholic My Pride? <Link href="/write-for-us" className="font-semibold">Share your article</Link></p>
       <div className="flex flex-col gap-2 border-t border-line pt-4"><strong>Found this helpful? Share it.</strong><ShareBar title={p.title} /></div>
       {related.length > 0 && (
         <section className="reveal flex flex-col gap-4 pt-3">

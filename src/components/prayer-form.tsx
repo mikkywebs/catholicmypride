@@ -8,7 +8,7 @@ import { ChevronDown } from './icons'
 
 const field = 'min-h-11 w-full rounded-lg border border-field bg-surface px-3 py-2.5 text-ink'
 
-function CountryPicker() {
+export function CountryPicker({ id = 'pr-country', required = false, label = 'Country' }: { id?: string; required?: boolean; label?: string }) {
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
   const matches = useMemo(() => {
@@ -18,15 +18,16 @@ function CountryPicker() {
   }, [q])
   return (
     <div className="relative flex flex-1 basis-52 flex-col gap-1.5">
-      <label htmlFor="pr-country" className="text-sm font-semibold">Country</label>
+      <label htmlFor={id} className="text-sm font-semibold">{label}</label>
       <div className="relative">
         <input
-          id="pr-country"
+          id={id}
           name="country"
+          required={required}
           role="combobox"
           aria-autocomplete="list"
           aria-expanded={open}
-          aria-controls="pr-country-list"
+          aria-controls={`${id}-list`}
           autoComplete="off"
           placeholder="Type or choose…"
           value={q}
@@ -38,7 +39,7 @@ function CountryPicker() {
         <button type="button" tabIndex={-1} aria-label="Show all countries" onClick={() => setOpen((o) => !o)} className="absolute right-1 top-1 flex size-9 items-center justify-center text-muted"><ChevronDown size={16} /></button>
       </div>
       {open && (
-        <ul id="pr-country-list" role="listbox" className="absolute left-0 right-0 top-full z-10 mt-1 max-h-60 overflow-y-auto rounded-xl border border-field bg-surface p-1.5 shadow-[0_12px_30px_rgba(31,36,48,0.14)]">
+        <ul id={`${id}-list`} role="listbox" className="absolute left-0 right-0 top-full z-10 mt-1 max-h-60 overflow-y-auto rounded-xl border border-field bg-surface p-1.5 shadow-[0_12px_30px_rgba(31,36,48,0.14)]">
           {matches.length ? matches.map((c) => (
             <li key={c} role="option" aria-selected={c === q}>
               <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setQ(c); setOpen(false) }} className="min-h-10 w-full rounded-md px-2.5 text-left text-ink hover:bg-sky">{c}</button>

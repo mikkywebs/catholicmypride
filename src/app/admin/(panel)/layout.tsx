@@ -6,7 +6,7 @@ import { AdminNav } from '@/components/admin/admin-nav'
 import { ensureUpcomingPrayers, ensureUpcomingReadings, ensureUpcomingSaints } from '@/lib/admin-readings'
 
 const NAV: [string, string][] = [
-  ['Dashboard', '/admin'], ['Blog', '/admin/posts'], ['Novenas', '/admin/novenas'], ['Daily Prayers', '/admin/prayers'], ['Chaplets', '/admin/chaplets'],
+  ['Dashboard', '/admin'], ['Blog', '/admin/posts'], ['Article Submissions', '/admin/submissions'], ['Novenas', '/admin/novenas'], ['Daily Prayers', '/admin/prayers'], ['Chaplets', '/admin/chaplets'],
   ['Mass Readings', '/admin/readings'], ['Saints', '/admin/saints'], ['Music & Audio', '/admin/songs'], ['Ebooks', '/admin/books'],
   ['Dioceses', '/admin/dioceses'], ['Parishes', '/admin/churches'], ['Countries & Provinces', '/admin/regions'], ['Prayer Requests', '/admin/prayer-requests'], ['Messages', '/admin/messages'], ['Q&A', '/admin/faqs'], ['Asked Questions', '/admin/faq-requests'], ['Quiz', '/admin/quiz'], ['WhatsApp Briefing', '/admin/whatsapp'],
   ['Categories', '/admin/categories'], ['Settings', '/admin/settings'],

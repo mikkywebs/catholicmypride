@@ -19,6 +19,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     pray: [
       flags.novenas && { label: 'Novenas', href: '/novenas' },
       flags.prayers && { label: 'Daily Prayers', href: '/daily-prayers' },
+      { label: 'Holy Rosary', href: '/rosary' },
       flags.chaplets && { label: 'Chaplets', href: '/chaplets' },
       flags.readings && { label: 'Mass Readings', href: '/mass-readings' },
     ].filter(Boolean) as NavData['pray'],
@@ -29,6 +30,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       flags.churches && { label: 'Church Directory', href: '/churches' },
       { label: 'Questions & Answers', href: '/faith-questions' },
       { label: 'Quiz Time', href: '/quiz' },
+      { label: 'Write for Us', href: '/write-for-us' },
     ].filter(Boolean) as NavData['resources'],
     saint: flags.saints,
     wall: flags.wall,
