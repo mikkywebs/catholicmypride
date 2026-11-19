@@ -23,6 +23,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       flags.songs && { label: 'Music & Audio', href: '/music' },
       flags.books && { label: 'Ebooks', href: '/ebooks' },
       flags.churches && { label: 'Church Directory', href: '/churches' },
+      { label: 'Questions & Answers', href: '/faith-questions' },
+      { label: 'Quiz Time', href: '/quiz' },
     ].filter(Boolean) as NavData['resources'],
     saint: flags.saints,
     wall: flags.wall,

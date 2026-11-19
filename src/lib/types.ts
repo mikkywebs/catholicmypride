@@ -110,3 +110,14 @@ export type Region = { id: string; continent: string; country: string; province:
 export type Church = { id: string; name: string; address: string | null; map_url: string | null; deanery: string | null; diocese_id: string | null; diocese?: Diocese | null }
 
 export type PublicPrayerRequest = { id: string; first_name: string; country: string | null; body: string; prayed_count: number; created_at: string; approved_at: string | null }
+
+export type Faq = {
+  id: string; question: string; slug: string; topic: string; answer_md: string; sources: string | null
+  needs_review?: boolean; seo_title?: string | null; seo_description?: string | null; updated_at?: string | null
+}
+
+export type QuizQuestion = {
+  id: string; question: string; topic: string
+  option_a: string; option_b: string; option_c: string; option_d: string
+  correct: 'A' | 'B' | 'C' | 'D'; explanation: string | null; source: string | null
+}

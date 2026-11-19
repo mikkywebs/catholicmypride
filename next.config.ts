@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   // Daily Mass readings data, read from disk by the server.
-  outputFileTracingIncludes: { '/**': ['./data/lectionary/**/*.json', './data/saints/**/*.json'] },
+  outputFileTracingIncludes: { '/**': ['./data/lectionary/**/*.json', './data/saints/**/*.json', './data/faith/**/*.json'] },
   env: { NEXT_PUBLIC_BUILD_YEAR: String(new Date().getFullYear()) },
   images: {
     remotePatterns: [

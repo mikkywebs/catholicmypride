@@ -6,10 +6,11 @@ import { createBrowserClient } from '@supabase/ssr'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 type Item = { id: string; name: string | null; detail: string; created_at: string }
-type Alert = { key: string; kind: 'prayer' | 'message'; title: string; body: string; href: string }
+type Alert = { key: string; kind: 'prayer' | 'message' | 'asked'; title: string; body: string; href: string }
 
 const PRAYERS = '/admin/prayer-requests'
 const MESSAGES = '/admin/messages'
+const ASKED = '/admin/faq-requests'
 
 let db: ReturnType<typeof createBrowserClient> | null = null
 const client = () => (db ??= createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!))
@@ -32,7 +33,7 @@ function chime() {
 /** Admin menu with live counts, plus a pop-up whenever a prayer request or message arrives. */
 export function AdminNav({ nav, children }: { nav: [string, string][]; children?: React.ReactNode }) {
   const path = usePathname()
-  const [counts, setCounts] = useState({ prayers: 0, messages: 0 })
+  const [counts, setCounts] = useState({ prayers: 0, messages: 0, asked: 0 })
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [perm, setPerm] = useState<NotificationPermission | 'unsupported'>('unsupported')
   const seen = useRef<Set<string> | null>(null)
@@ -51,21 +52,23 @@ export function AdminNav({ nav, children }: { nav: [string, string][]; children?
   const toAlert = (kind: Alert['kind'], r: Item): Alert => ({
     key: `${kind}:${r.id}`,
     kind,
-    title: kind === 'prayer' ? 'New prayer request' : 'New message',
+    title: kind === 'prayer' ? 'New prayer request' : kind === 'asked' ? 'New question about the faith' : 'New message',
     body: [r.name || 'Anonymous', r.detail].filter(Boolean).join(' — ').slice(0, 160),
-    href: kind === 'prayer' ? PRAYERS : MESSAGES,
+    href: kind === 'prayer' ? PRAYERS : kind === 'asked' ? ASKED : MESSAGES,
   })
 
   const load = useCallback(async () => {
     const s = client()
-    const [p, m] = await Promise.all([
+    const [p, m, q] = await Promise.all([
       s.from('prayer_requests').select('id, name, country, body, created_at', { count: 'exact' }).eq('status', 'pending').order('created_at', { ascending: false }).limit(5),
       s.from('contact_messages').select('id, name, subject, message, created_at', { count: 'exact' }).eq('is_read', false).order('created_at', { ascending: false }).limit(5),
+      s.from('faq_submissions').select('id, name, country, question, created_at', { count: 'exact' }).eq('status', 'new').order('created_at', { ascending: false }).limit(5),
     ])
     if (p.error && m.error) return
-    setCounts({ prayers: p.count ?? 0, messages: m.count ?? 0 })
+    setCounts({ prayers: p.count ?? 0, messages: m.count ?? 0, asked: q.error ? 0 : q.count ?? 0 })
     const items: [Alert['kind'], Item][] = [
       ...((p.data ?? []) as { id: string; name: string | null; country: string | null; body: string; created_at: string }[]).map((r) => ['prayer', { id: r.id, name: r.name, detail: [r.country, r.body].filter(Boolean).join(': '), created_at: r.created_at }] as [Alert['kind'], Item]),
+      ...((q.error ? [] : q.data ?? []) as { id: string; name: string | null; country: string | null; question: string; created_at: string }[]).map((r) => ['asked', { id: r.id, name: r.name, detail: [r.country, r.question].filter(Boolean).join(': '), created_at: r.created_at }] as [Alert['kind'], Item]),
       ...((m.data ?? []) as { id: string; name: string; subject: string | null; message: string; created_at: string }[]).map((r) => ['message', { id: r.id, name: r.name, detail: r.subject || r.message, created_at: r.created_at }] as [Alert['kind'], Item]),
     ]
     if (!seen.current) { seen.current = new Set(items.map(([k, r]) => `${k}:${r.id}`)); return }
@@ -95,6 +98,7 @@ export function AdminNav({ nav, children }: { nav: [string, string][]; children?
       channel = s.channel('admin-alerts')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'prayer_requests' }, () => load())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_messages' }, () => load())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'faq_submissions' }, () => load())
         .subscribe()
     })
     return () => { alive = false; if (channel) s.removeChannel(channel) }
@@ -108,14 +112,14 @@ export function AdminNav({ nav, children }: { nav: [string, string][]; children?
     return () => clearTimeout(id)
   }, [])
 
-  const total = counts.prayers + counts.messages
+  const total = counts.prayers + counts.messages + counts.asked
   useEffect(() => {
     const base = document.title.replace(/^\(\d+\)\s*/, '')
     document.title = total ? `(${total}) ${base}` : base
   }, [total, path])
 
   const badge = (href: string) => {
-    const n = href === PRAYERS ? counts.prayers : href === MESSAGES ? counts.messages : 0
+    const n = href === PRAYERS ? counts.prayers : href === MESSAGES ? counts.messages : href === ASKED ? counts.asked : 0
     return n > 0 ? <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-[#d93025] px-1.5 text-[12px] font-bold leading-5 text-white" aria-label={`${n} new`}>{n}</span> : null
   }
 
@@ -138,11 +142,11 @@ export function AdminNav({ nav, children }: { nav: [string, string][]; children?
         )}
         {alerts.map((a) => (
           <div key={a.key} role="alert" className="flex gap-3 rounded-xl border-l-4 border-accent bg-surface p-4 text-ink shadow-xl">
-            <span aria-hidden="true" className="text-2xl leading-none">{a.kind === 'prayer' ? '🙏' : '✉️'}</span>
+            <span aria-hidden="true" className="text-2xl leading-none">{a.kind === 'prayer' ? '🙏' : a.kind === 'asked' ? '❓' : '✉️'}</span>
             <div className="flex min-w-0 flex-1 flex-col gap-1">
               <strong>{a.title}</strong>
               <span className="line-clamp-2 text-sm text-muted">{a.body}</span>
-              <Link href={a.href} onClick={() => setAlerts((x) => x.filter((y) => y.key !== a.key))} className="pt-1 text-sm font-semibold">Open {a.kind === 'prayer' ? 'prayer requests' : 'messages'} →</Link>
+              <Link href={a.href} onClick={() => setAlerts((x) => x.filter((y) => y.key !== a.key))} className="pt-1 text-sm font-semibold">Open {a.kind === 'prayer' ? 'prayer requests' : a.kind === 'asked' ? 'asked questions' : 'messages'} →</Link>
             </div>
             <button type="button" onClick={() => setAlerts((x) => x.filter((y) => y.key !== a.key))} className="self-start text-muted" aria-label="Dismiss">✕</button>
           </div>

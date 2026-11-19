@@ -305,3 +305,51 @@ export async function seedDioceses(country: string) {
   refresh(['churches', 'content'])
   redirect(`/admin/dioceses?seeded=${added}&updated=${updated}&failed=${failed}`)
 }
+
+// ---------------- Questions & Answers / Quiz ----------------
+/** Marks a visitor's question as answered and opens a new answer with the question filled in. */
+export async function answerSubmission(id: string, question: string) {
+  const { db } = await requireAdmin()
+  await db.from('faq_submissions').update({ status: 'answered' }).eq('id', id)
+  redirect(`/admin/faqs/new?question=${encodeURIComponent(question)}`)
+}
+
+export async function setSubmissionStatus(id: string, status: 'new' | 'ignored') {
+  const { db } = await requireAdmin()
+  await db.from('faq_submissions').update({ status }).eq('id', id)
+  refreshPage()
+}
+
+export async function deleteSubmission(id: string) {
+  const { db } = await requireAdmin()
+  await db.from('faq_submissions').delete().eq('id', id)
+  refreshPage()
+}
+
+/** Adds the starter questions that are not in the database yet. Nothing already saved is changed. */
+export async function loadStarter(kind: 'faqs' | 'quiz') {
+  const { db } = await requireAdmin()
+  const { loadStarterFaqs, loadStarterQuiz } = await import('@/lib/faith')
+  let added = 0
+  if (kind === 'faqs') {
+    const starter = await loadStarterFaqs()
+    const { data } = await db.from('faqs').select('slug')
+    const have = new Set((data ?? []).map((r) => r.slug as string))
+    const rows = starter.filter((f) => !have.has(f.slug)).map((f) => ({ ...f, needs_review: true, status: 'published', published_at: new Date().toISOString() }))
+    for (let i = 0; i < rows.length; i += 100) {
+      const { error } = await db.from('faqs').insert(rows.slice(i, i + 100))
+      if (!error) added += rows.slice(i, i + 100).length
+    }
+  } else {
+    const starter = await loadStarterQuiz()
+    const { data } = await db.from('quiz_questions').select('question')
+    const have = new Set((data ?? []).map((r) => (r.question as string).toLowerCase()))
+    const rows = starter.filter((q) => !have.has(q.question.toLowerCase())).map((q) => ({ ...q, needs_review: true, status: 'published' }))
+    for (let i = 0; i < rows.length; i += 100) {
+      const { error } = await db.from('quiz_questions').insert(rows.slice(i, i + 100))
+      if (!error) added += rows.slice(i, i + 100).length
+    }
+  }
+  refresh([kind, 'content'])
+  redirect(`/admin/${kind}?loaded=${added}`)
+}
