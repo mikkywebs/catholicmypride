@@ -90,13 +90,14 @@ export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commo
 
 /** The prayer said several times a day, with a tap counter kept on this device for today. */
 function RepeatPrayer({ id, html, count }: { id: string; html: string; count: number | null }) {
-  const key = `cmp-novena-count:${id}:${localISO()}`
-  const stored = useClientValue(() => Number(localStorage.getItem(key) || 0), 0)
+  // Read the date only in the browser (the count belongs to the visitor's own day).
+  const key = () => `cmp-novena-count:${id}:${localISO()}`
+  const stored = useClientValue(() => Number(localStorage.getItem(key()) || 0), 0)
   const [tapped, setTapped] = useState<number | null>(null)
   const n = tapped ?? stored
   const set = (v: number) => {
     setTapped(v)
-    try { localStorage.setItem(key, String(v)) } catch { /* private browsing */ }
+    try { localStorage.setItem(key(), String(v)) } catch { /* private browsing */ }
   }
   const done = count !== null && n >= count
   const groups = count ? Math.ceil(count / 5) : 0
@@ -106,12 +107,18 @@ function RepeatPrayer({ id, html, count }: { id: string; html: string; count: nu
       <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: html }} />
       {count && (
         <>
-          <div className="flex flex-wrap gap-x-5 gap-y-2" role="img" aria-label={`${Math.min(n, count)} of ${count} prayed`}>
+          {/* Each circle can be tapped: it sets the count to that number; tapping the last filled one empties it. */}
+          <div className="flex flex-wrap gap-x-4 gap-y-1" role="group" aria-label={`${Math.min(n, count)} of ${count} prayed. Tap a circle to set the count.`}>
             {Array.from({ length: groups }, (_, g) => (
-              <span key={g} className="flex gap-1.5">
+              <span key={g} className="flex">
                 {Array.from({ length: Math.min(5, count - g * 5) }, (_, i) => {
                   const k = g * 5 + i + 1
-                  return <span key={k} className={`size-4 rounded-full ${k <= n ? 'bg-accent' : 'border-2 border-[#d9b38c]'}`} />
+                  return (
+                    <button key={k} type="button" onClick={() => set(k === n ? k - 1 : k)} aria-label={`Prayer ${k}`} aria-pressed={k <= n}
+                      className="flex size-10 items-center justify-center rounded-full sm:size-9">
+                      <span className={`size-6 rounded-full transition-colors sm:size-5 ${k <= n ? 'bg-accent' : 'border-2 border-[#d9b38c] bg-surface hover:border-accent'}`} />
+                    </button>
+                  )
                 })}
               </span>
             ))}
@@ -124,7 +131,7 @@ function RepeatPrayer({ id, html, count }: { id: string; html: string; count: nu
             </button>
           )}
           {n > 0 && <button type="button" onClick={() => set(0)} className="self-start text-sm text-muted underline">Start the count again</button>}
-          {count >= 10 && <p className="m-0 text-sm text-muted">You can split them across the day in {groups} sets of up to 5. Your count is kept on this device until midnight.</p>}
+          <p className="m-0 text-sm text-muted">Tap the button or a circle after each prayer.{count >= 10 && <> You can split them across the day in {groups} sets of up to 5. </>} Your count is kept on this device until midnight.</p>
         </>
       )}
     </section>
