@@ -1,3 +1,4 @@
+import { WhatsAppJoin } from '@/components/whatsapp-join'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
@@ -41,6 +42,7 @@ async function Content({ params }: { params: PageProps<'/daily-prayers/[slug]'>[
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen and pray along" initialSeconds={p.audio_seconds} />}
       <Prose html={md(p.body_md)} />
       <Reactions type="prayer" id={p.slug} kinds={['love', 'amen', 'thumbs']} title="Did you pray along?" />
+      <WhatsAppJoin url={s.whatsapp_channel_url} />
       {dateFromPrayerSlug(p.slug) && (() => {
         const d = dateFromPrayerSlug(p.slug)!
         return (

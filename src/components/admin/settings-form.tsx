@@ -60,6 +60,11 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
       <div className="flex min-w-0 flex-[1_1_420px] flex-col gap-6">
         <section className={card}>
           <h2 className="m-0 text-xl">Social media</h2>
+          <label className="flex flex-col gap-1.5 rounded-xl bg-[#25D366]/10 p-3 text-sm font-semibold">
+            <span className="flex items-center gap-2"><BrandIcon icon={BRANDS.whatsapp} size={16} />WhatsApp Channel link</span>
+            <input name="whatsapp_channel_url" type="url" defaultValue={s.whatsapp_channel_url ?? ''} placeholder="https://whatsapp.com/channel/..." className={input} />
+            <span className="text-[13px] font-normal text-muted">In WhatsApp: open your channel → tap its name → Share → Copy link. A &ldquo;Join our WhatsApp Channel&rdquo; box then appears after every post, reading, saint and prayer.</span>
+          </label>
           <p className="m-0 text-sm text-muted">Leave a box empty and that icon won&apos;t appear anywhere on the site.</p>
           {([['youtube_url', 'YouTube', BRANDS.youtube], ['facebook_url', 'Facebook', BRANDS.facebook], ['tiktok_url', 'TikTok', BRANDS.tiktok], ['x_url', 'X (Twitter)', BRANDS.x]] as const).map(([n, l, icon]) => (
             <label key={n} className="flex flex-col gap-1.5 text-sm font-semibold">

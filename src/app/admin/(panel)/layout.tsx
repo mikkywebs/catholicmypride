@@ -8,7 +8,7 @@ import { ensureUpcomingPrayers, ensureUpcomingReadings, ensureUpcomingSaints } f
 const NAV: [string, string][] = [
   ['Dashboard', '/admin'], ['Blog', '/admin/posts'], ['Novenas', '/admin/novenas'], ['Daily Prayers', '/admin/prayers'], ['Chaplets', '/admin/chaplets'],
   ['Mass Readings', '/admin/readings'], ['Saints', '/admin/saints'], ['Music & Audio', '/admin/songs'], ['Ebooks', '/admin/books'],
-  ['Dioceses', '/admin/dioceses'], ['Parishes', '/admin/churches'], ['Countries & Provinces', '/admin/regions'], ['Prayer Requests', '/admin/prayer-requests'], ['Messages', '/admin/messages'],
+  ['Dioceses', '/admin/dioceses'], ['Parishes', '/admin/churches'], ['Countries & Provinces', '/admin/regions'], ['Prayer Requests', '/admin/prayer-requests'], ['Messages', '/admin/messages'], ['WhatsApp Briefing', '/admin/whatsapp'],
   ['Categories', '/admin/categories'], ['Settings', '/admin/settings'],
 ]
 

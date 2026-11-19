@@ -1,3 +1,4 @@
+import { WhatsAppJoin } from '@/components/whatsapp-join'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -74,6 +75,7 @@ async function Content({ params }: { params: PageProps<'/music/[slug]'>['params'
           />
         </div>
       </div>
+      <WhatsAppJoin url={s.whatsapp_channel_url} />
       <section className="reveal flex flex-col items-center gap-3 rounded-2xl border border-eyebrow px-7 py-9 text-center">
         <h2 className="m-0 font-serif text-[34px] font-semibold">{isSong ? 'Blessed by this song?' : 'Blessed by this message?'}</h2>
         <p className="m-0 max-w-[560px] text-muted">Your support helps us create more hymns, messages and prayers, and share the faith with families everywhere.</p>

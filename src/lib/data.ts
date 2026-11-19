@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS: Settings = {
   hero_title: "Spreading the Gospel, sharing Christ's love",
   hero_subtitle: 'Prayers, novenas, Scripture reflections and hymns for every day of the Church year.',
   about_image_url: null,
-  default_reading_image: null, default_reading_alt: null, default_prayer_image: null, default_prayer_alt: null,
+  default_reading_image: null, default_reading_alt: null, default_prayer_image: null, default_prayer_alt: null, whatsapp_channel_url: null,
   about_story_title: null,
   about_story_md: null,
   contact_email: 'cmpapostolate@gmail.com',

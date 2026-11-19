@@ -223,7 +223,7 @@ const SETTING_KEYS = [
   'about_image_url', 'about_story_title', 'about_story_md', 'contact_email', 'contact_phone', 'contact_address',
   'youtube_url', 'facebook_url', 'tiktok_url', 'x_url', 'donate_url',
   'bank_account_name', 'bank_name', 'bank_account_number', 'donate_needs_md',
-  'default_reading_image', 'default_reading_alt', 'default_prayer_image', 'default_prayer_alt',
+  'default_reading_image', 'default_reading_alt', 'default_prayer_image', 'default_prayer_alt', 'whatsapp_channel_url',
 ] as const
 const MUSIC_FALLBACKS = ['songs', 'audio', 'all', 'none']
 

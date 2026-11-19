@@ -1,3 +1,4 @@
+import { WhatsAppJoin } from '@/components/whatsapp-join'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
@@ -45,6 +46,7 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
       <Featured src={n.featured_image} alt={n.image_alt} priority />
       <ShareBar title={n.title} />
       <NovenaDays novenaId={n.id} days={days} startISO={start} commonHtml={md(n.common_prayers_md)} initial={initial} />
+      <WhatsAppJoin url={s.whatsapp_channel_url} />
       {upcoming.length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">More novenas</h2>

@@ -1,3 +1,4 @@
+import { WhatsAppJoin } from './whatsapp-join'
 import Link from 'next/link'
 import { JsonLd, articleLd } from './article-bits'
 import { Reactions, ShareBar, ViewCount } from './engage'
@@ -81,6 +82,7 @@ export function ReadingView({ r, s }: { r: Reading; s: Settings }) {
         </section>
       )}
       <Reactions type="reading" id={r.date} kinds={['love', 'amen', 'thumbs']} title="Did today’s Word speak to you?" />
+      <WhatsAppJoin url={s.whatsapp_channel_url} />
       <nav aria-label="Other days" className="flex flex-wrap justify-between gap-3.5 border-t border-line pt-5">
         <Link href={`/mass-readings/${addDays(r.date, -1)}`} className="flex flex-col py-1.5 text-ink no-underline"><span className="text-[13px] text-muted">← Previous day</span><span className="font-semibold">{formatLong(addDays(r.date, -1))}</span></Link>
         <Link href={`/mass-readings/${addDays(r.date, 1)}`} className="flex flex-col items-end py-1.5 text-ink no-underline"><span className="text-[13px] text-muted">Next day →</span><span className="font-semibold">{formatLong(addDays(r.date, 1))}</span></Link>

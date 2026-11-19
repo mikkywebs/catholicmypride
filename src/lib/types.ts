@@ -9,6 +9,7 @@ export type Settings = {
   about_image_url: string | null
   default_reading_image?: string | null; default_reading_alt?: string | null
   default_prayer_image?: string | null; default_prayer_alt?: string | null
+  whatsapp_channel_url?: string | null
   about_story_title: string | null
   about_story_md: string | null
   contact_email: string | null

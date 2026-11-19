@@ -13,6 +13,7 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
     { name: 'Facebook', url: s.facebook_url, icon: BRANDS.facebook },
     { name: 'TikTok', url: s.tiktok_url, icon: BRANDS.tiktok },
     { name: 'X', url: s.x_url, icon: BRANDS.x },
+    { name: 'WhatsApp Channel', url: s.whatsapp_channel_url ?? null, icon: BRANDS.whatsapp },
   ].filter((x) => x.url)
   const extras = (Array.isArray(s.extra_social) ? s.extra_social : []).filter((x) => x?.url).map((x) => {
     const p = detectPlatform(x.url)

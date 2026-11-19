@@ -1,3 +1,4 @@
+import { WhatsAppJoin } from '@/components/whatsapp-join'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -56,6 +57,7 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       <Prose html={md(p.body_md)} />
       {p.tags.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Tags">{p.tags.map((t) => <Chip key={t}>{t}</Chip>)}</div>}
       <Reactions type="post" id={p.id} kinds={['love', 'amen', 'thumbs']} title="Did this bless you?" />
+      <WhatsAppJoin url={s.whatsapp_channel_url} />
       <div className="flex flex-col gap-2 border-t border-line pt-4"><strong>Found this helpful? Share it.</strong><ShareBar title={p.title} /></div>
       {related.length > 0 && (
         <section className="reveal flex flex-col gap-4 pt-3">
