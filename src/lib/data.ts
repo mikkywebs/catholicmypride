@@ -1,4 +1,5 @@
 import 'server-only'
+import { SITE_TIME_ZONE } from './liturgical'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
 import { lectionaryReading } from './lectionary'
@@ -158,7 +159,7 @@ export async function getRecentReadings(limit = 14): Promise<Pick<Reading, 'date
   cacheTag('readings')
   const db = publicClient()
   if (!db) return []
-  const today = new Intl.DateTimeFormat('en-CA', { timeZone: process.env.SITE_TIMEZONE || 'Africa/Lagos' }).format(new Date())
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: SITE_TIME_ZONE }).format(new Date())
   const { data } = await db.from('readings').select('date, title, gospel_ref').lte('date', today).order('date', { ascending: false }).limit(limit)
   // Fill the days the admin has not saved from the lectionary, so the list never has gaps.
   const saved = new Map((data ?? []).map((r) => [r.date as string, r]))

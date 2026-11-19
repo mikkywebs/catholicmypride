@@ -26,7 +26,7 @@ export default async function Page() {
     { label: 'Catholic teachings', href: flags.blog ? '/blog' : null },
     { label: 'Prayers & novenas', href: flags.novenas ? '/novenas' : flags.prayers ? '/daily-prayers' : null },
     { label: 'Scripture reflections', href: flags.readings ? '/mass-readings' : null },
-    { label: 'Hymns & songs', href: flags.songs ? '/music' : null },
+    { label: 'Hymns & songs', href: flags.songs ? '/audio' : null },
     { label: 'Devotional content', href: flags.chaplets ? '/chaplets' : null },
   ]
 

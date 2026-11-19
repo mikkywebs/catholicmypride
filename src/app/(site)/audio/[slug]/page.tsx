@@ -16,21 +16,21 @@ import { isYouTubeUrl } from '@/lib/text'
 const SONG_REACTIONS: Kind[] = ['love', 'wow', 'awesome', 'emotional']
 const AUDIO_REACTIONS: Kind[] = ['love', 'amen', 'thumbs']
 
-export async function generateMetadata({ params }: PageProps<'/music/[slug]'>): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<'/audio/[slug]'>): Promise<Metadata> {
   const { slug } = await params
   const s = await getSong(slug)
   if (!s) return {}
   const isSong = s.kind !== 'audio'
   const title = s.seo_title || `${s.title} (${isSong ? 'Catholic Song' : 'Catholic Audio'})`
   const description = s.seo_description || s.about || `Listen to ${s.title} by Catholic My Pride.`
-  return { title, description, alternates: { canonical: `/music/${slug}` }, openGraph: { title, description, type: isSong ? 'music.song' : 'website', images: s.featured_image ? [s.featured_image] : undefined } }
+  return { title, description, alternates: { canonical: `/audio/${slug}` }, openGraph: { title, description, type: isSong ? 'music.song' : 'website', images: s.featured_image ? [s.featured_image] : undefined } }
 }
 
-export default function Page(props: PageProps<'/music/[slug]'>) {
+export default function Page(props: PageProps<'/audio/[slug]'>) {
   return <Suspense fallback={<div className="h-96" />}><Content params={props.params} /></Suspense>
 }
 
-async function Content({ params }: { params: PageProps<'/music/[slug]'>['params'] }) {
+async function Content({ params }: { params: PageProps<'/audio/[slug]'>['params'] }) {
   const { slug } = await params
   const [song, s, all] = await Promise.all([getSong(slug), getSettings(), getSongs(60)])
   if (!song) notFound()
@@ -44,9 +44,9 @@ async function Content({ params }: { params: PageProps<'/music/[slug]'>['params'
   return (
     <div className="mx-auto flex max-w-[1100px] flex-col gap-10 px-6 pb-[72px] pt-8">
       <JsonLd data={isSong
-        ? { '@context': 'https://schema.org', '@type': 'MusicRecording', name: song.title, url: `${SITE_URL}/music/${slug}`, byArtist: { '@type': 'MusicGroup', name: 'Catholic My Pride' }, image: song.featured_image ?? undefined, sameAs: youtube ?? undefined }
-        : { '@context': 'https://schema.org', '@type': 'AudioObject', name: song.title, url: `${SITE_URL}/music/${slug}`, contentUrl: song.audio_url ?? undefined, description: song.about ?? undefined, image: song.featured_image ?? undefined, sameAs: youtube ?? undefined }} />
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Music & Audio', href: '/music' }, { label: song.title }]} />
+        ? { '@context': 'https://schema.org', '@type': 'MusicRecording', name: song.title, url: `${SITE_URL}/audio/${slug}`, byArtist: { '@type': 'MusicGroup', name: 'Catholic My Pride' }, image: song.featured_image ?? undefined, sameAs: youtube ?? undefined }
+        : { '@context': 'https://schema.org', '@type': 'AudioObject', name: song.title, url: `${SITE_URL}/audio/${slug}`, contentUrl: song.audio_url ?? undefined, description: song.about ?? undefined, image: song.featured_image ?? undefined, sameAs: youtube ?? undefined }} />
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Music & Audio', href: '/audio' }, { label: song.title }]} />
       <div className="flex flex-wrap items-start gap-8 lg:gap-12">
         <div className="w-full max-w-[380px] flex-[0_1_380px] max-md:mx-auto">
           <Portrait src={song.featured_image} alt={song.image_alt} priority />
@@ -86,7 +86,7 @@ async function Content({ params }: { params: PageProps<'/music/[slug]'>['params'
           <h2 className="m-0 border-b border-line pb-3 font-serif text-[34px] font-semibold">{isSong ? 'Related songs' : 'More audio messages'}</h2>
           <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(180px,1fr))]">
             {more.map((r) => (
-              <Link key={r.id} href={`/music/${r.slug}`} className="flex flex-col gap-2 text-ink no-underline">
+              <Link key={r.id} href={`/audio/${r.slug}`} className="flex flex-col gap-2 text-ink no-underline">
                 <Portrait src={r.featured_image} alt={r.image_alt} sizes="240px" />
                 <span className="font-serif text-[21px] font-semibold leading-tight">{r.title}</span>
                 <span className="text-sm text-muted">{[r.category?.name, duration(r.duration_seconds)].filter(Boolean).join(' · ')}</span>

@@ -88,8 +88,11 @@ export const VESTMENT_HEX: Record<string, string> = {
   Gold: '#C9A227',
 }
 
-/** Today's date (YYYY-MM-DD) in the site's time zone. */
-export function todayISO(timeZone = process.env.SITE_TIMEZONE || 'Africa/Lagos') {
+/** The site changes day at midnight UTC (London winter time), the same moment for readers everywhere. */
+export const SITE_TIME_ZONE = 'UTC'
+
+/** Today's date (YYYY-MM-DD) for the site. */
+export function todayISO(timeZone = SITE_TIME_ZONE) {
   return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
 }
 

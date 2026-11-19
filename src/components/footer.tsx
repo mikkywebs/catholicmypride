@@ -21,7 +21,7 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
   })
   const resources = [
     flags.blog && { label: 'Blog', href: '/blog' },
-    flags.songs && { label: 'Music & Audio', href: '/music' },
+    flags.songs && { label: 'Music & Audio', href: '/audio' },
     flags.books && { label: 'Ebooks', href: '/ebooks' },
     flags.churches && { label: 'Church Directory', href: '/churches' },
     { label: 'Questions & Answers', href: '/faith-questions' },

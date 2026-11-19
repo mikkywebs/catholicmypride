@@ -1,4 +1,5 @@
 import 'server-only'
+import { SITE_TIME_ZONE } from './liturgical'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { lectionaryFields } from './lectionary'
 import { calendarSaintRow, calendarSaintsFor } from './saints-data'
@@ -11,7 +12,7 @@ const DAYS_AHEAD = 14
  * Never touches a day that already has readings.
  */
 export async function ensureUpcomingReadings(db: SupabaseClient) {
-  const tz = process.env.SITE_TIMEZONE || 'Africa/Lagos'
+  const tz = SITE_TIME_ZONE
   const start = new Date(`${new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date())}T12:00:00Z`)
   const dates = Array.from({ length: DAYS_AHEAD }, (_, i) => {
     const d = new Date(start); d.setUTCDate(d.getUTCDate() + i); return d.toISOString().slice(0, 10)
@@ -39,7 +40,7 @@ export async function ensureUpcomingReadings(db: SupabaseClient) {
  * saved in an earlier year to this year's date. Nothing you wrote is changed.
  */
 export async function ensureUpcomingSaints(db: SupabaseClient) {
-  const tz = process.env.SITE_TIMEZONE || 'Africa/Lagos'
+  const tz = SITE_TIME_ZONE
   const start = new Date(`${new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date())}T12:00:00Z`)
   const today = start.toISOString().slice(0, 10)
   const wanted: { slug: string; date: string }[] = []
@@ -71,7 +72,7 @@ export async function ensureUpcomingSaints(db: SupabaseClient) {
 
 /** Daily prayers for the next two weeks, drawn from each day's readings. Never touches a saved prayer. */
 export async function ensureUpcomingPrayers(db: SupabaseClient) {
-  const tz = process.env.SITE_TIMEZONE || 'Africa/Lagos'
+  const tz = SITE_TIME_ZONE
   const start = new Date(`${new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date())}T12:00:00Z`)
   const dates = Array.from({ length: DAYS_AHEAD }, (_, i) => { const d = new Date(start); d.setUTCDate(d.getUTCDate() + i); return d.toISOString().slice(0, 10) })
   const { data: existing, error } = await db.from('prayers').select('slug').in('slug', dates.map(dailyPrayerSlug))

@@ -7,7 +7,7 @@ import { duration } from '@/lib/format'
 export const metadata: Metadata = {
   title: 'Catholic Songs, Audio Messages and Prayers',
   description: 'Listen to Catholic hymns, devotional songs, audio messages and prayers from Catholic My Pride, organised by category.',
-  alternates: { canonical: '/music' },
+  alternates: { canonical: '/audio' },
 }
 
 export default async function Page() {

@@ -76,7 +76,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
   },
   songs: {
     key: 'songs', table: 'songs', singular: 'song or audio', plural: 'Music & Audio', titleField: 'title', slugFrom: 'title',
-    publicBase: '/music/', publicField: 'slug',
+    publicBase: '/audio/', publicField: 'slug',
     listColumns: [{ field: 'title', label: 'Title' }, { field: 'kind', label: 'Type' }, { field: 'on_bar', label: 'On music bar' }, { field: 'status', label: 'Status' }],
     orderBy: 'created_at', tags: ['songs', 'content'], seo: true, status: true,
     fields: [

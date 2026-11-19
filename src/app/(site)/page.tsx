@@ -211,7 +211,7 @@ async function Songs() {
             <SongRow key={s.id} slug={s.slug} title={s.title} src={s.audio_url} cover={s.featured_image} meta={[s.category?.name, duration(s.duration_seconds)].filter(Boolean).join(' · ')} />
           ))}
         </div>
-        <p className="mb-0 mt-6 text-center"><Link href="/music" className="font-semibold">All songs, messages &amp; prayers →</Link></p>
+        <p className="mb-0 mt-6 text-center"><Link href="/audio" className="font-semibold">All songs, messages &amp; prayers →</Link></p>
       </div>
     </section>
   )

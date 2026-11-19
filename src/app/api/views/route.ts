@@ -2,7 +2,7 @@ import type { NextRequest } from 'next/server'
 import { publicClient } from '@/lib/supabase/public'
 import { getSettings } from '@/lib/data'
 
-// Totals for a list of pages: GET /api/views?p=/music/a&p=/music/b
+// Totals for a list of pages: GET /api/views?p=/audio/a&p=/audio/b
 export async function GET(req: NextRequest) {
   const db = publicClient()
   const paths = req.nextUrl.searchParams.getAll('p').filter((p) => p.startsWith('/') && p.length <= 300).slice(0, 60)

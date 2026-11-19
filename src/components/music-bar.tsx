@@ -154,7 +154,7 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
             {t.cover && <Image src={t.cover} alt="" fill sizes="44px" className="object-cover" />}
           </div>
           <div className="min-w-0">
-            <a href={`/music/${t.slug}`} className="block truncate font-semibold text-navy-ink no-underline">{t.title}</a>
+            <a href={`/audio/${t.slug}`} className="block truncate font-semibold text-navy-ink no-underline">{t.title}</a>
             <div className="text-[13px] text-navy-muted">{prayer ? `${prayer.label}${prayer.blocked ? ' · tap play to pray along' : ''}` : 'Catholic My Pride'}</div>
           </div>
         </div>

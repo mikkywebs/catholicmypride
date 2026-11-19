@@ -28,10 +28,10 @@ export function SongRow({ slug, title, meta, src, cover }: { slug: string; title
         {cover && <Image src={cover} alt="" fill sizes="48px" className="object-cover" />}
       </div>
       <div className="min-w-0 flex-1 basis-52">
-        <a href={`/music/${slug}`} className="font-semibold text-ink no-underline">{title}</a>
-        <div className="flex flex-wrap items-center gap-x-3 text-sm text-muted"><span>{meta}</span><ListViews path={`/music/${slug}`} /></div>
+        <a href={`/audio/${slug}`} className="font-semibold text-ink no-underline">{title}</a>
+        <div className="flex flex-wrap items-center gap-x-3 text-sm text-muted"><span>{meta}</span><ListViews path={`/audio/${slug}`} /></div>
       </div>
-      <a href={`/music/${slug}`} className="inline-flex min-h-10 items-center rounded-md border border-ink px-4 text-[15px] font-semibold text-ink no-underline">Open</a>
+      <a href={`/audio/${slug}`} className="inline-flex min-h-10 items-center rounded-md border border-ink px-4 text-[15px] font-semibold text-ink no-underline">Open</a>
     </div>
   )
 }
