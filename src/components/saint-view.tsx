@@ -7,6 +7,14 @@ import { md, readMinutes } from '@/lib/format'
 import { formatShort } from '@/lib/liturgical'
 import type { Saint, Settings } from '@/lib/types'
 
+/** Heading for the list of recent days: saints, celebrations (solemnities, feasts, events), or both. */
+export function recentHeading(list: Saint[]) {
+  const events = list.filter((w) => w.kind === 'celebration').length
+  if (!events) return 'Recent saints'
+  if (events === list.length) return 'Recent solemnities & feasts'
+  return 'Recent saints & celebrations'
+}
+
 export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Settings; week: Saint[]; others?: Saint[] }) {
   const facts = [
     ['Feast day', saint.feast_label],
@@ -76,12 +84,12 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
       <WhatsAppJoin url={s.whatsapp_channel_url} />
       {week.filter((w) => w.slug !== saint.slug).length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
-          <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">Recent saints</h2>
+          <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">{recentHeading(week.filter((w) => w.slug !== saint.slug).slice(0, 4))}</h2>
           <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))]">
             {week.filter((w) => w.slug !== saint.slug).slice(0, 4).map((w) => (
               <Link key={w.slug} href={`/saint-of-the-day/${w.slug}`} className="flex flex-col gap-1.5 text-ink no-underline">
                 <Portrait src={w.featured_image} alt={w.image_alt} sizes="200px" className="!rounded-xl" />
-                {w.show_on && <span className="text-[13px] font-semibold text-eyebrow">{formatShort(w.show_on)}</span>}
+                {(w.show_on || w.celebration) && <span className="text-[13px] font-semibold text-eyebrow">{[w.show_on && formatShort(w.show_on), w.celebration].filter(Boolean).join(' · ')}</span>}
                 <strong>{w.name}</strong>
               </Link>
             ))}

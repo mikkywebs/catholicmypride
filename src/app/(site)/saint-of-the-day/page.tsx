@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { connection } from 'next/server'
-import { SaintView } from '@/components/saint-view'
+import { SaintView, recentHeading } from '@/components/saint-view'
 import { EmptyState, H1 } from '@/components/ui'
 import { getReading, getSaintForDate, getSaintsAround, getSaintsForDate, getSettings } from '@/lib/data'
 import Link from 'next/link'
@@ -43,9 +43,9 @@ async function Today() {
         </section>
         {week.length > 0 && (
           <section className="flex flex-col gap-3">
-            <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[28px] font-semibold">Recent saints</h2>
+            <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[28px] font-semibold">{recentHeading(week)}</h2>
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
-              {week.map((w) => <li key={w.slug}><Link href={`/saint-of-the-day/${w.slug}`} className="font-semibold">{w.name}</Link>{w.feast_label && <span className="text-muted"> · {w.feast_label}</span>}</li>)}
+              {week.map((w) => <li key={w.slug}><Link href={`/saint-of-the-day/${w.slug}`} className="font-semibold">{w.name}</Link>{[w.feast_label, w.celebration].filter(Boolean).length > 0 && <span className="text-muted"> · {[w.feast_label, w.celebration].filter(Boolean).join(' · ')}</span>}</li>)}
             </ul>
           </section>
         )}
