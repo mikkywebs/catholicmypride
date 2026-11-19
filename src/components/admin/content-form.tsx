@@ -169,23 +169,37 @@ function SlugInput({ initial, from, label, help }: { initial: string; from?: str
   )
 }
 
-function NovenaDaysEditor({ days }: { days: { day: number; title: string | null; prayer_md: string | null; audio_url: string | null; audio_seconds: number | null }[] }) {
-  const [open, setOpen] = useState(1)
+type NovenaDayRow = { day: number; title: string | null; prayer_md: string | null; audio_url: string | null; audio_seconds: number | null }
+
+function NovenaDaysEditor({ days, initialCount }: { days: NovenaDayRow[]; initialCount: number }) {
+  const [open, setOpen] = useState(days.some((d) => d.day === 0) ? 0 : 1)
+  const [count, setCount] = useState(initialCount)
+  const box = useRef<HTMLDivElement>(null)
+  // Follow the “Number of days” box as the admin types.
+  useEffect(() => {
+    const input = box.current?.closest('form')?.querySelector<HTMLInputElement>('input[name="days_count"]')
+    if (!input) return
+    const on = () => setCount(Math.min(40, Math.max(1, Number.parseInt(input.value, 10) || 9)))
+    input.addEventListener('input', on)
+    return () => input.removeEventListener('input', on)
+  }, [])
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="m-0 mt-2 border-t border-line pt-5 text-xl">The nine days</h2>
-      {Array.from({ length: 9 }, (_, i) => i + 1).map((d) => {
+    <div ref={box} className="flex flex-col gap-3">
+      <h2 className="m-0 mt-2 border-t border-line pt-5 text-xl">The {count} days</h2>
+      {Array.from({ length: count + 1 }, (_, i) => i).map((d) => {
         const x = days.find((y) => y.day === d)
         const on = open === d
+        const name = d === 0 ? 'Opening day (optional)' : `Day ${d}`
         return (
           <section key={d} className="overflow-hidden rounded-2xl border border-line bg-surface">
-            <button type="button" onClick={() => setOpen(on ? 0 : d)} aria-expanded={on} className="flex min-h-14 w-full items-center justify-between gap-3 px-5 text-ink">
-              <span className="flex items-center gap-3"><span className="flex size-8 items-center justify-center rounded-full bg-accent-soft font-bold text-eyebrow">{d}</span><strong>Day {d}</strong>{x?.title && <span className="text-sm text-muted">{x.title}</span>}</span>
+            <button type="button" onClick={() => setOpen(on ? -1 : d)} aria-expanded={on} className="flex min-h-14 w-full items-center justify-between gap-3 px-5 text-ink">
+              <span className="flex items-center gap-3"><span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent-soft font-bold text-eyebrow">{d === 0 ? '✦' : d}</span><strong>{name}</strong>{x?.title && <span className="text-sm text-muted">{x.title}</span>}</span>
               <span className="text-sm font-semibold text-accent">{on ? 'Close' : 'Edit'}</span>
             </button>
             <div className={`flex-col gap-3 px-5 pb-5 ${on ? 'flex' : 'hidden'}`}>
+              {d === 0 && <p className="m-0 text-sm text-muted">Prayed the day before Day 1. Leave it empty if this novena has no opening day.</p>}
               <label className="flex flex-col gap-1.5 text-sm font-semibold">Day title / intention<input name={`day${d}_title`} defaultValue={x?.title ?? ''} className={input} /></label>
-              <label className="flex flex-col gap-1.5 text-sm font-semibold">Prayer for this day<textarea name={`day${d}_prayer`} rows={7} defaultValue={x?.prayer_md ?? ''} className={`${input} resize-y font-mono text-[15px]`} /></label>
+              <label className="flex flex-col gap-1.5 text-sm font-semibold">Prayer for this day<textarea name={`day${d}_prayer`} rows={9} defaultValue={x?.prayer_md ?? ''} className={`${input} resize-y font-mono text-[15px]`} /></label>
               <AudioUpload name={`day${d}_audio`} secondsName={`day${d}_seconds`} label="Audio (optional)" initial={x?.audio_url} initialSeconds={x?.audio_seconds} help="No audio? The Listen button simply won't show for this day." />
             </div>
           </section>
@@ -195,7 +209,7 @@ function NovenaDaysEditor({ days }: { days: { day: number; title: string | null;
   )
 }
 
-export function ContentForm({ type, row, cats, action, novenaDays, options = {} }: { type: ContentType; row: Row; cats: Category[]; action: Action; novenaDays?: Parameters<typeof NovenaDaysEditor>[0]['days']; options?: FormOptions }) {
+export function ContentForm({ type, row, cats, action, novenaDays, options = {} }: { type: ContentType; row: Row; cats: Category[]; action: Action; novenaDays?: NovenaDayRow[]; options?: FormOptions }) {
   const [state, formAction, pending] = useActionState<FormState, FormData>(action, null)
   const ref = useRef<HTMLFormElement>(null)
   const seoNames = new Set(['seo_title', 'seo_description', 'focus_keyword', 'keywords', 'noindex', 'status', 'published_at'])
@@ -222,7 +236,7 @@ export function ContentForm({ type, row, cats, action, novenaDays, options = {} 
     <form ref={ref} action={formAction} className="flex flex-wrap items-start gap-6">
       <div className="flex min-w-0 flex-[999_1_620px] flex-col gap-4 rounded-2xl border border-line bg-surface p-6">
         {renderFields(main)}
-        {type.key === 'novenas' && <NovenaDaysEditor days={novenaDays ?? []} />}
+        {type.key === 'novenas' && <NovenaDaysEditor days={novenaDays ?? []} initialCount={Math.min(40, Math.max(1, Number(row.days_count) || 9))} />}
       </div>
       <aside className="flex min-w-0 flex-[1_1_340px] flex-col gap-4 lg:sticky lg:top-4">
         <section className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5">

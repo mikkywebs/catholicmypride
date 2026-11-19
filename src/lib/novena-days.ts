@@ -1,19 +1,32 @@
 import { addDays } from './liturgical'
 import type { Novena } from './types'
 
-/** A novena runs for the 9 days before its feast. */
+/** Number of numbered days (9 unless the admin set another number). */
+export const novenaLength = (n: Pick<Novena, 'days_count'>) => Math.min(40, Math.max(1, n.days_count || 9))
+/** Date of Day 1: the date set by the admin, or 9 days before the feast. */
+export const novenaStart = (n: Pick<Novena, 'start_date' | 'feast_date'>) => n.start_date || addDays(n.feast_date, -9)
+/** Last numbered day. */
+export const novenaEnd = (n: Novena) => addDays(novenaStart(n), novenaLength(n) - 1)
+/** First date anything is prayed (the opening day, if there is one). */
+export const novenaFirstDate = (n: Novena) => (n.has_opening ? addDays(novenaStart(n), -1) : novenaStart(n))
+
+/** Today's day: 0 for the opening day, 1…length, or null when the novena is not running. */
 export function novenaDay(n: Novena, today: string): number | null {
-  const start = addDays(n.feast_date, -9)
-  if (today < start || today > addDays(n.feast_date, -1)) return null
+  if (today < novenaFirstDate(n) || today > novenaEnd(n)) return null
+  const start = novenaStart(n)
+  if (today < start) return 0
   let day = 1
-  for (let d = 1; d <= 9; d++) if (addDays(start, d - 1) <= today) day = d
+  for (let d = 1; d <= novenaLength(n); d++) if (addDays(start, d - 1) <= today) day = d
   return day
 }
 
-/** Novenas being prayed today, the one closest to its feast first. */
+/** “Day 6 of 25” or “Opening day”. */
+export const dayLabel = (n: Novena, day: number) => (day === 0 ? 'Opening day' : `Day ${day} of ${novenaLength(n)}`)
+
+/** Novenas being prayed today, the one ending soonest first. */
 export function activeNovenas(list: Novena[], today: string) {
   return list
     .map((n) => ({ novena: n, day: novenaDay(n, today) }))
     .filter((x): x is { novena: Novena; day: number } => x.day !== null)
-    .sort((a, b) => a.novena.feast_date.localeCompare(b.novena.feast_date))
+    .sort((a, b) => novenaEnd(a.novena).localeCompare(novenaEnd(b.novena)))
 }

@@ -114,6 +114,12 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   if (t.key === 'readings') { row.auto_filled = false; row.needs_check = false }
   if (t.key === 'saints') row.auto_filled = false
   if (t.key === 'prayers') row.auto_filled = false
+  if (t.key === 'novenas') {
+    row.days_count = Math.min(40, Math.max(1, Number(row.days_count) || 9))
+    row.repeat_count = row.repeat_count ? Math.min(100, Math.max(1, Number(row.repeat_count))) : null
+    const opening = String(form.get('day0_prayer') ?? '').trim() || String(form.get('day0_title') ?? '').trim()
+    row.has_opening = Boolean(opening)
+  }
   if (t.key === 'dioceses' && Array.isArray(row.deaneries)) row.deaneries = [...new Set(row.deaneries as string[])]
   if ((t.key === 'dioceses' || t.key === 'regions') && (!row.continent || !row.country)) return { ok: false, message: 'Please choose the continent and country.' }
   if (t.key === 'churches' && !row.diocese_id) return { ok: false, message: 'Please choose the archdiocese or diocese.' }
@@ -128,16 +134,22 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
     return { ok: false, message: `Could not save: ${error.message}` }
   }
 
-  // Novena: nine days are saved alongside the novena.
+  // Novena: its days (and the optional opening day, Day 0) are saved alongside it.
   if (t.key === 'novenas' && data) {
-    const days = Array.from({ length: 9 }, (_, i) => i + 1).map((d) => ({
+    const count = Number(row.days_count)
+    const day = (d: number) => ({
       novena_id: data.id,
       day: d,
       title: String(form.get(`day${d}_title`) ?? '').trim() || null,
       prayer_md: String(form.get(`day${d}_prayer`) ?? '').trim() || null,
       audio_url: String(form.get(`day${d}_audio`) ?? '').trim() || null,
       audio_seconds: Math.round(Number(form.get(`day${d}_seconds`) ?? 0)) || null,
-    }))
+    })
+    const days = Array.from({ length: count }, (_, i) => day(i + 1))
+    if (row.has_opening) days.unshift(day(0))
+    // Remove days beyond the new length, and the opening day if it was emptied.
+    await db.from('novena_days').delete().eq('novena_id', data.id).gt('day', count)
+    if (!row.has_opening) await db.from('novena_days').delete().eq('novena_id', data.id).eq('day', 0)
     const { error: e2 } = await db.from('novena_days').upsert(days)
     if (e2) return { ok: false, message: `Saved the novena, but not its days: ${e2.message}` }
   }

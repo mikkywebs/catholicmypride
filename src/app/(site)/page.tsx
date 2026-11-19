@@ -9,7 +9,7 @@ import { ButtonLink, Cover, Eyebrow, Featured, H2, SectionHead } from '@/compone
 import { getBooks, getDailyPrayer, getHomeImages, getNovenas, getPosts, getPrayers, getReading, getSaintForDate, getSettings, getSongs } from '@/lib/data'
 import { dateLabel, duration } from '@/lib/format'
 import { formatLong, liturgicalInfo, todayISO } from '@/lib/liturgical'
-import { activeNovenas } from '@/lib/novena-days'
+import { activeNovenas, dayLabel, novenaLength } from '@/lib/novena-days'
 import type { Novena } from '@/lib/types'
 
 export default function Home() {
@@ -129,14 +129,22 @@ function NovenaBlock({ running }: { running: { novena: Novena; day: number }[] }
         <div className="flex flex-1 basis-[420px] flex-col gap-3.5 p-8 sm:p-12">
           <p className="m-0 text-[13px] uppercase tracking-[0.2em] text-gold">Novena in progress</p>
           <h2 className="m-0 font-serif text-[42px] font-semibold leading-[1.1]">{novena.title}</h2>
-          <p className="m-0 text-navy-muted">Feast day: {dateLabel(novena.feast_date)} · Today is Day {day} of 9</p>
-          <div role="img" aria-label={`Day ${day} of 9`} className="flex flex-wrap gap-2.5 py-2">
-            {Array.from({ length: 9 }, (_, i) => i + 1).map((n) => (
-              <span key={n} className={`flex size-[38px] items-center justify-center rounded-full text-[15px] font-semibold ${n <= day ? 'bg-gold text-[#1f2430]' : 'border border-[#5b6272] text-navy-muted'}`}>{n}</span>
-            ))}
-          </div>
+          <p className="m-0 text-navy-muted">{novena.feast_name || 'Feast day'}: {dateLabel(novena.feast_date)} · Today: {dayLabel(novena, day)}</p>
+          {novenaLength(novena) <= 12 ? (
+            <div role="img" aria-label={dayLabel(novena, day)} className="flex flex-wrap gap-2.5 py-2">
+              {Array.from({ length: novenaLength(novena) }, (_, i) => i + 1).map((n) => (
+                <span key={n} className={`flex size-[38px] items-center justify-center rounded-full text-[15px] font-semibold ${n <= day ? 'bg-gold text-[#1f2430]' : 'border border-[#5b6272] text-navy-muted'}`}>{n}</span>
+              ))}
+            </div>
+          ) : (
+            // Long novenas (e.g. 25 days): a progress bar instead of 25 circles.
+            <div role="img" aria-label={dayLabel(novena, day)} className="flex flex-col gap-2 py-2">
+              <div className="h-3 overflow-hidden rounded-full bg-[#3a4150]"><div className="h-full rounded-full bg-gold" style={{ width: `${(day / novenaLength(novena)) * 100}%` }} /></div>
+              <span className="text-sm text-navy-muted">{day === 0 ? 'Begins tomorrow with Day 1' : `${novenaLength(novena) - day} days to go`}</span>
+            </div>
+          )}
           <div className="flex flex-wrap gap-3 pt-1.5">
-            <ButtonLink href={`/novenas/${novena.slug}?day=${day}`} variant="gold">Pray Day {day}</ButtonLink>
+            <ButtonLink href={`/novenas/${novena.slug}?day=${day}`} variant="gold">{day === 0 ? 'Pray the opening prayer' : `Pray Day ${day}`}</ButtonLink>
             <Link href="/novenas" className="inline-flex min-h-12 items-center rounded-md border border-navy-ink px-6 font-semibold text-navy-ink no-underline">All novenas</Link>
           </div>
           {others.length > 0 && (
@@ -147,7 +155,7 @@ function NovenaBlock({ running }: { running: { novena: Novena; day: number }[] }
                   <li key={o.novena.id}>
                     <Link href={`/novenas/${o.novena.slug}?day=${o.day}`} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-lg bg-[#2c3240] px-4 py-3 text-navy-ink no-underline hover:bg-[#353c4b]">
                       <span className="font-serif text-[20px] font-semibold">{o.novena.title}</span>
-                      <span className="text-sm text-gold">Day {o.day} of 9 · Pray now →</span>
+                      <span className="text-sm text-gold">{dayLabel(o.novena, o.day)} · Pray now →</span>
                     </Link>
                   </li>
                 ))}
