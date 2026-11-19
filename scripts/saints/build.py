@@ -7,12 +7,13 @@ from part2 import DATA as B
 from part3 import DATA as C
 from part4 import DATA as D
 from part5 import CELEBRATIONS as E
+from part6 import EXTRA as F
 
 SQLITE, OUT = sys.argv[1:3]
 db = sqlite3.connect(SQLITE)
 RANK = {(f'{m:02d}-{d:02d}', code): t for m, d, code, t in db.execute('select feast_month, feast_date, feast_code, feast_type from generalcalendar')}
 LABEL = {'Solemnity': 'Solemnity', 'Feast': 'Feast', 'Feast-Lord': 'Feast', 'Mem': 'Memorial', 'Mem-Mary': 'Memorial', 'OpMem': 'Optional Memorial'}
-ORDER = {'Solemnity': 0, 'Feast': 1, 'Memorial': 2, 'Optional Memorial': 3}
+ORDER = {'Solemnity': 0, 'Feast': 1, 'Memorial': 2, 'Optional Memorial': 3, 'Local Memorial': 4}
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 
@@ -82,6 +83,14 @@ for mmdd, code, name, life, pray in E:
     }
     by_date.setdefault(mmdd, []).append(slug)
     seen.add((mmdd, code))
+for mmdd, name, born, died, patrons, life in F:
+    slug = slugify(name)
+    m, d = int(mmdd[:2]), int(mmdd[3:])
+    saints[slug] = {
+        'name': name, 'date': mmdd, 'feast_label': f'{d} {MONTHS[m - 1]}', 'celebration': 'Local Memorial',
+        'born': born or None, 'died': died or None, 'patronage': patrons, 'life_md': life, 'prayer_md': prayer(name, 'priest'),
+    }
+    by_date.setdefault(mmdd, []).append(slug)
 for k in by_date:
     by_date[k].sort(key=lambda s: ORDER[saints[s]['celebration']])
 skipped = sorted(k for k in RANK if k not in seen)

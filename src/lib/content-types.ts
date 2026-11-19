@@ -155,7 +155,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'name', label: "Saint's name", type: 'text', required: true },
       { name: 'slug', label: 'Web address (slug)', type: 'text', required: true },
       { name: 'show_on', label: 'Show as Saint of the Day on', type: 'date', half: true },
-      { name: 'celebration', label: 'Celebration', type: 'select', options: ['Solemnity', 'Feast', 'Memorial', 'Optional Memorial'], half: true, empty: '—' },
+      { name: 'celebration', label: 'Celebration', type: 'select', options: ['Solemnity', 'Feast', 'Memorial', 'Optional Memorial', 'Local Memorial'], half: true, empty: '—' },
       { name: 'featured_image', label: 'Featured image (portrait 4:5, like Instagram)', type: 'image', shape: '4:5', altField: 'image_alt' },
       { name: 'feast_label', label: 'Feast day', type: 'text', placeholder: 'e.g. 14 November' },
       { name: 'born', label: 'Born', type: 'text', half: true },

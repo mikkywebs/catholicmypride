@@ -11,7 +11,7 @@ type File = { saints: Record<string, Entry>; byDate: Record<string, string[]> }
 let file: Promise<File> | null = null
 const load = () => (file ??= readFile(path.join(process.cwd(), 'data', 'saints', 'saints.json'), 'utf8').then((t) => JSON.parse(t) as File).catch((): File => ({ saints: {}, byDate: {} })))
 
-export const CELEBRATION_ORDER: Record<string, number> = { Solemnity: 0, Feast: 1, Memorial: 2, 'Optional Memorial': 3 }
+export const CELEBRATION_ORDER: Record<string, number> = { Solemnity: 0, Feast: 1, Memorial: 2, 'Optional Memorial': 3, 'Local Memorial': 4 }
 
 function toSaint(slug: string, e: Entry, year: number): Saint {
   return {
