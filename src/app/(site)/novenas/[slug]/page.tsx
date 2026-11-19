@@ -9,7 +9,7 @@ import { NovenaDays } from '@/components/novena-days'
 import { Breadcrumb, Featured } from '@/components/ui'
 import { getNovena, getNovenas, getSettings } from '@/lib/data'
 import { dateLabel, md } from '@/lib/format'
-import { currentCycle, novenaEnd, novenaFirstDate, novenaLength, novenaStart } from '@/lib/novena-days'
+import { currentCycle, nextRoundStart, novenaEnd, novenaFirstDate, novenaLength, novenaStart } from '@/lib/novena-days'
 import { todayISO } from '@/lib/liturgical'
 
 export async function generateMetadata({ params }: PageProps<'/novenas/[slug]'>): Promise<Metadata> {
@@ -50,6 +50,17 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
         <h1 className="m-0 font-serif text-[40px] font-semibold leading-[1.1] sm:text-[52px]">{n.title}</h1>
         <div className="flex flex-wrap justify-center gap-x-4 text-[15px] text-muted"><span>{length} days · {dateLabel(novenaFirstDate(n))} – {dateLabel(novenaEnd(n))}</span><ViewCount section="Novenas" threshold={s.view_threshold} /></div>
       </div>
+      {today === n.feast_date ? (
+        <p role="status" className="m-0 rounded-2xl bg-accent-soft px-6 py-4 text-center text-[17px] font-semibold text-eyebrow">
+          🎉 Today we celebrate {n.feast_name ? n.feast_name.replace(/^The /, 'the ') : 'the feast'}! Thank you for praying the novena with us.
+        </p>
+      ) : today > novenaEnd(n) && (
+        <p role="status" className="m-0 rounded-2xl border border-line bg-surface px-6 py-4 text-center text-muted">
+          {n.repeats_yearly
+            ? <>This novena has ended for this year. It returns on <strong className="text-ink">{dateLabel(nextRoundStart(n))}</strong>. You can still pray any day below.</>
+            : <>This novena has ended. You can still pray any day below.</>}
+        </p>
+      )}
       <Featured src={n.featured_image} alt={n.image_alt} priority />
       <ShareBar title={n.title} />
       {n.intro_md && <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: md(n.intro_md) }} />}
