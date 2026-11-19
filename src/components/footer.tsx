@@ -26,8 +26,6 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
     flags.churches && { label: 'Church Directory', href: '/churches' },
     { label: 'Questions & Answers', href: '/faith-questions' },
     { label: 'Holy Rosary', href: '/rosary' },
-    { label: 'Quiz Time', href: '/quiz' },
-    { label: 'Write for Us', href: '/write-for-us' },
   ].filter(Boolean) as { label: string; href: string }[]
   const col = 'flex flex-1 basis-40 flex-col gap-1.5'
   const head = 'pb-1 text-[13px] font-semibold uppercase tracking-[0.12em] text-ink'
@@ -75,6 +73,8 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
             <Link href="/contact" className={a}>Contact us</Link>
             <Link href="/prayer-requests" className={a}>Prayer Requests</Link>
             {flags.saints && <Link href="/saint-of-the-day" className={a}>Saint of the Day</Link>}
+            <Link href="/quiz" className={a}>Quiz Time</Link>
+            <Link href="/write-for-us" className={a}>Write for Us</Link>
           </nav>
           {resources.length > 0 && (
             <nav aria-label="Resources" className={col}>
