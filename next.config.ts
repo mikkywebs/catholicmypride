@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   // Daily Mass readings data, read from disk by the server.
   outputFileTracingIncludes: { '/**': ['./data/lectionary/**/*.json', './data/saints/**/*.json', './data/faith/**/*.json'] },
+  // The two Advent novenas first had the year in their address; old links still work.
+  async redirects() {
+    return [
+      { source: '/novenas/saint-andrew-christmas-novena-2026', destination: '/novenas/saint-andrew-christmas-novena', permanent: true },
+      { source: '/novenas/novena-immaculate-conception-2026', destination: '/novenas/novena-immaculate-conception', permanent: true },
+    ]
+  },
   env: { NEXT_PUBLIC_BUILD_YEAR: String(new Date().getFullYear()) },
   images: {
     remotePatterns: [

@@ -9,14 +9,17 @@ import { NovenaDays } from '@/components/novena-days'
 import { Breadcrumb, Featured } from '@/components/ui'
 import { getNovena, getNovenas, getSettings } from '@/lib/data'
 import { dateLabel, md } from '@/lib/format'
-import { novenaEnd, novenaFirstDate, novenaLength, novenaStart } from '@/lib/novena-days'
+import { currentCycle, novenaEnd, novenaFirstDate, novenaLength, novenaStart } from '@/lib/novena-days'
+import { todayISO } from '@/lib/liturgical'
 
 export async function generateMetadata({ params }: PageProps<'/novenas/[slug]'>): Promise<Metadata> {
   const { slug } = await params
   const n = await getNovena(slug)
   if (!n) return {}
   const title = n.seo_title || `${n.title}: ${novenaLength(n)} Days of Prayer`
-  const description = n.seo_description || `Pray the ${n.title} from ${dateLabel(novenaFirstDate(n))} to ${dateLabel(novenaEnd(n))}, with a prayer for each day.`
+  // Yearly novenas: dates without the year, so the description stays true every year.
+  const when = (iso: string) => (n.repeats_yearly ? dateLabel(iso).replace(/ \d{4}$/, '') : dateLabel(iso))
+  const description = n.seo_description || `Pray the ${n.title} from ${when(novenaFirstDate(n))} to ${when(novenaEnd(n))}, with a prayer for each day.`
   return { title, description, alternates: { canonical: `/novenas/${slug}` }, openGraph: { title, description, images: n.featured_image ? [n.featured_image] : undefined } }
 }
 
@@ -27,14 +30,17 @@ export default function Page(props: PageProps<'/novenas/[slug]'>) {
 async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
   const { slug } = await params
   const sp = await searchParams
-  const [n, s, all] = await Promise.all([getNovena(slug), getSettings(), getNovenas()])
-  if (!n) notFound()
+  const [found, s, list] = await Promise.all([getNovena(slug), getSettings(), getNovenas()])
+  if (!found) notFound()
+  const today = todayISO()
+  const n = currentCycle(found, today)
+  const all = list.map((x) => currentCycle(x, today)).sort((a, b) => novenaFirstDate(a).localeCompare(novenaFirstDate(b)))
   const start = novenaStart(n)
   const length = novenaLength(n)
   const dayParam = typeof sp.day === 'string' && sp.day !== '' ? Number(sp.day) : NaN
   const initial = Number.isInteger(dayParam) && dayParam >= (n.has_opening ? 0 : 1) && dayParam <= length ? dayParam : null
   const days = (n.days ?? []).map((d) => ({ day: d.day, title: d.title, html: md(d.prayer_md), audio_url: d.audio_url, audio_seconds: d.audio_seconds }))
-  const upcoming = all.filter((x) => x.id !== n.id).slice(0, 3)
+  const upcoming = all.filter((x) => x.id !== n.id && novenaEnd(x) >= today).slice(0, 3)
   return (
     <div className="mx-auto flex max-w-[820px] flex-col gap-6 px-6 pb-[72px] pt-8">
       <JsonLd data={articleLd({ title: n.title, description: n.seo_description, image: n.featured_image, path: `/novenas/${slug}`, published: novenaFirstDate(n) })} />

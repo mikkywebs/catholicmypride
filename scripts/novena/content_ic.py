@@ -1,24 +1,25 @@
-# Novena to the Immaculate Conception 2026, Catholic My Pride.
+# Novena to the Immaculate Conception, Catholic My Pride.
 # Each day: (title, (book file, display name, chapter, first verse, last verse or None, text override or None), reflection, prayer).
 
-TITLE = 'Novena to the Immaculate Conception 2026'
-SLUG = 'novena-immaculate-conception-2026'
+TITLE = 'Novena to the Immaculate Conception'
+SLUG = 'novena-immaculate-conception'
+OLD_SLUG = 'novena-immaculate-conception-2026'
 FEAST_NAME = 'The Immaculate Conception'
 FEAST_DATE = '2026-12-08'
 START = None          # 9 days before the feast: 29 November – 7 December
 DAYS = 9
 HAS_OPENING = False
 REPEAT_COUNT = 3
-SEO_TITLE = 'Novena to the Immaculate Conception 2026: 29 November – 7 December'
-SEO_DESC = 'Pray the Novena to the Immaculate Conception with Catholic My Pride from 29 November to 7 December 2026, with Scripture, a reflection and a prayer for each of the nine days.'
+SEO_TITLE = 'Novena to the Immaculate Conception: 29 November – 7 December'
+SEO_DESC = 'Pray the Novena to the Immaculate Conception with Catholic My Pride every year from 29 November to 7 December, with Scripture, a reflection and a prayer for each of the nine days.'
 
 INTRO = """**Nine days with Mary, conceived without sin**
 
 On **8 December** the Church celebrates the Solemnity of the Immaculate Conception: from the first moment of her life, by a unique grace of God and in view of the merits of Jesus Christ, the Virgin Mary was preserved from every stain of original sin. Pope Pius IX proclaimed this dogma in 1854, and four years later Our Lady told Saint Bernadette at Lourdes, *“I am the Immaculate Conception.”*
 
-Pray with the Catholic My Pride family for nine days, from **Sunday 29 November** (the First Sunday of Advent) to **Monday 7 December**, in preparation for the feast. In many countries 8 December is a holy day of obligation; check with your parish for Mass times.
+Pray with the Catholic My Pride family for nine days, from **29 November** to **7 December**, in preparation for the feast. In many countries 8 December is a holy day of obligation; check with your parish for Mass times.
 
-This novena runs alongside our [Saint Andrew Christmas Novena](/novenas/saint-andrew-christmas-novena-2026), and you are welcome to pray both.
+This novena runs alongside our [Saint Andrew Christmas Novena](/novenas/saint-andrew-christmas-novena), and you are welcome to pray both.
 
 **How to pray each day**
 
@@ -48,7 +49,7 @@ Remember, O most gracious Virgin Mary, that never was it known that anyone who f
 
 INVITATION = """💙 PRAY THE NOVENA TO THE IMMACULATE CONCEPTION WITH CATHOLIC MY PRIDE!
 
-From Sunday 29 November to Monday 7 December 2026, join us for nine days of prayer with Mary, in preparation for the Solemnity of the Immaculate Conception on 8 December.
+From 29 November to 7 December, join us for nine days of prayer with Mary, in preparation for the Solemnity of the Immaculate Conception on 8 December.
 
 📖 A Scripture passage and reflection each day
 🙏 A daily prayer, three Hail Marys and the Memorare
@@ -59,13 +60,13 @@ Write your prayer intentions in the comments, and let us pray for one another!
 O Mary, conceived without sin, pray for us who have recourse to thee.
 
 CATHOLIC MY PRIDE
-🌐 www.catholicmypride.org/novenas/novena-immaculate-conception-2026"""
+🌐 www.catholicmypride.org/novenas/novena-immaculate-conception"""
 
 OPENING = None
 
 DAY = [
-('Chosen from Eternity · First Sunday of Advent', ('Ephesians', 'Ephesians', 1, 4, None, None),
-"Long before Mary was born, God had her in His plan. Saint Paul says that God chose us in Christ “before the foundation of the world” to be holy and unspotted. What God desires for every one of us, He brought about fully in Mary from her very first moment. As Advent begins today, we start this novena by thanking God for His eternal love, for Mary, and for us.",
+('Chosen from Eternity', ('Ephesians', 'Ephesians', 1, 4, None, None),
+"Long before Mary was born, God had her in His plan. Saint Paul says that God chose us in Christ “before the foundation of the world” to be holy and unspotted. What God desires for every one of us, He brought about fully in Mary from her very first moment. As Advent begins, we start this novena by thanking God for His eternal love, for Mary, and for us.",
 "Eternal Father, before the world began You chose Mary to be the spotless Mother of Your Son. You have chosen each of us too, to be holy in Your sight. As we begin this novena and this Advent, open our hearts to Your plan for our lives. Immaculate Mary, pray for us. Amen."),
 ('The Promise in the Garden', ('Genesis', 'Genesis', 3, 15, None, None),
 "Right after the first sin, God made a promise: there would be enmity between the serpent and the woman, and her offspring would crush the serpent’s head. The Church has always seen in this “first Gospel” Christ, the Saviour, and Mary, His Mother, who was never under the power of sin. The story of our salvation begins with a promise of hope, and God kept His word.",
@@ -85,10 +86,10 @@ DAY = [
 ('Purity of Heart', ('Matthew', 'Matthew', 5, 8, None, None),
 "Jesus promises that the clean of heart shall see God. Mary, the purest of all creatures, sees God most clearly. Purity of heart is not only about chastity, though it includes it; it means an undivided heart that seeks God above all. Today we ask Mary to help us, and especially young people, to keep our hearts pure in a world full of distractions.",
 "Immaculate Mother, most pure Virgin, obtain for us clean hearts. Protect our eyes, our minds and our bodies from all that would stain them. Help young people to value purity and to live it with joy. Give us undivided hearts that seek God above all things, so that one day we may see Him. Amen."),
-('Behold Thy Mother · Second Sunday of Advent', ('John', 'John', 19, 26, 27, None),
-"From the cross, Jesus gave His Mother to the beloved disciple, and in him to all of us: “Behold thy mother.” The Immaculate Virgin is not far away; she is our Mother, who cares for each of her children. On this Second Sunday of Advent, let us take her into our homes as the disciple did, and entrust our families to her.",
+('Behold Thy Mother', ('John', 'John', 19, 26, 27, None),
+"From the cross, Jesus gave His Mother to the beloved disciple, and in him to all of us: “Behold thy mother.” The Immaculate Virgin is not far away; she is our Mother, who cares for each of her children. This Advent, let us take her into our homes as the disciple did, and entrust our families to her.",
 "Jesus, from the cross You gave us Your own Mother. Like the beloved disciple, we take her into our homes today. Mary, our Mother, watch over our families, our children and our parents. Keep us united, keep us faithful, and bring us all safely home to your Son. Amen."),
 ('Glory of Jerusalem, Joy of Israel', ('Judith', 'Judith', 15, 10, None, 'Thou art the glory of Jerusalem, thou art the joy of Israel, thou art the honour of our people.'),
-"The people praised Judith with words the Church applies to Mary: “Thou art the glory of Jerusalem, thou art the joy of Israel, thou art the honour of our people.” Tomorrow we celebrate the Immaculate Conception, the first dawn of our salvation. Today is also the memorial of Saint Ambrose, who loved and honoured Mary. As our novena ends, we place all our intentions in Mary’s hands, confident that she will bring them to Jesus.",
+"The people praised Judith with words the Church applies to Mary: “Thou art the glory of Jerusalem, thou art the joy of Israel, thou art the honour of our people.” Tomorrow we celebrate the Immaculate Conception, the first dawn of our salvation. On 7 December the Church also remembers Saint Ambrose, who loved and honoured Mary. As our novena ends, we place all our intentions in Mary’s hands, confident that she will bring them to Jesus.",
 "Immaculate Virgin Mary, glory of the Church, joy of all Christians, honour of our human family: we thank you for these nine days of prayer. Receive our intentions and present them to your Son. Help us to celebrate your feast tomorrow with joy, and to follow you faithfully to Jesus. O Mary, conceived without sin, pray for us who have recourse to thee. Amen."),
 ]

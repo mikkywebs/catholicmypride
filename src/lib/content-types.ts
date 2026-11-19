@@ -142,6 +142,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'feast_date', label: 'Feast date', type: 'date', required: true, half: true },
       { name: 'start_date', label: 'Day 1 is on (leave empty for 9 days before the feast)', type: 'date', half: true },
       { name: 'days_count', label: 'Number of days (usually 9)', type: 'number', half: true, placeholder: '9' },
+      { name: 'repeats_yearly', label: 'Repeats every year (the dates move to next year by themselves)', type: 'boolean', help: 'Tick this for novenas on fixed dates, like the Immaculate Conception. Leave it off for movable feasts such as Pentecost or Divine Mercy Sunday, and update their dates each year.' },
       featured(),
       { name: 'intro_md', label: 'About this novena (shown above the days)', type: 'markdown', rows: 5 },
       { name: 'repeat_prayer_md', label: 'Prayer repeated each day (optional, e.g. the Saint Andrew prayer)', type: 'markdown', rows: 4 },

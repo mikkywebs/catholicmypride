@@ -3,7 +3,10 @@ import Link from 'next/link'
 import { EmptyState, Eyebrow, Featured, H1 } from '@/components/ui'
 import { getNovenas } from '@/lib/data'
 import { dateLabel } from '@/lib/format'
-import { novenaFirstDate, novenaLength } from '@/lib/novena-days'
+import { connection } from 'next/server'
+import { Suspense } from 'react'
+import { todayISO } from '@/lib/liturgical'
+import { currentCycle, novenaEnd, novenaFirstDate, novenaLength } from '@/lib/novena-days'
 
 export const metadata: Metadata = {
   title: 'Catholic Novenas: Pray Day by Day',
@@ -11,8 +14,17 @@ export const metadata: Metadata = {
   alternates: { canonical: '/novenas' },
 }
 
-export default async function Page() {
-  const list = await getNovenas()
+export default function Page() {
+  return <Suspense fallback={<div className="h-96" />}><List /></Suspense>
+}
+
+async function List() {
+  await connection()
+  const today = todayISO()
+  // This year's dates for yearly novenas; running and upcoming ones first, finished ones last.
+  const list = (await getNovenas())
+    .map((n) => currentCycle(n, today))
+    .sort((a, b) => Number(novenaEnd(a) < today) - Number(novenaEnd(b) < today) || novenaFirstDate(a).localeCompare(novenaFirstDate(b)))
   return (
     <div className="mx-auto flex max-w-[1100px] flex-col gap-8 px-6 pb-[72px] pt-10">
       <div className="text-center">

@@ -20,12 +20,34 @@ export function novenaDay(n: Novena, today: string): number | null {
   return day
 }
 
+const pad = (n: number) => String(n).padStart(2, '0')
+function shiftYear(iso: string, years: number) {
+  const [y, m, d] = iso.split('-').map(Number)
+  const yy = y + years
+  const last = new Date(Date.UTC(yy, m, 0)).getUTCDate()
+  return `${yy}-${pad(m)}-${pad(Math.min(d, last))}`
+}
+
+/** For a novena that repeats every year, the dates of this year's (or next year's) round:
+ *  the first one that has not finished yet. Other novenas are returned unchanged. */
+export function currentCycle(n: Novena, today: string): Novena {
+  if (!n.repeats_yearly) return n
+  const base = Number(n.feast_date.slice(0, 4))
+  const year = Number(today.slice(0, 4))
+  for (const y of [year - 1, year, year + 1]) {
+    const k = { ...n, feast_date: shiftYear(n.feast_date, y - base), start_date: n.start_date ? shiftYear(n.start_date, y - base) : null }
+    if (novenaEnd(k) >= today) return k
+  }
+  return n
+}
+
 /** “Day 6 of 25” or “Opening day”. */
 export const dayLabel = (n: Novena, day: number) => (day === 0 ? 'Opening day' : `Day ${day} of ${novenaLength(n)}`)
 
 /** Novenas being prayed today, the one ending soonest first. */
 export function activeNovenas(list: Novena[], today: string) {
   return list
+    .map((n) => currentCycle(n, today))
     .map((n) => ({ novena: n, day: novenaDay(n, today) }))
     .filter((x): x is { novena: Novena; day: number } => x.day !== null)
     .sort((a, b) => novenaEnd(a.novena).localeCompare(novenaEnd(b.novena)))
