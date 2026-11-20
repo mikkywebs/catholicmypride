@@ -7,7 +7,7 @@ import { publicClient } from './supabase/public'
 export type QuoteKind = 'jesus' | 'mary' | 'apparition' | 'bible' | 'saint' | 'pope' | 'bishop' | 'scholar' | 'church'
 export type Quote = { id: string; text: string; author: string; source: string | null; kind: QuoteKind; show_on: string | null }
 export const KIND_LABEL: Record<QuoteKind, string> = {
-  jesus: 'Jesus', mary: 'Our Lady', apparition: 'Apparitions of Our Lady', bible: 'The Bible', saint: 'The Saints', pope: 'The Popes', bishop: 'Bishops', scholar: 'Catholic Scholars', church: 'The Church',
+  jesus: 'Jesus', mary: 'Our Lady', apparition: 'Our Lady', bible: 'The Bible', saint: 'The Saints', pope: 'The Popes', bishop: 'Bishops', scholar: 'Catholic Scholars', church: 'The Church',
 }
 
 type StarterQuote = Omit<Quote, 'id' | 'show_on'>
@@ -22,7 +22,8 @@ export async function getQuotes(): Promise<Quote[]> {
   const db = publicClient()
   if (db) {
     const { data, error } = await db.from('quotes').select('id, text, author, source, kind, show_on').eq('status', 'published').limit(5000)
-    if (!error && data && data.length) return data as Quote[]
+    // Our Lady's words in Scripture and in approved apparitions are shown together under “Our Lady”.
+    if (!error && data && data.length) return (data as Quote[]).map((q) => (q.kind === 'apparition' ? { ...q, kind: 'mary' } : q))
   }
   return (await loadStarterQuotes()).map((q, i) => ({ ...q, id: `starter-${i}`, show_on: null }))
 }

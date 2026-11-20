@@ -219,7 +219,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     fields: [
       { name: 'text', label: 'Quote', type: 'textarea', rows: 4, required: true, help: 'Quote the exact words. Many famous quotes online are wrongly attributed: please add only quotes with a known source.' },
       { name: 'author', label: 'Said or written by', type: 'text', required: true, half: true, placeholder: 'e.g. Saint Augustine of Hippo' },
-      { name: 'kind', label: 'From', type: 'select', options: ['jesus', 'mary', 'apparition', 'bible', 'saint', 'pope', 'bishop', 'scholar', 'church'], required: true, half: true, help: 'apparition = words of Our Lady in a Church-approved apparition (Lourdes, Fatima, Guadalupe…).' },
+      { name: 'kind', label: 'From', type: 'select', options: ['jesus', 'mary', 'bible', 'saint', 'pope', 'bishop', 'scholar', 'church'], required: true, half: true, help: 'mary = Our Lady’s words, in Scripture or in a Church-approved apparition (Lourdes, Fatima, Guadalupe…).' },
       { name: 'source', label: 'Source (book, chapter, document or verse)', type: 'text', placeholder: 'e.g. Confessions, Book 1, chapter 1' },
       { name: 'show_on', label: 'Show as Quote of the Day on (optional)', type: 'date', half: true, help: 'Leave empty: it comes up in turn with the others.' },
       { name: 'status', label: 'Status', type: 'select', options: ['published', 'draft'], half: true },
