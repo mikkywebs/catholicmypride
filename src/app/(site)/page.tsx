@@ -12,12 +12,16 @@ import { formatLong, liturgicalInfo, todayISO } from '@/lib/liturgical'
 import { activeNovenas, dayLabel, novenaLength } from '@/lib/novena-days'
 import { SeasonBanner } from '@/components/season'
 import { seasonTheme } from '@/lib/season-theme'
+import { getQuotes, quoteFor } from '@/lib/quotes'
 import type { Novena } from '@/lib/types'
 
 export default function Home() {
   return (
     <>
       <Hero />
+      <Suspense fallback={<div className="h-40" />}>
+        <QuoteOfTheDay />
+      </Suspense>
       <Suspense fallback={<div className="h-24" />}>
         <TodaySections />
       </Suspense>
@@ -56,6 +60,23 @@ async function Hero() {
   )
 }
 
+
+/** Quote of the Day, just under the welcome box. */
+async function QuoteOfTheDay() {
+  await connection()
+  const q = quoteFor(await getQuotes(), todayISO())
+  if (!q) return null
+  return (
+    <section className="reveal px-6 pt-12">
+      <figure className="mx-auto m-0 flex max-w-[860px] flex-col items-center gap-3 text-center">
+        <p className="eyebrow m-0">Quote of the Day</p>
+        <blockquote className="m-0 font-serif text-[26px] leading-snug text-ink sm:text-[32px]">“{q.text}”</blockquote>
+        <figcaption className="text-muted"><strong className="text-ink">{q.author}</strong>{q.source && <> · {q.source}</>}</figcaption>
+        <Link href="/quotes" className="text-sm font-semibold">More quotes →</Link>
+      </figure>
+    </section>
+  )
+}
 
 async function TodaySections() {
   await connection()

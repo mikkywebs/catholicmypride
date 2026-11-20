@@ -381,7 +381,7 @@ export async function deleteSubmission(id: string) {
 }
 
 /** Adds the starter questions that are not in the database yet. Nothing already saved is changed. */
-export async function loadStarter(kind: 'faqs' | 'quiz') {
+export async function loadStarter(kind: 'faqs' | 'quiz' | 'quotes') {
   const { db } = await requireAdmin()
   const { loadStarterFaqs, loadStarterQuiz } = await import('@/lib/faith')
   let added = 0
@@ -392,6 +392,16 @@ export async function loadStarter(kind: 'faqs' | 'quiz') {
     const rows = starter.filter((f) => !have.has(f.slug)).map((f) => ({ ...f, needs_review: true, status: 'published', published_at: new Date().toISOString() }))
     for (let i = 0; i < rows.length; i += 100) {
       const { error } = await db.from('faqs').insert(rows.slice(i, i + 100))
+      if (!error) added += rows.slice(i, i + 100).length
+    }
+  } else if (kind === 'quotes') {
+    const { loadStarterQuotes } = await import('@/lib/quotes')
+    const starter = await loadStarterQuotes()
+    const { data } = await db.from('quotes').select('text')
+    const have = new Set((data ?? []).map((r) => (r.text as string).toLowerCase()))
+    const rows = starter.filter((q) => !have.has(q.text.toLowerCase())).map((q) => ({ ...q, status: 'published' }))
+    for (let i = 0; i < rows.length; i += 100) {
+      const { error } = await db.from('quotes').insert(rows.slice(i, i + 100))
       if (!error) added += rows.slice(i, i + 100).length
     }
   } else {

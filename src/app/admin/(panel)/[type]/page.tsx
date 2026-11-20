@@ -30,11 +30,11 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
           {sp.failed && sp.failed !== '0' ? ` ${String(sp.failed)} could not be added. If one is the Maronite eparchy, run database update 0012 and click the button again.` : ''}
         </p>
       )}
-      {sp.loaded !== undefined && <p role="status" className="m-0 rounded-lg bg-[#e3f1e8] px-4 py-3 text-[#1f5c38]">Added {String(sp.loaded)} starter questions, each marked &ldquo;Please review&rdquo;. Nothing you had saved was changed.</p>}
-      {(t.key === 'faqs' || t.key === 'quiz') && (
-        <form action={loadStarter.bind(null, t.key)} className="flex flex-wrap items-center gap-3 rounded-xl bg-sky px-4 py-3">
-          <button className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">Load the starter questions</button>
-          <span className="text-[13px] text-muted">Adds the ready-made {t.key === 'faqs' ? 'questions and answers' : 'quiz questions'} that are not here yet, so you can edit them. Until you save any, the website shows the starter set as it is.</span>
+      {sp.loaded !== undefined && <p role="status" className="m-0 rounded-lg bg-[#e3f1e8] px-4 py-3 text-[#1f5c38]">Added {String(sp.loaded)} starter {t.key === 'quotes' ? 'quotes' : 'questions, each marked “Please review”'}. Nothing you had saved was changed.</p>}
+      {(t.key === 'faqs' || t.key === 'quiz' || t.key === 'quotes') && (
+        <form action={loadStarter.bind(null, t.key as 'faqs' | 'quiz' | 'quotes')} className="flex flex-wrap items-center gap-3 rounded-xl bg-sky px-4 py-3">
+          <button className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">{t.key === 'quotes' ? 'Load the starter quotes' : 'Load the starter questions'}</button>
+          <span className="text-[13px] text-muted">Adds the ready-made {t.key === 'faqs' ? 'questions and answers' : t.key === 'quotes' ? 'quotes (each with its source)' : 'quiz questions'} that are not here yet, so you can edit them. Until you save any, the website shows the starter set as it is.</span>
         </form>
       )}
       {t.key === 'dioceses' && Object.keys(DIRECTORY_FACTS).map((country) => {

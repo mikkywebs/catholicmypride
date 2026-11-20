@@ -212,6 +212,20 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       ...STATUS_FIELDS,
     ],
   },
+  quotes: {
+    key: 'quotes', table: 'quotes', singular: 'quote', plural: 'Quotes', titleField: 'text',
+    listColumns: [{ field: 'text', label: 'Quote' }, { field: 'author', label: 'By' }, { field: 'kind', label: 'From' }, { field: 'show_on', label: 'Quote of the Day on' }],
+    orderBy: 'author', tags: ['quotes', 'content'], status: false,
+    fields: [
+      { name: 'text', label: 'Quote', type: 'textarea', rows: 4, required: true, help: 'Quote the exact words. Many famous quotes online are wrongly attributed: please add only quotes with a known source.' },
+      { name: 'author', label: 'Said or written by', type: 'text', required: true, half: true, placeholder: 'e.g. Saint Augustine of Hippo' },
+      { name: 'kind', label: 'From', type: 'select', options: ['jesus', 'mary', 'bible', 'saint', 'pope', 'bishop', 'scholar', 'church'], required: true, half: true },
+      { name: 'source', label: 'Source (book, chapter, document or verse)', type: 'text', placeholder: 'e.g. Confessions, Book 1, chapter 1' },
+      { name: 'show_on', label: 'Show as Quote of the Day on (optional)', type: 'date', half: true, help: 'Leave empty: it comes up in turn with the others.' },
+      { name: 'status', label: 'Status', type: 'select', options: ['published', 'draft'], half: true },
+      { name: 'needs_review', label: 'Still needs review (shown only in the admin)', type: 'boolean' },
+    ],
+  },
   quiz: {
     key: 'quiz', table: 'quiz_questions', singular: 'quiz question', plural: 'Quiz Questions', titleField: 'question',
     listColumns: [{ field: 'question', label: 'Question' }, { field: 'topic', label: 'A–Z topic' }, { field: 'correct', label: 'Answer' }, { field: 'status', label: 'Status' }],

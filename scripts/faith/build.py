@@ -5,6 +5,7 @@ sys.path.insert(0, '.')
 from faq1 import FAQ as F1
 from faq2 import FAQ as F2
 from faq3 import FAQ as F3
+from faq4 import FAQ as F4
 from quiz1 import QUIZ as Q1
 from quiz2 import QUIZ as Q2
 from quiz3 import QUIZ as Q3
@@ -21,7 +22,7 @@ def slugify(s):
     return re.sub(r'[^a-z0-9]+', '-', s.lower()).strip('-')[:80].strip('-')
 
 faqs, seen = [], set()
-for topic, q, a, src in F1 + F2 + F3:
+for topic, q, a, src in F1 + F2 + F3 + F4:
     slug = slugify(q)
     assert slug not in seen, slug
     seen.add(slug)

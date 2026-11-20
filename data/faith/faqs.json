@@ -1062,5 +1062,481 @@
 "topic": "Women",
 "answer_md": "Women and men are equal in dignity, both made in God’s image. Women have always had indispensable roles: Mary, the Mother of God; the women who first witnessed the Resurrection; foundresses, martyrs, mothers, teachers and four women Doctors of the Church.",
 "sources": "CCC 369–372; Mulieris Dignitatem"
+},
+{
+"question": "What is the Angelus?",
+"slug": "what-is-the-angelus",
+"topic": "Angelus",
+"answer_md": "The Angelus is a short prayer recalling the Incarnation, traditionally prayed at 6am, noon and 6pm when church bells ring. It has three verses about the Annunciation, each followed by a Hail Mary, and a closing prayer. In the Easter season it is replaced by the Regina Caeli.",
+"sources": "Luke 1:26–38; John 1:14"
+},
+{
+"question": "What is an Act of Contrition?",
+"slug": "what-is-an-act-of-contrition",
+"topic": "Act of Contrition",
+"answer_md": "An Act of Contrition is a prayer telling God we are sorry for our sins, firmly intending not to sin again, and trusting in his mercy. It is said in Confession and can be prayed at any time, especially at night. A common form begins: “O my God, I am heartily sorry for having offended thee…”",
+"sources": "CCC 1451–1452"
+},
+{
+"question": "Must Catholics believe in apparitions such as Lourdes or Fatima?",
+"slug": "must-catholics-believe-in-apparitions-such-as-lourdes-or-fatima",
+"topic": "Apparitions",
+"answer_md": "No. Approved apparitions are “private revelations”. The Church may judge them worthy of belief and helpful for faith, but they add nothing to the Revelation completed in Christ, and Catholics are not obliged to believe them. Their purpose is to help us live the Gospel more fully.",
+"sources": "CCC 67"
+},
+{
+"question": "Which Bible translation should Catholics use?",
+"slug": "which-bible-translation-should-catholics-use",
+"topic": "Bible",
+"answer_md": "Catholics should use a translation with the full 73 books, approved by the Church (it usually carries an imprimatur). Well-known Catholic translations include the Douay-Rheims, the Revised Standard Version Catholic Edition, the New American Bible and the Jerusalem Bible. Your bishops’ conference approves the version used at Mass.",
+"sources": "CCC 120; Code of Canon Law 825"
+},
+{
+"question": "Where should I start reading the Bible?",
+"slug": "where-should-i-start-reading-the-bible",
+"topic": "Bible",
+"answer_md": "A good place to begin is one of the Gospels, such as Mark or Luke, which tell the life of Jesus. Then read the Acts of the Apostles, a few Psalms, and Genesis. Read slowly and prayerfully, asking the Holy Spirit to help you, and follow the daily Mass readings to read with the whole Church.",
+"sources": "CCC 125–127, 2653"
+},
+{
+"question": "Does the Church allow cremation?",
+"slug": "does-the-church-allow-cremation",
+"topic": "Cremation",
+"answer_md": "Yes. The Church prefers burial, following the example of Christ, but allows cremation as long as it is not chosen for reasons against Christian faith. The ashes should be kept in a sacred place, such as a cemetery or church columbarium, not scattered, divided or kept at home.",
+"sources": "CCC 2301; Ad resurgendum cum Christo (2016)"
+},
+{
+"question": "Can a divorced Catholic receive Holy Communion?",
+"slug": "can-a-divorced-catholic-receive-holy-communion",
+"topic": "Marriage",
+"answer_md": "Divorce itself does not stop a Catholic from receiving Communion. A divorced person who has not entered a new union can receive the sacraments. Those who have remarried without an annulment should speak with their priest, who can help them understand their situation and the path of accompaniment the Church offers.",
+"sources": "CCC 1650–1651; Amoris Laetitia"
+},
+{
+"question": "Who can be a godparent?",
+"slug": "who-can-be-a-godparent",
+"topic": "Godparents",
+"answer_md": "A godparent should be a practising Catholic, at least sixteen, confirmed, who has received First Communion, and lives a life of faith. A baptised non-Catholic Christian may act as a Christian witness together with a Catholic godparent. Parents cannot be godparents for their own child.",
+"sources": "Code of Canon Law 872–874"
+},
+{
+"question": "Can a Catholic marry someone who is not Catholic?",
+"slug": "can-a-catholic-marry-someone-who-is-not-catholic",
+"topic": "Marriage",
+"answer_md": "Yes, with permission from the bishop, usually arranged through the parish. Marriage to a baptised Christian of another denomination is called a mixed marriage; marriage to a non-baptised person needs a dispensation. The Catholic promises to keep the faith and do all they can to raise the children Catholic.",
+"sources": "CCC 1633–1637; Code of Canon Law 1124–1125"
+},
+{
+"question": "How do Catholics prepare for marriage?",
+"slug": "how-do-catholics-prepare-for-marriage",
+"topic": "Marriage",
+"answer_md": "Couples should contact their parish several months before the wedding (often six to twelve). Preparation usually includes meetings with the priest, a marriage preparation course, paperwork such as baptism certificates, and time to pray together. It is a chance to build the marriage on Christ, not only to plan the wedding day.",
+"sources": "CCC 1632"
+},
+{
+"question": "At what age do Catholics receive First Holy Communion?",
+"slug": "at-what-age-do-catholics-receive-first-holy-communion",
+"topic": "First Communion",
+"answer_md": "In the Latin Church, children usually receive First Communion around the age of reason, about seven, after preparation and their first Confession. In Eastern Catholic Churches, infants receive Communion together with Baptism and Confirmation.",
+"sources": "Code of Canon Law 913–914; CCC 1244"
+},
+{
+"question": "At what age are Catholics confirmed?",
+"slug": "at-what-age-are-catholics-confirmed",
+"topic": "Confirmation",
+"answer_md": "In the Latin Church, Confirmation is usually given around the age of reason or later, according to the norms of each bishops’ conference, often between seven and sixteen. Adults who were never confirmed can be confirmed after preparation. Eastern Catholics are confirmed (chrismated) at Baptism.",
+"sources": "Code of Canon Law 891; CCC 1307"
+},
+{
+"question": "Can I receive Communion on the tongue or in the hand?",
+"slug": "can-i-receive-communion-on-the-tongue-or-in-the-hand",
+"topic": "Communion",
+"answer_md": "Both are permitted in many countries, according to the norms of the bishops’ conference. Whichever way you receive, do so with reverence: bow before receiving, answer “Amen”, and consume the Host immediately in front of the minister.",
+"sources": "GIRM 160–161"
+},
+{
+"question": "Can I receive Holy Communion more than once a day?",
+"slug": "can-i-receive-holy-communion-more-than-once-a-day",
+"topic": "Communion",
+"answer_md": "A Catholic may receive Communion a second time on the same day, but only within a Mass in which they take part. A person in danger of death may also receive Viaticum.",
+"sources": "Code of Canon Law 917, 921"
+},
+{
+"question": "Is it a sin to miss Sunday Mass if I am sick?",
+"slug": "is-it-a-sin-to-miss-sunday-mass-if-i-am-sick",
+"topic": "Mass",
+"answer_md": "No. The Sunday obligation does not bind those excused for a serious reason, such as illness, caring for a sick person or young baby, or being unable to travel. It is good to pray at home, read the readings or follow a Mass broadcast, and make a spiritual communion.",
+"sources": "CCC 2181, 2183"
+},
+{
+"question": "What is a Mass intention?",
+"slug": "what-is-a-mass-intention",
+"topic": "Mass",
+"answer_md": "A Mass intention is a person or need for whom a Mass is offered, for example for someone who has died, a sick relative or a thanksgiving. People often give an offering (a stipend) when requesting it, which supports the priest; it is not a payment for grace.",
+"sources": "Code of Canon Law 945–946"
+},
+{
+"question": "Why are there three years of Sunday readings (Year A, B and C)?",
+"slug": "why-are-there-three-years-of-sunday-readings-year-a-b-and-c",
+"topic": "Mass",
+"answer_md": "The Lectionary spreads the Bible over three years so that Catholics hear more of Scripture. Year A mainly uses Matthew’s Gospel, Year B Mark (with John), and Year C Luke. Weekdays follow a two-year cycle (Year I and II).",
+"sources": "Introduction to the Lectionary for Mass"
+},
+{
+"question": "Why does the Church still use Latin?",
+"slug": "why-does-the-church-still-use-latin",
+"topic": "Liturgy",
+"answer_md": "Latin is the traditional language of the Latin Church and a sign of its unity across nations and centuries. Since Vatican II, Mass is usually celebrated in the language of the people, but Latin remains the official language of the liturgy and some Latin chants and prayers are encouraged.",
+"sources": "Sacrosanctum Concilium 36, 54"
+},
+{
+"question": "What is the Liturgy of the Hours?",
+"slug": "what-is-the-liturgy-of-the-hours",
+"topic": "Liturgy",
+"answer_md": "The Liturgy of the Hours, or Divine Office, is the Church’s official daily prayer, made up of psalms, Scripture and prayers at different times of day, especially Morning Prayer and Evening Prayer. Priests and religious pray it daily, and lay people are warmly invited to join.",
+"sources": "CCC 1174–1178"
+},
+{
+"question": "What is Ordinary Time?",
+"slug": "what-is-ordinary-time",
+"topic": "Liturgy",
+"answer_md": "Ordinary Time is the part of the Church year outside the great seasons of Advent, Christmas, Lent and Easter. “Ordinary” comes from “ordinal”, meaning counted weeks. Its colour is green, a sign of hope and growth as we follow Jesus’ public life.",
+"sources": "General Norms for the Liturgical Year 43–44"
+},
+{
+"question": "What is the Easter Triduum?",
+"slug": "what-is-the-easter-triduum",
+"topic": "Liturgy",
+"answer_md": "The Easter Triduum is the three holiest days of the year: from the Mass of the Lord’s Supper on Holy Thursday evening, through Good Friday and Holy Saturday, to Evening Prayer on Easter Sunday. It celebrates the Passion, death and Resurrection of Jesus as one great feast.",
+"sources": "General Norms for the Liturgical Year 18–21"
+},
+{
+"question": "What is the Easter Vigil?",
+"slug": "what-is-the-easter-vigil",
+"topic": "Easter Vigil",
+"answer_md": "The Easter Vigil, on the night of Holy Saturday, is the greatest celebration of the year. It begins in darkness with the new fire and the Easter candle, continues with many Scripture readings, and celebrates Baptism and Confirmation of new Catholics before the Easter Eucharist.",
+"sources": "Roman Missal; CCC 1217"
+},
+{
+"question": "Why is Christmas celebrated on 25 December?",
+"slug": "why-is-christmas-celebrated-on-25-december",
+"topic": "Christmas",
+"answer_md": "The Bible does not give the date of Jesus’ birth. Since at least the 4th century, the Church in Rome has celebrated it on 25 December, around the time of the winter solstice, when the days begin to grow longer: a fitting sign of Christ, the Light of the world.",
+"sources": "John 8:12; Tradition"
+},
+{
+"question": "How long is the Christmas season?",
+"slug": "how-long-is-the-christmas-season",
+"topic": "Christmas",
+"answer_md": "The Christmas season begins on the evening of 24 December and continues until the feast of the Baptism of the Lord, in early or mid January. Catholics celebrate Christmas for the whole season, not just one day.",
+"sources": "General Norms for the Liturgical Year 32–38"
+},
+{
+"question": "What is the Epiphany?",
+"slug": "what-is-the-epiphany",
+"topic": "Epiphany",
+"answer_md": "The Epiphany celebrates the visit of the Magi to the infant Jesus, showing that he is the Saviour of all nations. It is celebrated on 6 January or, in many countries, on the Sunday between 2 and 8 January.",
+"sources": "Matthew 2:1–12; CCC 528"
+},
+{
+"question": "What is the Ascension?",
+"slug": "what-is-the-ascension",
+"topic": "Ascension",
+"answer_md": "Forty days after his Resurrection, Jesus ascended into heaven in his risen body. He did not leave us alone: he sits at the right hand of the Father, intercedes for us, and sends the Holy Spirit. Many countries celebrate it on the following Sunday.",
+"sources": "Acts 1:9–11; CCC 659–667"
+},
+{
+"question": "What are the “last rites”?",
+"slug": "what-are-the-last-rites",
+"topic": "Death",
+"answer_md": "The “last rites” usually means the sacraments for a dying person: Confession, the Anointing of the Sick and Holy Communion as Viaticum (“food for the journey”). If someone is seriously ill or dying, call a priest as soon as possible rather than waiting until the last moment.",
+"sources": "CCC 1524–1525"
+},
+{
+"question": "What happens at the particular judgement?",
+"slug": "what-happens-at-the-particular-judgement",
+"topic": "Death",
+"answer_md": "Immediately after death, each person is judged by Christ according to their faith and works. The soul then enters heaven (directly or after purification in purgatory) or chooses eternal separation from God. The Last Judgement at the end of time will reveal all things publicly.",
+"sources": "CCC 1021–1022, 1038–1041"
+},
+{
+"question": "What is an exorcism?",
+"slug": "what-is-an-exorcism",
+"topic": "Exorcism",
+"answer_md": "An exorcism is a prayer in which the Church asks, in the name of Jesus, that a person or object be protected from the power of the evil one. A simple exorcism is part of Baptism. A major exorcism may be performed only by a priest with the bishop’s permission, after careful medical and spiritual discernment.",
+"sources": "CCC 1673; Code of Canon Law 1172"
+},
+{
+"question": "Can Catholics read horoscopes or consult fortune tellers?",
+"slug": "can-catholics-read-horoscopes-or-consult-fortune-tellers",
+"topic": "Superstition",
+"answer_md": "No. Horoscopes, astrology, fortune-telling and consulting mediums try to unveil the future or gain power apart from God. They contradict the trust and honour we owe to God alone. Catholics are invited to place their future in God’s providence.",
+"sources": "CCC 2115–2117"
+},
+{
+"question": "What does the Church teach about charms and witchcraft?",
+"slug": "what-does-the-church-teach-about-charms-and-witchcraft",
+"topic": "Superstition",
+"answer_md": "Magic, charms and sorcery, even when used to heal or protect, try to tame occult powers and are gravely contrary to the virtue of religion. Protection comes from God, through prayer, the sacraments and sacramentals, not from objects believed to work by themselves.",
+"sources": "CCC 2111, 2117"
+},
+{
+"question": "Is gambling a sin for Catholics?",
+"slug": "is-gambling-a-sin-for-catholics",
+"topic": "Gambling",
+"answer_md": "Games of chance and wagers are not in themselves wrong. They become wrong when they take money needed for one’s own or one’s family’s needs, or when they become an addiction. Moderation and responsibility are essential.",
+"sources": "CCC 2413"
+},
+{
+"question": "What does the Church teach about alcohol and drugs?",
+"slug": "what-does-the-church-teach-about-alcohol-and-drugs",
+"topic": "Alcohol",
+"answer_md": "Drinking alcohol in moderation is not wrong, but drunkenness is a sin against temperance and endangers oneself and others. Using drugs, except for medical reasons, gravely harms health and life. People struggling with addiction deserve compassion and help.",
+"sources": "CCC 2290–2291"
+},
+{
+"question": "Can Catholics donate their organs?",
+"slug": "can-catholics-donate-their-organs",
+"topic": "Organ donation",
+"answer_md": "Yes. Organ donation after death is a noble act of generous love, encouraged by the Church, as long as free consent has been given. A donor must never be killed or have death hastened to obtain organs.",
+"sources": "CCC 2296"
+},
+{
+"question": "What does the Church teach about IVF?",
+"slug": "what-does-the-church-teach-about-ivf",
+"topic": "IVF",
+"answer_md": "The Church understands the deep longing of couples for a child and supports research and treatments that help nature. It teaches that a child is a gift that should be conceived in the marital act itself, and so does not accept IVF, which separates conception from that act and often involves the loss of embryos.",
+"sources": "CCC 2373–2379; Donum Vitae"
+},
+{
+"question": "What does the Church teach about those who die by suicide?",
+"slug": "what-does-the-church-teach-about-those-who-die-by-suicide",
+"topic": "Suicide",
+"answer_md": "Suicide is gravely contrary to the love of self, neighbour and God. But serious psychological disturbance, anguish or fear can greatly reduce responsibility. The Church does not despair of the salvation of those who have taken their own lives: God can provide a path to repentance, and we pray for them. If you are struggling, please speak to someone you trust or a local helpline today.",
+"sources": "CCC 2280–2283"
+},
+{
+"question": "What does the Church teach about Judaism?",
+"slug": "what-does-the-church-teach-about-judaism",
+"topic": "Other Religions",
+"answer_md": "The Jewish people were the first to hear the Word of God, and the Church has a unique bond with them. God’s gifts and call are irrevocable. Vatican II rejected every form of antisemitism and encouraged mutual respect and dialogue.",
+"sources": "CCC 839–840; Nostra Aetate 4"
+},
+{
+"question": "What does the Church teach about Muslims?",
+"slug": "what-does-the-church-teach-about-muslims",
+"topic": "Other Religions",
+"answer_md": "The Church teaches that Muslims profess to hold the faith of Abraham and, together with Christians, adore the one, merciful God. Vatican II urged Christians and Muslims to forget past quarrels and to work together for justice, peace and freedom.",
+"sources": "CCC 841; Nostra Aetate 3"
+},
+{
+"question": "What is the difference between Catholics and the Orthodox?",
+"slug": "what-is-the-difference-between-catholics-and-the-orthodox",
+"topic": "Orthodox",
+"answer_md": "The Orthodox Churches share with Catholics the apostolic succession, the sacraments, and devotion to Mary. The main difference is that they are not in full communion with the Pope. The Catholic Church sees them as sister Churches and prays and works for full unity.",
+"sources": "CCC 838; Unitatis Redintegratio 15"
+},
+{
+"question": "What are the Eastern Catholic Churches?",
+"slug": "what-are-the-eastern-catholic-churches",
+"topic": "Eastern Churches",
+"answer_md": "The Eastern Catholic Churches, such as the Maronite, Ukrainian Greek Catholic, Syro-Malabar and Coptic Catholic Churches, are fully Catholic and in communion with the Pope, but celebrate their own ancient liturgies and traditions. Catholics may attend and receive the sacraments in any Catholic rite.",
+"sources": "Orientalium Ecclesiarum; CCC 1203"
+},
+{
+"question": "What is a patron saint?",
+"slug": "what-is-a-patron-saint",
+"topic": "Saints",
+"answer_md": "A patron saint is a saint chosen as a special intercessor and protector of a person, place, profession or cause, for example Saint Joseph for workers or Saint Cecilia for musicians. Catholics often take a patron saint’s name at Baptism or Confirmation.",
+"sources": "CCC 2156"
+},
+{
+"question": "What is a name day?",
+"slug": "what-is-a-name-day",
+"topic": "Saints",
+"answer_md": "A name day is the feast of the saint whose name a person bears. In many Catholic cultures it is celebrated like a birthday, as a reminder of the saint’s example and prayers.",
+"sources": "CCC 2156–2159"
+},
+{
+"question": "Must a baby be given a saint’s name at Baptism?",
+"slug": "must-a-baby-be-given-a-saints-name-at-baptism",
+"topic": "Baptism",
+"answer_md": "The Church asks that parents and godparents avoid names foreign to Christian sentiment. A saint’s name is a beautiful choice, giving the child a heavenly patron, but other good names may be given.",
+"sources": "Code of Canon Law 855; CCC 2156"
+},
+{
+"question": "Who can be a Confirmation sponsor?",
+"slug": "who-can-be-a-confirmation-sponsor",
+"topic": "Confirmation",
+"answer_md": "A Confirmation sponsor must meet the same requirements as a godparent: a practising, confirmed Catholic, at least sixteen, who is not the candidate’s parent. It is fitting to choose one’s baptismal godparent.",
+"sources": "Code of Canon Law 892–893"
+},
+{
+"question": "What is a cardinal?",
+"slug": "what-is-a-cardinal",
+"topic": "Clergy",
+"answer_md": "A cardinal is a bishop (or priest) chosen by the Pope as a close adviser. Cardinals under eighty elect a new Pope in a conclave. They wear red as a sign of readiness to shed their blood for the faith.",
+"sources": "Code of Canon Law 349–351"
+},
+{
+"question": "What is a monsignor?",
+"slug": "what-is-a-monsignor",
+"topic": "Clergy",
+"answer_md": "Monsignor is an honorary title given by the Pope to some priests in recognition of their service. It does not add any sacramental power: a monsignor is a priest.",
+"sources": "Church practice"
+},
+{
+"question": "What is the difference between a nun and a sister?",
+"slug": "what-is-the-difference-between-a-nun-and-a-sister",
+"topic": "Religious Life",
+"answer_md": "Strictly, a nun lives an enclosed, contemplative life in a monastery, devoted to prayer, while a religious sister lives an active life of service, such as teaching, nursing or caring for the poor. In everyday speech both words are often used for any woman religious.",
+"sources": "Code of Canon Law 667; Church practice"
+},
+{
+"question": "How is a new Pope elected?",
+"slug": "how-is-a-new-pope-elected",
+"topic": "Pope",
+"answer_md": "When the papacy is vacant, cardinals under eighty gather in the Sistine Chapel in a conclave. They pray and vote in secret until one candidate receives two-thirds of the votes. White smoke announces the election, and the new Pope is presented with the words “Habemus Papam”.",
+"sources": "Universi Dominici Gregis"
+},
+{
+"question": "What is an encyclical?",
+"slug": "what-is-an-encyclical",
+"topic": "Pope",
+"answer_md": "An encyclical is a letter from the Pope to the whole Church, and often to all people of good will, teaching on an important subject. Examples include Rerum Novarum (1891) on workers, Laudato Si’ (2015) on care for creation, and Deus Caritas Est (2005) on love.",
+"sources": "Church practice"
+},
+{
+"question": "What is Catholic social teaching?",
+"slug": "what-is-catholic-social-teaching",
+"topic": "Social Teaching",
+"answer_md": "Catholic social teaching applies the Gospel to life in society. Its key principles include the dignity of every human person, the common good, solidarity, subsidiarity, the preferential option for the poor, the rights of workers, and care for creation.",
+"sources": "CCC 2419–2449; Compendium of the Social Doctrine of the Church"
+},
+{
+"question": "What does the Church teach about work and fair wages?",
+"slug": "what-does-the-church-teach-about-work-and-fair-wages",
+"topic": "Social Teaching",
+"answer_md": "Work is a way of sharing in God’s creation and serving others. Workers have a right to a just wage that allows them and their families to live a dignified life, to safe conditions, to rest, and to form associations. Refusing a just wage can be a grave injustice.",
+"sources": "CCC 2427–2436; Rerum Novarum"
+},
+{
+"question": "Why should Catholics care for the environment?",
+"slug": "why-should-catholics-care-for-the-environment",
+"topic": "Social Teaching",
+"answer_md": "Creation is God’s gift entrusted to our care, not ours to exploit. Caring for our “common home” is part of loving God and neighbour, especially the poor, who suffer most from environmental harm. Pope Francis wrote about this in Laudato Si’.",
+"sources": "CCC 2415–2418; Laudato Si’ (2015)"
+},
+{
+"question": "What does the Church teach about racism?",
+"slug": "what-does-the-church-teach-about-racism",
+"topic": "Dignity",
+"answer_md": "Every human being is created in God’s image and has equal dignity. Every form of discrimination based on race, colour, sex, social condition, language or religion is incompatible with God’s plan and must be overcome.",
+"sources": "CCC 1934–1935; Gaudium et Spes 29"
+},
+{
+"question": "Is it wrong to tell a “small” lie?",
+"slug": "is-it-wrong-to-tell-a-small-lie",
+"topic": "Truth",
+"answer_md": "Every lie, even a small one, offends against truth and charity, though not every lie is equally serious. We should speak the truth with kindness. Charity sometimes means keeping silent or keeping a secret, which is different from lying.",
+"sources": "CCC 2482–2489"
+},
+{
+"question": "Is swearing or using God’s name carelessly a sin?",
+"slug": "is-swearing-or-using-gods-name-carelessly-a-sin",
+"topic": "Blasphemy",
+"answer_md": "The second commandment asks us to honour God’s name. Using it carelessly or in anger is wrong; blasphemy, speaking against God, the Church or the saints with hatred or contempt, is a grave sin. Rude words are also against charity and should be avoided.",
+"sources": "CCC 2142–2149"
+},
+{
+"question": "What do adult children owe their parents?",
+"slug": "what-do-adult-children-owe-their-parents",
+"topic": "Family",
+"answer_md": "The fourth commandment continues into adult life: grown children should show their parents respect, gratitude and help, especially in old age, sickness, loneliness or need.",
+"sources": "CCC 2214–2220"
+},
+{
+"question": "Who is responsible for a child’s religious education?",
+"slug": "who-is-responsible-for-a-childs-religious-education",
+"topic": "Family",
+"answer_md": "Parents are the first educators of their children in the faith. They teach above all by example, prayer at home and taking their children to Mass. Parishes and schools help, but they do not replace the parents.",
+"sources": "CCC 2221–2226"
+},
+{
+"question": "Is Halloween a Catholic celebration?",
+"slug": "is-halloween-a-catholic-celebration",
+"topic": "Halloween",
+"answer_md": "The word Halloween comes from “All Hallows’ Eve”, the eve of All Saints’ Day (1 November), followed by All Souls’ Day (2 November). Catholics can keep its Christian meaning by remembering the saints, praying for the dead, and avoiding anything that glorifies evil or the occult.",
+"sources": "Roman Calendar; CCC 2116"
+},
+{
+"question": "Why is the Rosary so repetitive?",
+"slug": "why-is-the-rosary-so-repetitive",
+"topic": "Rosary",
+"answer_md": "The repeated Hail Marys are like a gentle background, freeing the heart to meditate on the mysteries of Jesus’ life with Mary. Saint John Paul II called the Rosary a contemplation of Christ’s face with Mary. Repetition is natural to love, as in the Psalms.",
+"sources": "Rosarium Virginis Mariae 26; CCC 2708"
+},
+{
+"question": "What is the Miraculous Medal?",
+"slug": "what-is-the-miraculous-medal",
+"topic": "Sacramentals",
+"answer_md": "The Miraculous Medal was designed according to a vision of Mary given to Saint Catherine Labouré in Paris in 1830. It bears the prayer “O Mary, conceived without sin, pray for us who have recourse to thee.” It is a sacramental: its power comes from faith and prayer, not from the medal itself.",
+"sources": "Rue du Bac, 1830; CCC 1670"
+},
+{
+"question": "What is the Saint Benedict medal?",
+"slug": "what-is-the-saint-benedict-medal",
+"topic": "Sacramentals",
+"answer_md": "The Saint Benedict medal carries an image of Saint Benedict and Latin initials of prayers asking God’s protection against evil, such as “Begone, Satan!” Worn with faith, it is a sacramental reminding us to reject sin and trust in Christ.",
+"sources": "Tradition; CCC 1670"
+},
+{
+"question": "What is a chaplet?",
+"slug": "what-is-a-chaplet",
+"topic": "Devotions",
+"answer_md": "A chaplet is a set of prayers prayed on beads, often shorter than the Rosary, such as the Chaplet of Divine Mercy or the Chaplet of Saint Michael. Chaplets help us pray with focus and perseverance.",
+"sources": "Tradition"
+},
+{
+"question": "What are the Stations of the Cross?",
+"slug": "what-are-the-stations-of-the-cross",
+"topic": "Devotions",
+"answer_md": "The Stations (or Way) of the Cross are fourteen moments of Jesus’ Passion, from his condemnation to his burial. Catholics pray them by meditating at each station, especially on Fridays of Lent, walking with Jesus in love and gratitude.",
+"sources": "Tradition; CCC 2669"
+},
+{
+"question": "What is a holy hour?",
+"slug": "what-is-a-holy-hour",
+"topic": "Devotions",
+"answer_md": "A holy hour is an hour of prayer, often before the Blessed Sacrament, recalling Jesus’ words in Gethsemane: “Could you not watch one hour with me?” It can include silent prayer, Scripture, the Rosary or simply resting in the Lord’s presence.",
+"sources": "Matthew 26:40; CCC 1378"
+},
+{
+"question": "What are the First Fridays and First Saturdays?",
+"slug": "what-are-the-first-fridays-and-first-saturdays",
+"topic": "Devotions",
+"answer_md": "The First Fridays devotion honours the Sacred Heart by receiving Communion on the first Friday of nine consecutive months, as Jesus asked Saint Margaret Mary. The First Saturdays devotion, asked for at Fatima, offers Confession, Communion, the Rosary and meditation on five first Saturdays in reparation to Mary’s Immaculate Heart.",
+"sources": "Tradition"
+},
+{
+"question": "What is spiritual direction?",
+"slug": "what-is-spiritual-direction",
+"topic": "Spiritual Life",
+"answer_md": "Spiritual direction is regular conversation with a wise priest, religious or trained lay person who helps you grow in prayer, discern God’s will and live your faith more deeply. It is not counselling or Confession, though it may encourage both.",
+"sources": "CCC 2690"
+},
+{
+"question": "What is a retreat?",
+"slug": "what-is-a-retreat",
+"topic": "Spiritual Life",
+"answer_md": "A retreat is time set apart, from a few hours to several days, to step away from daily busyness and spend time with God in silence, prayer, Scripture and often the sacraments. Many parishes, monasteries and retreat houses offer them.",
+"sources": "Mark 6:31"
+},
+{
+"question": "Who was Saint Nicholas, and is he Santa Claus?",
+"slug": "who-was-saint-nicholas-and-is-he-santa-claus",
+"topic": "Saints",
+"answer_md": "Saint Nicholas was a 4th-century bishop of Myra, in present-day Turkey, famous for his generosity, especially secret gifts to the poor. The figure of Santa Claus grew out of his memory. His feast is 6 December.",
+"sources": "Roman Calendar; Tradition"
 }
 ]
