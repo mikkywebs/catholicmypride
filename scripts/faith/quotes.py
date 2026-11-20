@@ -188,4 +188,16 @@ QUOTES = [
     ('pope', 'The most Blessed Virgin Mary, in the first instance of her conception, by a singular grace and privilege granted by Almighty God, was preserved free from all stain of original sin.', 'Blessed Pope Pius IX', 'Ineffabilis Deus (1854): the dogma of the Immaculate Conception'),
     ('pope', 'Mother Church rejoices.', 'Saint John XXIII', 'Opening speech of the Second Vatican Council, 11 October 1962 (Gaudet Mater Ecclesia)'),
     ('pope', 'Servant of the servants of God.', 'Saint Gregory the Great', 'The title he used for the Pope, still used today'),
+    # Catholic scholars and writers
+    ('scholar', 'The Christian ideal has not been tried and found wanting. It has been found difficult; and left untried.', 'G. K. Chesterton', 'What’s Wrong with the World (1910), Part 1, chapter 5'),
+    ('scholar', 'Tradition means giving votes to the most obscure of all classes, our ancestors. It is the democracy of the dead.', 'G. K. Chesterton', 'Orthodoxy (1908), chapter 4'),
+    ('scholar', 'Angels can fly because they take themselves lightly.', 'G. K. Chesterton', 'Orthodoxy (1908), chapter 7'),
+    ('scholar', 'The heart has its reasons which reason knows nothing of.', 'Blaise Pascal', 'Pensées, 277'),
+    ('scholar', 'Man is only a reed, the weakest in nature; but he is a thinking reed.', 'Blaise Pascal', 'Pensées, 347'),
+    ('scholar', 'In his will is our peace.', 'Dante Alighieri', 'Paradiso, Canto III, 85'),
+    ('scholar', 'The love that moves the sun and the other stars.', 'Dante Alighieri', 'Paradiso, Canto XXXIII, 145'),
+    ('scholar', 'I put before you the one great thing to love on earth: the Blessed Sacrament.', 'J. R. R. Tolkien', 'Letter 43, to his son Michael (1941)'),
+    ('scholar', 'Every other person who ever came into this world came into it to live. He came into it to die.', 'Venerable Fulton J. Sheen', 'Life of Christ (1958), chapter 1'),
+    ('scholar', 'What doth it profit thee to dispute profoundly of the Trinity, if thou be void of humility, and art thereby displeasing to the Trinity?', 'Thomas à Kempis', 'The Imitation of Christ, Book 1, chapter 1'),
+    ('scholar', 'I had rather feel compunction than know its definition.', 'Thomas à Kempis', 'The Imitation of Christ, Book 1, chapter 1'),
 ]
