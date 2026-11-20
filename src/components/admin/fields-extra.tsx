@@ -194,6 +194,14 @@ function TimedField({ row }: { row: Record<string, unknown> }) {
           <input name="bar_remind_minutes" type="number" min={0} max={60} defaultValue={(row.bar_remind_minutes as number | null) ?? 15} className={`${input} max-w-[140px]`} />
           <span className="text-[13px] font-normal text-muted">Someone who opens the website within this many minutes after a prayer time sees “🔔 The Angelus was prayed at 12 noon · Pray it now”. 0 = no reminder.</span>
         </label>
+        {typeof row.id === 'string' && (
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="text-muted">Preview on the website:</span>
+            <a href={`/?prayer-preview=${row.id}`} target="_blank" rel="noopener noreferrer" className="rounded-full border border-field bg-surface px-3 py-1.5 font-semibold no-underline">At prayer time</a>
+            <a href={`/?prayer-preview=${row.id}&late=1`} target="_blank" rel="noopener noreferrer" className="rounded-full border border-field bg-surface px-3 py-1.5 font-semibold no-underline">Arriving late</a>
+            <span className="text-[13px] text-muted">Save and publish first. The preview doesn’t change anything for visitors.</span>
+          </div>
+        )}
         <p className="m-0 text-[13px] text-muted">A prayer with set times plays only at those times, once, and is never part of the ordinary music. &ldquo;Play this on the music bar&rdquo; above is switched off for it automatically.</p>
       </div>
     </div>

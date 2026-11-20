@@ -48,11 +48,9 @@ export function Ticker() {
     if (today.psalm) list.push({ label: 'Psalm', text: today.psalm })
     if (today.second) list.push({ label: 'Second Reading', text: today.second })
     if (today.gospel) list.push({ label: 'Gospel', text: today.gospel })
-    // Holy Rosary: today's mysteries, each with its Scripture passage.
+    // Holy Rosary: today's mysteries (the Rosary page has each one with its Scripture).
     const r = mysteriesFor(today.date)
-    const short = r.name.split(' ')[0]
     list.push({ label: 'Holy Rosary', text: `${r.weekday}: the ${r.name}`, href: '/rosary' })
-    r.mysteries.forEach((m, n) => list.push({ label: `${['1st', '2nd', '3rd', '4th', '5th'][n]} ${short} Mystery`, text: `${m.title} · ${m.passage}`, href: '/rosary' }))
     return list
   }, [today])
 

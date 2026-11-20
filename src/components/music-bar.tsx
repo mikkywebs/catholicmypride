@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { announcePlay, onOtherPlay } from './audio-bus'
 import { NextIcon, PauseIcon, PlayIcon, PrevIcon, VolumeIcon } from './icons'
 import { useClientValue } from './use-client'
-import { activeSlots, dueTimed, recentTimed, type BarSlot, type TimedPrayer } from '@/lib/schedule'
+import { activeSlots, clock, dueTimed, recentTimed, type BarSlot, type TimedPrayer } from '@/lib/schedule'
 
 export type Track = { id: string; slug: string; title: string; src: string; cover: string | null }
 
@@ -102,14 +102,31 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
     const t = setTimeout(() => setLate(show), 0)
     return () => clearTimeout(t)
   }, [minute]) // eslint-disable-line react-hooks/exhaustive-deps
+  // Admin preview: open any page with ?prayer-preview=<id or slug> to see what visitors see at prayer time,
+  // or add &late=1 to see the reminder for late arrivals. Nothing is remembered on the device.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search)
+    const want = q.get('prayer-preview')
+    if (!want) return
+    const t = library.find((x) => x.id === want || x.slug === want)
+    if (!t) return
+    const p = timed.find((x) => x.id === t.id)
+    const time = p?.times[0] ? clock(p.times[0]) : 'its time'
+    const id = setTimeout(() => {
+      if (q.get('late') === '1') setLate({ id: t.id, key: 'preview', title: t.title, time, ago: 5 })
+      else setPrayer({ id: t.id, label: `${time} · ${t.title} (preview)`, resume: false, blocked: false })
+    }, 600)
+    return () => clearTimeout(id)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const prayLate = () => {
     if (!late) return
-    try { localStorage.setItem('cmp-timed', late.key) } catch {}
+    if (late.key !== 'preview') try { localStorage.setItem('cmp-timed', late.key) } catch {}
     setLate(null)
     setPrayer({ id: late.id, label: `${late.time} · ${late.title}`, resume: playing, blocked: false })
   }
   const closeLate = () => {
-    if (late) try { localStorage.setItem('cmp-late-closed', late.key) } catch {}
+    if (late && late.key !== 'preview') try { localStorage.setItem('cmp-late-closed', late.key) } catch {}
     setLate(null)
   }
 
@@ -143,6 +160,15 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
         <span className="min-w-0 flex-1 basis-60 text-[15px]">🔔 <strong>{late.title}</strong> was prayed at {late.time} ({late.ago} minutes ago). Pray it with us now?</span>
         <button type="button" onClick={prayLate} className="inline-flex min-h-11 items-center gap-2 rounded-md bg-gold px-4 font-bold text-[#1f2430]"><PlayIcon size={16} /> Pray it now</button>
         <button type="button" onClick={closeLate} aria-label="Close" className="flex size-10 items-center justify-center rounded-full text-navy-muted">✕</button>
+      </div>
+    </div>
+  ) : null
+  const blockedBanner = prayer?.blocked && prayerTrack ? (
+    <div role="alert" className="fixed inset-x-0 bottom-[76px] z-40 px-4 sm:bottom-[72px]">
+      <div className="mx-auto flex max-w-[640px] flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border-2 border-gold bg-navy px-5 py-3 text-navy-ink shadow-[0_8px_24px_rgba(0,0,0,0.25)]">
+        <span className="min-w-0 flex-1 basis-60 text-[15px]">🔔 It is time to pray: <strong>{prayer.label}</strong></span>
+        <button type="button" onClick={play} className="inline-flex min-h-11 items-center gap-2 rounded-md bg-gold px-4 font-bold text-[#1f2430]"><PlayIcon size={16} /> Pray now</button>
+        <button type="button" onClick={() => setPrayer(null)} aria-label="Close" className="flex size-10 items-center justify-center rounded-full text-navy-muted">✕</button>
       </div>
     </div>
   ) : null
@@ -181,6 +207,7 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
   return (
     <>
     {lateBanner}
+    {blockedBanner}
     <div data-music-bar role="region" aria-label="Music player" className="sticky bottom-0 z-40 border-t-2 border-gold bg-navy px-5 py-2.5 text-navy-ink shadow-[0_-4px_16px_rgba(0,0,0,0.15)]">
       <audio
         ref={audio}
