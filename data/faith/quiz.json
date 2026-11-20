@@ -10976,5 +10976,49 @@
 "correct": "C",
 "explanation": "Written by Fr Joseph Mohr, music by Franz Gruber.",
 "source": "Oberndorf, 1818"
+},
+{
+"question": "What is the Church’s teaching on the resurrection of the body?",
+"topic": "Teaching",
+"option_a": "Bodies never matter",
+"option_b": "At the end of time our bodies will rise, transformed, and be reunited with our souls",
+"option_c": "Only souls live on",
+"option_d": "We return as other creatures",
+"correct": "B",
+"explanation": "“I believe in the resurrection of the body.”",
+"source": "CCC 988–1004"
+},
+{
+"question": "What does the Church mean by the “Kingdom of God”?",
+"topic": "Teaching",
+"option_a": "The Vatican only",
+"option_b": "God’s reign of love and truth, begun in Christ and fulfilled at the end of time",
+"option_c": "A country in the Middle East",
+"option_d": "A medieval empire",
+"correct": "B",
+"explanation": "“Thy kingdom come.”",
+"source": "CCC 541–546, 2816"
+},
+{
+"question": "What is the custom of putting a small amount of holy water on oneself when leaving a church a reminder of?",
+"topic": "Customs",
+"option_a": "Our Baptism",
+"option_b": "Marriage",
+"option_c": "Holy Orders",
+"option_d": "Confirmation",
+"correct": "A",
+"explanation": "With the Sign of the Cross.",
+"source": "CCC 1668"
+},
+{
+"question": "Which apostle preached the first sermon on the day of Pentecost?",
+"topic": "Apostles",
+"option_a": "Peter",
+"option_b": "Paul",
+"option_c": "John",
+"option_d": "James",
+"correct": "A",
+"explanation": "About three thousand people were baptised.",
+"source": "Acts 2:14, 41"
 }
 ]

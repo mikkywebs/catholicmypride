@@ -112,4 +112,3 @@ QUIZ = [
 ('Customs', 'What is the custom of putting a small amount of holy water on oneself when leaving a church a reminder of?', 'Our Baptism', 'Confirmation', 'Marriage', 'Holy Orders', 'A', 'With the Sign of the Cross.', 'CCC 1668'),
 ('Apostles', 'Which apostle preached the first sermon on the day of Pentecost?', 'Peter', 'John', 'James', 'Paul', 'A', 'About three thousand people were baptised.', 'Acts 2:14, 41'),
 ]
-]
