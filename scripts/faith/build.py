@@ -11,6 +11,7 @@ from quiz3 import QUIZ as Q3
 from quiz4 import QUIZ as Q4
 from quiz5 import QUIZ as Q5
 from quiz6 import QUIZ as Q6
+from quiz7 import QUIZ as Q7
 
 def slugify(s):
     s = unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode()
@@ -24,7 +25,7 @@ for topic, q, a, src in F1 + F2 + F3:
     assert 5 <= len(q) <= 300, q
     faqs.append({'question': q, 'slug': slug, 'topic': topic, 'answer_md': a, 'sources': src or None})
 quiz, qs = [], set()
-for row in Q1 + Q2 + Q3 + Q4 + Q5 + Q6:
+for row in Q1 + Q2 + Q3 + Q4 + Q5 + Q6 + Q7:
     assert len(row) == 9, row
     topic, q, a, b, c, d, correct, expl, src = row
     assert correct in 'ABCD' and q.lower() not in qs and len(q) >= 5, q
