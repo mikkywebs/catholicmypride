@@ -190,6 +190,10 @@ function TimedField({ row }: { row: Record<string, unknown> }) {
           </select>
           <span className="text-[13px] font-normal text-muted">From Easter Sunday to Pentecost the Regina Caeli replaces the Angelus. Upload it as a separate item if you have it.</span>
         </label>
+        <label className="flex flex-col gap-1.5 text-sm font-semibold">Remind visitors who arrive late (minutes)
+          <input name="bar_remind_minutes" type="number" min={0} max={60} defaultValue={(row.bar_remind_minutes as number | null) ?? 15} className={`${input} max-w-[140px]`} />
+          <span className="text-[13px] font-normal text-muted">Someone who opens the website within this many minutes after a prayer time sees “🔔 The Angelus was prayed at 12 noon · Pray it now”. 0 = no reminder.</span>
+        </label>
         <p className="m-0 text-[13px] text-muted">A prayer with set times plays only at those times, once, and is never part of the ordinary music. &ldquo;Play this on the music bar&rdquo; above is switched off for it automatically.</p>
       </div>
     </div>

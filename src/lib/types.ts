@@ -54,7 +54,7 @@ export type Song = Seo & {
   on_bar: boolean; bar_days: number[]; bar_start: string | null; bar_end: string | null; bar_order: number
   published_at: string | null
   category?: Category | null
-  bar_times?: string[] | null; bar_season?: 'all' | 'easter' | 'not_easter' | null
+  bar_times?: string[] | null; bar_season?: 'all' | 'easter' | 'not_easter' | null; bar_remind_minutes?: number | null
 }
 
 export type Chaplet = Seo & {

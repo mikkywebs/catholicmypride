@@ -39,7 +39,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const playable = songs.filter((x) => x.audio_url)
   const library = playable.map((x) => ({ id: x.id, slug: x.slug, title: x.title, src: x.audio_url!, cover: x.featured_image }))
   const timedIds = new Set(playable.filter((x) => x.bar_times?.length).map((x) => x.id))
-  const timed = playable.filter((x) => x.bar_times?.length).map((x) => ({ id: x.id, title: x.title, times: x.bar_times ?? [], season: x.bar_season ?? 'all' }))
+  const timed = playable.filter((x) => x.bar_times?.length).map((x) => ({ id: x.id, title: x.title, times: x.bar_times ?? [], season: x.bar_season ?? 'all', remind: x.bar_remind_minutes ?? 15 }))
   const fallback = s.music_fallback === 'none' ? [] : playable.filter((x) => !timedIds.has(x.id)).filter((x) => s.music_fallback === 'all' || (s.music_fallback === 'audio' ? x.kind === 'audio' : x.kind !== 'audio')).map((x) => x.id)
   // Prayers with set times (Angelus, Divine Mercy) only ever play at their times.
   const slots = playable.filter((x) => x.on_bar && !timedIds.has(x.id)).map((x) => ({ id: x.id, title: x.title, days: x.bar_days ?? [], start: x.bar_start, end: x.bar_end, order: x.bar_order ?? 0 }))
@@ -55,7 +55,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <ScrollTools />
       <main id="main" className="flex-1">{children}</main>
       <Footer s={s} flags={flags} />
-      <MusicBar library={library} slots={slots} loop={s.music_loop !== 'once'} fallback={fallback} timed={timed} />
+      <MusicBar library={library} slots={slots} fallback={fallback} timed={timed} />
     </div>
   )
 }

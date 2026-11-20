@@ -5,7 +5,7 @@ import { Suspense } from 'react'
 import { JsonLd } from '@/components/article-bits'
 import { ShareBar } from '@/components/engage'
 import { Breadcrumb, Prose } from '@/components/ui'
-import { WhatsAppJoin } from '@/components/whatsapp-join'
+import { StayConnected } from '@/components/whatsapp-join'
 import { getSettings } from '@/lib/data'
 import { getFaq, getFaqs } from '@/lib/faith'
 import { md } from '@/lib/format'
@@ -43,7 +43,7 @@ async function Content({ params }: { params: PageProps<'/faith-questions/[slug]'
       <Prose html={md(f.answer_md)} />
       {f.sources && <p className="m-0 rounded-xl bg-sky px-5 py-3.5 text-[15px]"><strong>Sources:</strong> {f.sources}</p>}
       <ShareBar title={f.question} />
-      <WhatsAppJoin url={s.whatsapp_channel_url} />
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       {related.length > 0 && (
         <section className="flex flex-col gap-3">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[28px] font-semibold">More questions</h2>

@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { QuizBank } from '@/components/quiz-bank'
 import { Eyebrow, H1 } from '@/components/ui'
 import { getQuizBank } from '@/lib/faith'
+import { getSettings } from '@/lib/data'
+import { StayConnected } from '@/components/whatsapp-join'
 
 export const metadata: Metadata = {
   title: 'Catholic Quiz Questions and Answers A–Z',
@@ -11,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const items = await getQuizBank()
+  const [items, s] = await Promise.all([getQuizBank(), getSettings()])
   return (
     <div className="mx-auto flex max-w-[900px] flex-col gap-7 px-6 pb-[72px] pt-10">
       <div className="text-center">
@@ -20,6 +22,7 @@ export default async function Page() {
         <p className="mx-auto mt-3 max-w-xl text-muted">Search any question and reveal its answer, with an explanation and a source. Ready to test yourself? <Link href="/quiz">Play Quiz Time</Link>.</p>
       </div>
       <QuizBank items={items} />
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
     </div>
   )
 }

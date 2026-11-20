@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { QuizGame } from '@/components/quiz-game'
+import { StayConnected } from '@/components/whatsapp-join'
 import { Eyebrow, H1 } from '@/components/ui'
 import { getSettings } from '@/lib/data'
 
@@ -24,6 +25,7 @@ export default async function Page() {
         <Link href="/quiz/bank">Browse all quiz questions A–Z</Link>
         <Link href="/faith-questions">Catholic Questions &amp; Answers</Link>
       </div>
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
     </div>
   )
 }

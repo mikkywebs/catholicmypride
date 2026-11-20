@@ -1,4 +1,4 @@
-import { WhatsAppJoin } from '@/components/whatsapp-join'
+import { StayConnected } from '@/components/whatsapp-join'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
@@ -59,7 +59,7 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
       <ShareBar title={n.title} />
       {n.intro_md && <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: md(n.intro_md) }} />}
       <NovenaDays novenaId={n.id} days={days} startISO={start} length={length} hasOpening={Boolean(n.has_opening)} commonHtml={md(n.common_prayers_md)} repeat={n.repeat_prayer_md ? { html: md(n.repeat_prayer_md), count: n.repeat_count } : null} initial={initial} />
-      <WhatsAppJoin url={s.whatsapp_channel_url} />
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       {upcoming.length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">More novenas</h2>

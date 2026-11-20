@@ -115,12 +115,7 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
             </select>
             <span className="text-[13px] font-normal text-muted">Choose what plays and when in each item under <Link href="/admin/songs">Music &amp; Audio</Link>.</span>
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-semibold">After the last item
-            <select name="music_loop" defaultValue={s.music_loop ?? 'loop'} className={input}>
-              <option value="loop">Start again from the top</option>
-              <option value="once">Stop</option>
-            </select>
-          </label>
+          <p className="m-0 text-[13px] text-muted">The music bar plays only when a visitor presses Play. It plays the list once and stops, and never repeats the same item by itself.</p>
         </section>
         <section className={card}>
           <h2 className="m-0 text-xl">Page views</h2>

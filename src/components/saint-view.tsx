@@ -1,4 +1,4 @@
-import { WhatsAppJoin } from './whatsapp-join'
+import { StayConnected } from './whatsapp-join'
 import Link from 'next/link'
 import { JsonLd, articleLd } from './article-bits'
 import { Reactions, ShareBar, ViewCount } from './engage'
@@ -81,7 +81,7 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
         </section>
       )}
       <Reactions type="saint" id={saint.slug} kinds={['love', 'amen', 'thumbs']} title={saint.kind === 'celebration' ? 'Did today’s celebration speak to you?' : `Did ${saint.name}’s story inspire you?`} />
-      <WhatsAppJoin url={s.whatsapp_channel_url} />
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       {week.filter((w) => w.slug !== saint.slug).length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">{recentHeading(week.filter((w) => w.slug !== saint.slug).slice(0, 4))}</h2>

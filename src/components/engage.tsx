@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { MilestoneCelebration, type MilestoneLinks } from './milestone'
 import { usePathname } from 'next/navigation'
 import { useClientValue } from './use-client'
 import { browserPublicClient } from '@/lib/supabase/browser'
@@ -76,17 +77,22 @@ export function ShareBar({ title }: { title: string }) {
 export function ViewCount({ section, threshold }: { section: string; threshold: number }) {
   const path = usePathname()
   const [n, setN] = useState<number | null>(null)
+  const [milestone, setMilestone] = useState<{ views: number; links: MilestoneLinks } | null>(null)
   useEffect(() => {
     const key = `cmp-viewed:${path}`
     const already = (() => { try { return sessionStorage.getItem(key) } catch { return null } })()
     fetch('/api/views', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path, section, count: Boolean(already) }) })
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (d && typeof d.views === 'number') setN(d.views) })
+      .then((d) => {
+        if (d && typeof d.views === 'number') setN(d.views)
+        if (d?.milestone) setMilestone({ views: d.views, links: d.milestone })
+      })
       .catch(() => {})
     try { sessionStorage.setItem(key, '1') } catch {}
   }, [path, section])
-  if (n === null || n < threshold) return null
-  return <span className="inline-flex items-center gap-1.5"><EyeIcon />{n.toLocaleString()} views</span>
+  const celebrate = milestone ? <MilestoneCelebration views={milestone.views} links={milestone.links} /> : null
+  if (n === null || n < threshold) return celebrate
+  return <><span className="inline-flex items-center gap-1.5"><EyeIcon />{n.toLocaleString()} views</span>{celebrate}</>
 }
 
 // Batches list view counts into one request per page.

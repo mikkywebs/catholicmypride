@@ -76,6 +76,7 @@ function readField(f: Field, form: FormData): [string, unknown][] {
           ? [...new Set(raw('bar_times').split(/[\s,;]+/).map((x) => x.trim()).filter((x) => /^([01]?\d|2[0-3]):[0-5]\d$/.test(x)).map((x) => x.padStart(5, '0')))].sort()
           : []],
         ['bar_season', ['easter', 'not_easter'].includes(raw('bar_season')) ? raw('bar_season') : 'all'],
+        ['bar_remind_minutes', Math.min(60, Math.max(0, Number.parseInt(raw('bar_remind_minutes'), 10) || 0))],
       ]
     }
     case 'image':
@@ -258,7 +259,7 @@ export async function saveSettings(_: FormState, form: FormData): Promise<FormSt
   row.view_threshold = Math.max(0, Number.parseInt(String(form.get('view_threshold') ?? '50'), 10) || 0)
   const fb = String(form.get('music_fallback') ?? 'songs')
   row.music_fallback = MUSIC_FALLBACKS.includes(fb) ? fb : 'songs'
-  row.music_loop = form.get('music_loop') === 'once' ? 'once' : 'loop'
+  row.music_loop = 'once' // the bar never repeats by itself
   const season = String(form.get('seasonal_theme') ?? 'auto')
   row.seasonal_theme = (SEASON_MODES as string[]).includes(season) ? season : 'auto'
   const { error } = await db.from('settings').update(row).eq('id', 1)

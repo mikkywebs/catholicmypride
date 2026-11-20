@@ -26,7 +26,7 @@ export function activeSlots(slots: BarSlot[], now: Date) {
   return slots.filter((x) => isActive(x, now)).sort((a, b) => a.order - b.order || a.title.localeCompare(b.title))
 }
 
-export type TimedPrayer = { id: string; title: string; times: string[]; season: 'all' | 'easter' | 'not_easter' | string }
+export type TimedPrayer = { id: string; title: string; times: string[]; season: 'all' | 'easter' | 'not_easter' | string; remind?: number }
 
 const pad = (n: number) => String(n).padStart(2, '0')
 const localISO = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
@@ -40,13 +40,39 @@ export function dueTimed(prayers: TimedPrayer[], now: Date, isEaster = isEasterS
     for (const t of p.times) {
       const diff = mins - minutes(t)
       if (diff >= 0 && diff < 2) {
-        const h = Number(t.slice(0, 2))
-        const label = `${h === 12 ? '12 noon' : `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`} · ${p.title}`
-        return { id: p.id, key: `${localISO(now)}T${t}:${p.id}`, label }
+        return { id: p.id, key: `${localISO(now)}T${t}:${p.id}`, label: `${clock(t)} · ${p.title}` }
       }
     }
   }
   return null
+}
+
+/** “12 noon”, “6pm”, “3am”, “6:30pm”. */
+export function clock(t: string) {
+  const h = Number(t.slice(0, 2)), m = t.slice(3, 5)
+  if (h === 12 && m === '00') return '12 noon'
+  if (h === 0 && m === '00') return 'midnight'
+  return `${h % 12 || 12}${m === '00' ? '' : `:${m}`}${h < 12 ? 'am' : 'pm'}`
+}
+
+/** A prayer whose time passed a few minutes ago (after the 2-minute start window, within its reminder window).
+ *  Used to invite visitors who arrive late: “The Angelus was prayed at 12 noon · Pray it now”. */
+export function recentTimed(prayers: TimedPrayer[], now: Date, isEaster = isEasterSeason(now)) {
+  const mins = now.getHours() * 60 + now.getMinutes()
+  let best: { id: string; key: string; title: string; time: string; ago: number } | null = null
+  for (const p of prayers) {
+    const window = p.remind ?? 15
+    if (window <= 0) continue
+    if (p.season === 'easter' && !isEaster) continue
+    if (p.season === 'not_easter' && isEaster) continue
+    for (const t of p.times) {
+      const ago = mins - minutes(t)
+      if (ago >= 2 && ago <= window && (!best || ago < best.ago)) {
+        best = { id: p.id, key: `${localISO(now)}T${t}:${p.id}`, title: p.title, time: clock(t), ago }
+      }
+    }
+  }
+  return best
 }
 
 /** Easter Sunday up to and including Pentecost, on the visitor's date. */

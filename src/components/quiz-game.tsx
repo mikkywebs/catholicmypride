@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useClientValue } from './use-client'
+import { BOOK_WINS, QuizBookButton } from './quiz-book-card'
 import { countries, countryName, flag } from '@/lib/country-codes'
 import type { QuizQuestion } from '@/lib/types'
 
@@ -169,6 +170,14 @@ export function QuizGame({ logoUrl }: { logoUrl: string }) {
             <button type="button" onClick={() => downloadCertificate(saved.certificate!, logoUrl)} className="rounded-md bg-gold px-6 py-3 font-bold text-[#1f2430]">Download my certificate (PDF)</button>
           </div>
         )}
+        {won && p && (saved.wins >= BOOK_WINS ? (
+          <div className="flex flex-col items-center gap-2 pt-2">
+            {saved.wins === BOOK_WINS && <p className="m-0 font-semibold">📘 Three wins! Your free ebook, written specially for you, is ready.</p>}
+            <QuizBookButton name={who} country={countryName(p.country)} logoUrl={logoUrl} />
+          </div>
+        ) : (
+          <p className="m-0 text-sm text-navy-muted">📘 Win {BOOK_WINS - saved.wins} more {BOOK_WINS - saved.wins === 1 ? 'time' : 'times'} (not necessarily in a row) to unlock your free personalised ebook.</p>
+        ))}
         <button type="button" onClick={start} className={`mt-2 rounded-md px-6 py-3 font-semibold ${won ? 'border border-navy-muted text-navy-ink' : 'bg-accent text-accent-ink'}`}>{won ? 'Play again' : 'Try again'}</button>
       </div>
 

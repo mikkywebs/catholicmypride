@@ -1,4 +1,4 @@
-import { WhatsAppJoin } from '@/components/whatsapp-join'
+import { StayConnected } from '@/components/whatsapp-join'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -58,7 +58,7 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       <Prose html={md(p.body_md)} />
       {p.tags.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Tags">{p.tags.map((t) => <Chip key={t}>{t}</Chip>)}</div>}
       <Reactions type="post" id={p.id} kinds={['love', 'amen', 'thumbs']} title="Did this bless you?" />
-      <WhatsAppJoin url={s.whatsapp_channel_url} />
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       <p className="m-0 rounded-2xl border border-line bg-surface px-6 py-4 text-center text-[15px] text-muted">✍️ Would you like to write for Catholic My Pride? <Link href="/write-for-us" className="font-semibold">Share your article</Link></p>
       <div className="flex flex-col gap-2 border-t border-line pt-4"><strong>Found this helpful? Share it.</strong><ShareBar title={p.title} /></div>
       {related.length > 0 && (

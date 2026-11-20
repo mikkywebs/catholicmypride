@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { announcePlay, onOtherPlay } from './audio-bus'
 import { NextIcon, PauseIcon, PlayIcon, PrevIcon, VolumeIcon } from './icons'
 import { useClientValue } from './use-client'
-import { activeSlots, dueTimed, type BarSlot, type TimedPrayer } from '@/lib/schedule'
+import { activeSlots, dueTimed, recentTimed, type BarSlot, type TimedPrayer } from '@/lib/schedule'
 
 export type Track = { id: string; slug: string; title: string; src: string; cover: string | null }
 
@@ -19,13 +19,17 @@ function subscribeClock(cb: () => void) {
 const minuteNow = () => Math.floor(Date.now() / 60_000)
 
 /**
- * Sticky music bar. Browsers block sound until the visitor interacts,
- * so it starts on the first tap or click anywhere. There is no download control.
+ * Sticky music bar. Music starts only when the visitor presses Play, plays the list once and stops
+ * (never the same item twice in a row). Prayers with set times are handled by the timed-prayer logic.
+ * There is no download control.
  */
-export function MusicBar({ library, slots, loop, fallback, timed = [] }: { library: Track[]; slots: BarSlot[]; loop: boolean; fallback: string[]; timed?: TimedPrayer[] }) {
+export function MusicBar({ library, slots, fallback, timed = [] }: { library: Track[]; slots: BarSlot[]; fallback: string[]; timed?: TimedPrayer[] }) {
   const audio = useRef<HTMLAudioElement>(null)
   const minute = useSyncExternalStore(subscribeClock, minuteNow, () => 0)
   const byId = new Map(library.map((t) => [t.id, t]))
+  // Prayers with set times (Angelus, Divine Mercy) never come up through Previous/Next.
+  const timedIds = new Set(timed.map((p) => p.id))
+  const rotation = library.filter((x) => !timedIds.has(x.id))
   const scheduled = minute ? activeSlots(slots, new Date(minute * 60_000)).map((x) => x.id) : []
   const ids = scheduled.length ? scheduled : fallback
   const tracks = ids.map((id) => byId.get(id)).filter(Boolean) as Track[]
@@ -34,7 +38,9 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
   const queueKey = ids.join(',')
   const [pos, setPos] = useState({ key: '', i: 0 })
   const i = pos.key === queueKey && pos.i < tracks.length ? pos.i : 0
-  const setI = (n: number) => setPos({ key: queueKey, i: n })
+  const setI = (n: number) => { setExtra(null); setPos({ key: queueKey, i: n }) }
+  // When the list has only one item, Previous/Next move through all the audio instead.
+  const [extra, setExtra] = useState<string | null>(null)
   const [playing, setPlaying] = useState(false)
   // Remember volume and mute between visits.
   const storedVolume = useClientValue(() => Number(localStorage.getItem('cmp-volume') ?? 0.6), 0.6)
@@ -68,17 +74,6 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
   }
   const pause = () => { audio.current?.pause(); setPlaying(false) }
 
-  // Autoplay after the first interaction, unless the visitor paused it this session.
-  useEffect(() => {
-    if (!tracks.length) return
-    const start = (e: Event) => {
-      if ((e.target as HTMLElement)?.closest?.('[data-music-bar], [data-audio-player]')) return
-      if (!userPaused.current) play()
-    }
-    window.addEventListener('pointerdown', start, { once: true })
-    return () => window.removeEventListener('pointerdown', start)
-  }, [tracks.length])
-
   useEffect(() => onOtherPlay(ID, pause), [])
 
   // Start a prayer when its time comes (once per time, even with several tabs open).
@@ -93,6 +88,30 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
     const t = setTimeout(() => setPrayer({ id: due.id, label: due.label, resume: playing, blocked: false }), 0)
     return () => clearTimeout(t)
   }, [minute]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Late visitors: a prayer whose time passed a few minutes ago is offered, never played by itself.
+  const [late, setLate] = useState<{ id: string; key: string; title: string; time: string; ago: number } | null>(null)
+  useEffect(() => {
+    if (!minute) return
+    const r = recentTimed(timed, new Date())
+    let show = r && byId.has(r.id) ? r : null
+    try {
+      // Already heard or offered at that time on this device, or closed: don't offer it again.
+      if (show && (localStorage.getItem('cmp-timed') === show.key || localStorage.getItem('cmp-late-closed') === show.key)) show = null
+    } catch {}
+    const t = setTimeout(() => setLate(show), 0)
+    return () => clearTimeout(t)
+  }, [minute]) // eslint-disable-line react-hooks/exhaustive-deps
+  const prayLate = () => {
+    if (!late) return
+    try { localStorage.setItem('cmp-timed', late.key) } catch {}
+    setLate(null)
+    setPrayer({ id: late.id, label: `${late.time} · ${late.title}`, resume: playing, blocked: false })
+  }
+  const closeLate = () => {
+    if (late) try { localStorage.setItem('cmp-late-closed', late.key) } catch {}
+    setLate(null)
+  }
 
   // When a prayer is set, play it; if the browser blocks sound (no tap yet), show a button.
   useEffect(() => {
@@ -118,12 +137,27 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
   }, [prayer?.blocked, prayer?.id])
 
   const prayerTrack = prayer ? byId.get(prayer.id) : undefined
-  if (!tracks.length && !prayerTrack) return null
-  const t = prayerTrack ?? tracks[i]
+  const lateBanner = late && !prayer ? (
+    <div role="status" className="fixed inset-x-0 bottom-[76px] z-40 px-4 sm:bottom-[72px]">
+      <div className="mx-auto flex max-w-[640px] flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border-2 border-gold bg-navy px-5 py-3 text-navy-ink shadow-[0_8px_24px_rgba(0,0,0,0.25)]">
+        <span className="min-w-0 flex-1 basis-60 text-[15px]">🔔 <strong>{late.title}</strong> was prayed at {late.time} ({late.ago} minutes ago). Pray it with us now?</span>
+        <button type="button" onClick={prayLate} className="inline-flex min-h-11 items-center gap-2 rounded-md bg-gold px-4 font-bold text-[#1f2430]"><PlayIcon size={16} /> Pray it now</button>
+        <button type="button" onClick={closeLate} aria-label="Close" className="flex size-10 items-center justify-center rounded-full text-navy-muted">✕</button>
+      </div>
+    </div>
+  ) : null
+  if (!tracks.length && !prayerTrack) return lateBanner
+  const extraTrack = extra ? byId.get(extra) : undefined
+  const t = prayerTrack ?? extraTrack ?? tracks[i]
   const step = (d: number) => {
     if (prayer) { setPrayer(null); setTimeout(() => { if (playing) play() }, 0); return }
-    const n = (i + d + tracks.length) % tracks.length
-    setI(n)
+    if (tracks.length > 1 && !extraTrack) {
+      setI((i + d + tracks.length) % tracks.length)
+    } else if (rotation.length > 1) {
+      // Only one item scheduled: go through all the audio, so Next always brings something different.
+      const at = Math.max(0, rotation.findIndex((x) => x.id === t.id))
+      setExtra(rotation[(at + d + rotation.length) % rotation.length].id)
+    }
     setTimeout(() => { if (playing) play() }, 0)
   }
   const ended = () => {
@@ -133,12 +167,20 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
       setPlaying(false)
       return
     }
+    // Carry on to the next different item; at the end of the list, stop. Nothing repeats by itself.
+    if (extraTrack) {
+      const at = rotation.findIndex((x) => x.id === extraTrack.id)
+      if (at >= 0 && at + 1 < rotation.length) { setExtra(rotation[at + 1].id); setTimeout(play, 0) }
+      else setPlaying(false)
+      return
+    }
     if (i + 1 < tracks.length) { setI(i + 1); setTimeout(play, 0) }
-    else if (loop) { setI(0); setTimeout(play, 0) }
     else setPlaying(false)
   }
 
   return (
+    <>
+    {lateBanner}
     <div data-music-bar role="region" aria-label="Music player" className="sticky bottom-0 z-40 border-t-2 border-gold bg-navy px-5 py-2.5 text-navy-ink shadow-[0_-4px_16px_rgba(0,0,0,0.15)]">
       <audio
         ref={audio}
@@ -159,7 +201,7 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
           </div>
         </div>
         <div className="flex items-center gap-1.5">
-          <button type="button" aria-label="Previous song" onClick={() => step(-1)} className="flex size-11 items-center justify-center rounded-full text-navy-ink"><PrevIcon /></button>
+          <button type="button" aria-label="Previous" onClick={() => step(-1)} className="flex size-11 items-center justify-center rounded-full text-navy-ink"><PrevIcon /></button>
           <button
             type="button"
             aria-label={playing ? 'Pause' : 'Play'}
@@ -171,7 +213,7 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
           >
             {playing ? <PauseIcon /> : <PlayIcon />}
           </button>
-          <button type="button" aria-label="Next song" onClick={() => step(1)} className="flex size-11 items-center justify-center rounded-full text-navy-ink"><NextIcon /></button>
+          <button type="button" aria-label="Next" onClick={() => step(1)} className="flex size-11 items-center justify-center rounded-full text-navy-ink"><NextIcon /></button>
         </div>
         <div className="flex basis-52 items-center gap-2.5">
           <button type="button" aria-label={muted ? 'Unmute' : 'Mute'} aria-pressed={muted} onClick={() => setMuted(!muted)} className="flex size-11 items-center justify-center rounded-full text-navy-ink">
@@ -182,5 +224,6 @@ export function MusicBar({ library, slots, loop, fallback, timed = [] }: { libra
         </div>
       </div>
     </div>
+    </>
   )
 }

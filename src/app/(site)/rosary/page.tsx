@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { ShareBar } from '@/components/engage'
-import { WhatsAppJoin } from '@/components/whatsapp-join'
+import { StayConnected } from '@/components/whatsapp-join'
 import { getSettings } from '@/lib/data'
 import { todayISO } from '@/lib/liturgical'
 import { MYSTERIES } from '@/lib/rosary'
@@ -44,7 +44,7 @@ async function Today() {
     <>
       <RosaryToday serverDate={todayISO()} />
       <ShareBar title="Holy Rosary: today’s mysteries with Scripture" />
-      <WhatsAppJoin url={s.whatsapp_channel_url} />
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
     </>
   )
 }

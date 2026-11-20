@@ -1,4 +1,4 @@
-import { WhatsAppJoin } from '@/components/whatsapp-join'
+import { StayConnected } from '@/components/whatsapp-join'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -38,6 +38,11 @@ async function Content({ params }: { params: PageProps<'/audio/[slug]'>['params'
   const related = all.filter((x) => x.id !== song.id && x.kind === song.kind && (!song.category_id || x.category_id === song.category_id)).slice(0, 4)
   const fill = related.length < 4 ? all.filter((x) => x.id !== song.id && x.kind === song.kind && !related.includes(x)).slice(0, 4 - related.length) : []
   const more = [...related, ...fill]
+  // Previous / next among audio of the same kind (songs, or messages and prayers), in the list order.
+  const sameKind = all.filter((x) => x.kind === song.kind && x.audio_url)
+  const at = sameKind.findIndex((x) => x.id === song.id)
+  const prev = at > 0 ? sameKind[at - 1] : null
+  const next = at >= 0 && at + 1 < sameKind.length ? sameKind[at + 1] : sameKind.find((x) => x.id !== song.id) ?? null
   const len = duration(song.duration_seconds)
   const typeLabel = isSong ? 'Song' : 'Audio message'
   const youtube = song.youtube_url && isYouTubeUrl(song.youtube_url) ? song.youtube_url : null
@@ -60,7 +65,13 @@ async function Content({ params }: { params: PageProps<'/audio/[slug]'>['params'
             {song.about && <p className="m-0 text-[19px] text-muted">{song.about}</p>}
           </div>
           {song.lyrics && <Lyrics text={song.lyrics} label={isSong ? 'Lyrics' : 'Transcript'} />}
-          {song.audio_url && <AudioPlayer src={song.audio_url} label={song.title} initialSeconds={song.duration_seconds} downloadName={song.allow_download ? `${slugify(song.title)}.mp3` : undefined} />}
+          {song.audio_url && <AudioPlayer src={song.audio_url} label={song.title} initialSeconds={song.duration_seconds} downloadName={song.allow_download ? `${slugify(song.title)}.mp3` : undefined} next={next ? { href: `/audio/${next.slug}`, title: next.title } : null} />}
+          {(prev || next) && (
+            <nav aria-label="More audio" className="flex flex-wrap justify-between gap-3 text-[15px]">
+              {prev ? <Link href={`/audio/${prev.slug}`} className="font-semibold">← {prev.title}</Link> : <span />}
+              {next && <Link href={`/audio/${next.slug}`} className="font-semibold">{next.title} →</Link>}
+            </nav>
+          )}
           {youtube && (
             <a href={youtube} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center gap-2.5 self-start rounded-md border border-line bg-surface px-5 font-semibold text-ink no-underline hover:border-ink hover:text-ink">
               <BrandIcon icon={BRANDS.youtube} size={22} /> Watch on YouTube
@@ -75,7 +86,7 @@ async function Content({ params }: { params: PageProps<'/audio/[slug]'>['params'
           />
         </div>
       </div>
-      <WhatsAppJoin url={s.whatsapp_channel_url} />
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       <section className="reveal flex flex-col items-center gap-3 rounded-2xl border border-eyebrow px-7 py-9 text-center">
         <h2 className="m-0 font-serif text-[34px] font-semibold">{isSong ? 'Blessed by this song?' : 'Blessed by this message?'}</h2>
         <p className="m-0 max-w-[560px] text-muted">Your support helps us create more hymns, messages and prayers, and share the faith with families everywhere.</p>

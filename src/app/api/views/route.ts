@@ -27,5 +27,19 @@ export async function POST(req: NextRequest) {
   }
   const country = req.headers.get('x-vercel-ip-country') ?? null
   const { data } = await db.rpc('record_view', { p_path: path, p_section: body.section ?? null, p_country: country })
-  return Response.json({ views: Number(data ?? 0) })
+  const views = Number(data ?? 0)
+  // This visitor brought the page to a milestone (50, 100, 200, 500, 1,000…): send what the thank-you needs.
+  if (isMilestone(views)) {
+    const s = await getSettings()
+    return Response.json({ views, milestone: { whatsapp: s.whatsapp_channel_url ?? null, youtube: s.youtube_url ?? null } })
+  }
+  return Response.json({ views })
+}
+
+/** 50, 100, 200, 500, 1,000, 2,000, 5,000, 10,000, 20,000, 50,000, 100,000… */
+function isMilestone(n: number) {
+  if (n === 50) return true
+  if (n < 100) return false
+  const p = 10 ** Math.floor(Math.log10(n))
+  return n === p || n === 2 * p || n === 5 * p
 }

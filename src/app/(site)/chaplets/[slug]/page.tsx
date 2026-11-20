@@ -1,4 +1,4 @@
-import { WhatsAppJoin } from '@/components/whatsapp-join'
+import { StayConnected } from '@/components/whatsapp-join'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -43,7 +43,7 @@ async function Content({ params }: { params: PageProps<'/chaplets/[slug]'>['para
       {c.audio_url && <AudioPlayer src={c.audio_url} label="Pray along" initialSeconds={c.audio_seconds} />}
       <Prose html={md(c.body_md)} />
       <Reactions type="chaplet" id={c.id} kinds={['love', 'amen', 'thumbs']} title="Did you pray along?" />
-      <WhatsAppJoin url={s.whatsapp_channel_url} />
+      <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       {others.length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
           <h2 className="m-0 border-b border-line pb-2.5 font-serif text-[30px] font-semibold">More chaplets</h2>

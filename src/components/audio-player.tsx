@@ -10,14 +10,22 @@ function fmt(s: number) {
 }
 
 /** Player for songs, novena days, prayers and blog audio. Pauses every other player. */
-export function AudioPlayer({ src, label, downloadName, initialSeconds }: { src: string; label: string; downloadName?: string; initialSeconds?: number | null }) {
+export function AudioPlayer({ src, label, downloadName, initialSeconds, next }: { src: string; label: string; downloadName?: string; initialSeconds?: number | null; next?: { href: string; title: string } | null }) {
   const id = useId()
   const ref = useRef<HTMLAudioElement>(null)
   const [playing, setPlaying] = useState(false)
   const [t, setT] = useState(0)
   const [d, setD] = useState(initialSeconds ?? 0)
+  const [done, setDone] = useState(false)
 
   useEffect(() => onOtherPlay(id, () => { ref.current?.pause(); setPlaying(false) }), [id])
+
+  // Arrived with “Play next” (?play=1): try to start (the browser may still ask for a tap).
+  useEffect(() => {
+    if (!ref.current || new URLSearchParams(window.location.search).get('play') !== '1') return
+    announcePlay(id)
+    ref.current.play().then(() => setPlaying(true)).catch(() => {})
+  }, [id])
 
   const toggle = async () => {
     const a = ref.current
@@ -29,7 +37,7 @@ export function AudioPlayer({ src, label, downloadName, initialSeconds }: { src:
 
   return (
     <section data-audio-player aria-label={label} className="flex flex-wrap items-center gap-4 rounded-2xl bg-navy px-5 py-4 text-navy-ink">
-      <audio ref={ref} src={src} preload="metadata" onTimeUpdate={(e) => setT(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setD(e.currentTarget.duration)} onEnded={() => setPlaying(false)} />
+      <audio ref={ref} src={src} preload="metadata" onTimeUpdate={(e) => setT(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setD(e.currentTarget.duration)} onEnded={() => { setPlaying(false); if (next) setDone(true) }} />
       <button type="button" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'} className="flex size-14 shrink-0 items-center justify-center rounded-full bg-gold text-[#1f2430]">
         {playing ? <PauseIcon size={20} /> : <PlayIcon size={20} />}
       </button>
@@ -51,6 +59,12 @@ export function AudioPlayer({ src, label, downloadName, initialSeconds }: { src:
         <a href={`${src}${src.includes('?') ? '&' : '?'}download=${encodeURIComponent(downloadName)}`} download={downloadName} className="inline-flex items-center gap-2 rounded-md bg-navy-ink px-4 py-2.5 font-semibold text-navy no-underline hover:text-navy">
           <DownloadIcon /> Download MP3
         </a>
+      )}
+      {done && next && (
+        <div role="status" className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-[#3a4150] pt-3">
+          <span className="text-navy-muted">Up next: <strong className="text-navy-ink">{next.title}</strong></span>
+          <a href={`${next.href}?play=1`} className="inline-flex min-h-11 items-center gap-2 rounded-md bg-gold px-5 font-bold text-[#1f2430] no-underline hover:text-[#1f2430]"><PlayIcon size={16} /> Play next</a>
+        </div>
       )}
     </section>
   )
