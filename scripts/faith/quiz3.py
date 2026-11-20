@@ -72,7 +72,6 @@ QUIZ = [
 ('Church History', 'Which council responded to the Protestant Reformation (1545–1563)?', 'Vatican II', 'Trent', 'Florence', 'Lyon', 'B', 'It clarified doctrine and reformed the Church.', ''),
 ('Church History', 'Which council defined papal infallibility in 1870?', 'Vatican I', 'Vatican II', 'Trent', 'Lateran V', 'A', 'In the constitution Pastor Aeternus.', ''),
 ('Church History', 'In which years was the Second Vatican Council held?', '1869–1870', '1962–1965', '1545–1563', '1978–1981', 'B', 'Opened by John XXIII and closed by Paul VI.', ''),
-('Church History', 'Who translated the Bible into Latin, called the Vulgate?', 'Saint Jerome', 'Saint Augustine', 'Saint Bede', 'Saint Ambrose', 'A', 'Around the year 400.', ''),
 ('Church History', 'In what year did the Great Schism divide East and West?', '313', '1054', '1517', '1870', 'B', 'Rome and Constantinople separated in 1054.', ''),
 ('Church History', 'In what year did Martin Luther publish his 95 theses?', '1492', '1517', '1545', '1600', 'B', 'The start of the Protestant Reformation.', ''),
 ('Church History', 'What are the catacombs of Rome?', 'Royal palaces', 'Underground Christian burial places', 'Ancient libraries', 'Roman baths', 'B', 'Early Christians buried their dead there and honoured the martyrs.', ''),
