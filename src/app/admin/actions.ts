@@ -330,6 +330,34 @@ export async function answerSubmission(id: string, question: string) {
   redirect(`/admin/faqs/new?question=${encodeURIComponent(question)}`)
 }
 
+/** Blog Ideas: turn a suggestion into a draft post with all the SEO fields filled in, then open it. */
+export async function createIdeaDraft(idea: import('@/lib/blog-ideas').BlogIdea) {
+  const { db } = await requireAdmin()
+  const { data: existing } = await db.from('posts').select('id').eq('slug', idea.slug).maybeSingle()
+  if (existing) redirect(`/admin/posts/${existing.id}`)
+  const { data: cats } = await db.from('categories').select('id, name').eq('kind', 'blog')
+  const cat = (cats ?? []).find((c) => (c.name as string).toLowerCase() === idea.category.toLowerCase())
+  const body = [
+    `> ✍️ Draft from Blog Ideas. Replace the notes under each heading with your own writing, then delete this line. Publish by ${idea.publishBy}.`,
+    idea.outlineMd,
+    '## Frequently asked questions (answer each in 2–3 sentences)',
+    idea.faqs.map((q) => `### ${q}
+
+- …`).join('\n\n'),
+    '---',
+    `**Link to:** ${idea.links.map((l) => `[${l.label}](${l.href})`).join(' · ')}`,
+    `**Image idea:** ${idea.image} · **Alt text:** ${idea.imageAlt}`,
+  ].join('\n\n')
+  const { data: post, error } = await db.from('posts').insert({
+    title: idea.title, slug: idea.slug, body_md: body, excerpt: idea.seoDescription,
+    seo_title: idea.seoTitle, seo_description: idea.seoDescription, focus_keyword: idea.focusKeyword, keywords: idea.keywords.join(', '),
+    tags: idea.tags, category_id: cat?.id ?? null, author: 'Catholic My Pride', image_alt: idea.imageAlt,
+    status: 'draft', updated_at: new Date().toISOString(),
+  }).select('id').single()
+  if (error || !post) redirect(`/admin/blog-ideas?error=${encodeURIComponent(error?.message ?? 'Could not create the draft')}`)
+  redirect(`/admin/posts/${post.id}?from=idea`)
+}
+
 /** Article sent by a reader: turn it into a draft blog post (once) and open it in the blog editor. */
 export async function openArticle(id: string) {
   const { db } = await requireAdmin()
