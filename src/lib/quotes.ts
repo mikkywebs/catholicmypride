@@ -4,10 +4,10 @@ import path from 'node:path'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
 
-export type QuoteKind = 'jesus' | 'mary' | 'bible' | 'saint' | 'pope' | 'bishop' | 'scholar' | 'church'
+export type QuoteKind = 'jesus' | 'mary' | 'apparition' | 'bible' | 'saint' | 'pope' | 'bishop' | 'scholar' | 'church'
 export type Quote = { id: string; text: string; author: string; source: string | null; kind: QuoteKind; show_on: string | null }
 export const KIND_LABEL: Record<QuoteKind, string> = {
-  jesus: 'Jesus', mary: 'Our Lady', bible: 'The Bible', saint: 'The Saints', pope: 'The Popes', bishop: 'Bishops', scholar: 'Catholic Scholars', church: 'The Church',
+  jesus: 'Jesus', mary: 'Our Lady', apparition: 'Apparitions of Our Lady', bible: 'The Bible', saint: 'The Saints', pope: 'The Popes', bishop: 'Bishops', scholar: 'Catholic Scholars', church: 'The Church',
 }
 
 type StarterQuote = Omit<Quote, 'id' | 'show_on'>
