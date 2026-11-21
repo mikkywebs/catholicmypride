@@ -43,13 +43,15 @@ const ROSE = '#c66a92'
 const GOLD = '#e0a93b'
 const GREEN = '#3f6b45'
 const WOOD = '#8a5a35'
+const BLUE = '#3c6ea8'
+const starPath = (cx: number, cy: number, r: number) => Array.from({ length: 10 }, (_, k) => { const a = -Math.PI / 2 + (k * Math.PI) / 5; const rr = k % 2 ? r * 0.45 : r; return `${k ? 'L' : 'M'}${(cx + Math.cos(a) * rr).toFixed(1)} ${(cy + Math.sin(a) * rr).toFixed(1)}` }).join(' ') + 'Z'
 
 /** Hand-drawn seasonal pictures. Light enough to sit in a ribbon or a banner. */
 export function SeasonArt({ art, candles = 0, className = '' }: { art: Art; candles?: number; className?: string }) {
   const label: Record<Art, string> = {
     wreath: `Advent wreath with ${candles} of 4 candles lit`, star: 'Star of Bethlehem', newyear: 'Star with sparkles for the New Year',
     cross: 'A simple cross with a violet cloth', palm: 'Palm branches', chalice: 'Chalice and host', baretree: 'The wooden cross',
-    tomb: 'The empty tomb at sunrise', risen: 'The cross at sunrise with lilies', flame: 'Flames of the Holy Spirit', crown: 'A royal crown with a cross, for Christ the King',
+    tomb: 'The empty tomb at sunrise', risen: 'The cross at sunrise with lilies', flame: 'Flames of the Holy Spirit', crown: 'A royal crown with a cross, for Christ the King', lily: 'A white lily under twelve stars, for the Immaculate Conception', stars: 'The sun, the moon and a crown of twelve stars, for the Assumption', monstrance: 'A golden monstrance with the Sacred Host', heart: 'The Sacred Heart of Jesus with flames and a cross',
   }
   return (
     <svg viewBox="0 0 200 140" role="img" aria-label={label[art]} className={className}>
@@ -166,6 +168,49 @@ export function SeasonArt({ art, candles = 0, className = '' }: { art: Art; cand
           {[70, 100, 130].map((x, i) => <circle key={i} cx={x} cy="116" r="4.5" fill={i === 1 ? '#a8322b' : '#2f5f9e'} />)}
           <rect x="96" y="30" width="8" height="34" rx="1.5" fill="#c9962e" />
           <rect x="88" y="38" width="24" height="7" rx="1.5" fill="#c9962e" />
+        </g>
+      )}
+      {art === 'lily' && (
+        <g>
+          {Array.from({ length: 12 }, (_, i) => { const a = Math.PI + 0.25 + (i / 11) * (Math.PI - 0.5); return <path key={i} d={starPath(100 + Math.cos(a) * 78, 112 + Math.sin(a) * 92, 5)} fill={GOLD} /> })}
+          <path d="M100 132 C100 110 99 92 100 70" stroke={GREEN} strokeWidth="4" fill="none" strokeLinecap="round" />
+          <path d="M100 112 C86 104 80 96 78 86 C90 92 96 100 100 108" fill={GREEN} />
+          <path d="M100 100 C114 92 120 84 122 74 C110 80 104 88 100 96" fill={GREEN} />
+          <path d="M100 72 C84 64 74 48 76 34 C88 42 96 54 100 66 Z" fill="#fffdf6" stroke="#c9bfa8" strokeWidth="1.5" />
+          <path d="M100 72 C116 64 126 48 124 34 C112 42 104 54 100 66 Z" fill="#fffdf6" stroke="#c9bfa8" strokeWidth="1.5" />
+          <path d="M100 72 C92 56 94 40 100 26 C106 40 108 56 100 72 Z" fill="#ffffff" stroke="#c9bfa8" strokeWidth="1.5" />
+          {[94, 100, 106].map((x) => <circle key={x} cx={x} cy={54} r="2.2" fill={GOLD} />)}
+        </g>
+      )}
+      {art === 'stars' && (
+        <g>
+          {Array.from({ length: 16 }, (_, i) => { const a = (i / 16) * Math.PI * 2; return <line key={i} x1={100 + Math.cos(a) * 30} y1={68 + Math.sin(a) * 30} x2={100 + Math.cos(a) * 46} y2={68 + Math.sin(a) * 40} stroke={GOLD} strokeWidth="2.5" strokeLinecap="round" opacity="0.6" /> })}
+          <circle cx="100" cy="68" r="24" fill={GOLD} />
+          {Array.from({ length: 12 }, (_, i) => { const a = -Math.PI / 2 + (i / 12) * Math.PI * 2; return <path key={i} d={starPath(100 + Math.cos(a) * 50, 64 + Math.sin(a) * 50, 5.5)} fill={BLUE} /> })}
+          <path d="M72 124 C86 140 114 140 128 124 C114 132 86 132 72 124 Z" fill="#c9cfd8" stroke="#9aa3b0" strokeWidth="1.5" />
+        </g>
+      )}
+      {art === 'monstrance' && (
+        <g>
+          {Array.from({ length: 24 }, (_, i) => { const a = (i / 24) * Math.PI * 2; const long = i % 2 === 0; return <line key={i} x1={100 + Math.cos(a) * 22} y1={56 + Math.sin(a) * 22} x2={100 + Math.cos(a) * (long ? 50 : 40)} y2={56 + Math.sin(a) * (long ? 50 : 40)} stroke={GOLD} strokeWidth={long ? 3 : 2} strokeLinecap="round" /> })}
+          <circle cx="100" cy="56" r="21" fill={GOLD} />
+          <circle cx="100" cy="56" r="15" fill="#fffdf6" stroke="#d8c9a0" strokeWidth="1" />
+          <path d="M100 49 V63 M93 56 H107" stroke="#d8c9a0" strokeWidth="1.5" />
+          <rect x="97" y="6" width="6" height="14" rx="1" fill="#c9962e" /><rect x="93" y="9" width="14" height="5" rx="1" fill="#c9962e" />
+          <path d="M96 78 H104 L106 112 H94 Z" fill="#c9962e" />
+          <circle cx="100" cy="94" r="5" fill={GOLD} />
+          <path d="M78 128 C80 118 90 112 100 112 C110 112 120 118 122 128 Z" fill={GOLD} stroke="#b9892a" strokeWidth="1.5" />
+        </g>
+      )}
+      {art === 'heart' && (
+        <g>
+          {Array.from({ length: 13 }, (_, i) => { const a = Math.PI + (i / 12) * Math.PI; return <line key={i} x1={100 + Math.cos(a) * 52} y1={84 + Math.sin(a) * 52} x2={100 + Math.cos(a) * 74} y2={84 + Math.sin(a) * 74} stroke={GOLD} strokeWidth="2.5" strokeLinecap="round" opacity="0.55" /> })}
+          <path d="M100 48 C94 38 98 30 104 24 C104 32 112 34 108 44 C106 48 102 50 100 48 Z" fill="#f2a33a" />
+          <path d="M100 46 C98 40 100 36 102 32 C103 38 106 40 103 46 Z" fill="#ffd36b" />
+          <rect x="97.5" y="14" width="5" height="22" rx="1" fill={GOLD} /><rect x="91" y="19" width="18" height="4.5" rx="1" fill={GOLD} />
+          <path d="M100 128 C72 108 58 92 60 74 C62 60 74 52 86 54 C93 55 98 60 100 66 C102 60 107 55 114 54 C126 52 138 60 140 74 C142 92 128 108 100 128 Z" fill="#b3261e" stroke="#7d1a14" strokeWidth="2" />
+          <path d="M64 84 C80 76 120 76 136 84 M66 90 C82 82 118 82 134 90" stroke={WOOD} strokeWidth="2.5" fill="none" strokeLinecap="round" />
+          <path d="M108 96 L114 104" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
         </g>
       )}
       {art === 'flame' && (

@@ -101,8 +101,12 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
               <option value="easter">Always show Easter</option>
               <option value="pentecost">Always show Pentecost</option>
               <option value="christking">Always show Christ the King</option>
+              <option value="immaculate">Always show the Immaculate Conception</option>
+              <option value="assumption">Always show the Assumption</option>
+              <option value="corpuschristi">Always show Corpus Christi</option>
+              <option value="sacredheart">Always show the Sacred Heart</option>
             </select>
-            <span className="text-[13px] font-normal text-muted">Automatic changes by itself every year: Advent wreath (one more candle each week), Christmas star, New Year blessing, a plain Lent, Holy Week, Easter, Pentecost and Christ the King. In Ordinary Time nothing is added. If you pick one season by hand, remember to set it back to Automatic.</span>
+            <span className="text-[13px] font-normal text-muted">Automatic changes by itself every year: Advent wreath (one more candle each week), Christmas star, New Year blessing, a plain Lent, Holy Week, Easter, Pentecost, plus the great feasts: Christ the King, the Immaculate Conception, the Assumption, Corpus Christi and the Sacred Heart. In Ordinary Time nothing is added. If you pick one season by hand, remember to set it back to Automatic.</span>
           </label>
         </section>
         <section className={card}>

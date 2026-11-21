@@ -1,12 +1,12 @@
 // Seasonal decoration, worked out from the Church calendar for any year.
 import { adventStart, easter, liturgicalInfo, parseISODate } from './liturgical'
 
-export type SeasonKey = 'advent' | 'christmas' | 'lent' | 'holyweek' | 'easter' | 'pentecost' | 'christking'
+export type SeasonKey = 'advent' | 'christmas' | 'lent' | 'holyweek' | 'easter' | 'pentecost' | 'christking' | 'immaculate' | 'assumption' | 'corpuschristi' | 'sacredheart'
 export type SeasonMode = 'auto' | 'off' | SeasonKey
-export const SEASON_MODES: SeasonMode[] = ['auto', 'off', 'advent', 'christmas', 'lent', 'holyweek', 'easter', 'pentecost', 'christking']
+export const SEASON_MODES: SeasonMode[] = ['auto', 'off', 'advent', 'christmas', 'lent', 'holyweek', 'easter', 'pentecost', 'christking', 'immaculate', 'assumption', 'corpuschristi', 'sacredheart']
 
 /** Picture drawn in the banner. */
-export type Art = 'wreath' | 'star' | 'newyear' | 'cross' | 'palm' | 'chalice' | 'baretree' | 'tomb' | 'risen' | 'flame' | 'crown'
+export type Art = 'wreath' | 'star' | 'newyear' | 'cross' | 'palm' | 'chalice' | 'baretree' | 'tomb' | 'risen' | 'flame' | 'crown' | 'lily' | 'stars' | 'monstrance' | 'heart'
 
 export type SeasonTheme = {
   key: SeasonKey
@@ -34,6 +34,7 @@ const VIOLET = { color: '#6b4a9b', tint: '#efe8f7', onDark: '#c9b3ec' }
 const ROSE = { color: '#b8557f', tint: '#f9e9f0', onDark: '#f0b3cd' }
 const GOLD = { color: '#b9892a', tint: '#fbf3df', onDark: '#f2c66b' }
 const RED = { color: '#a8322b', tint: '#f9e6e4', onDark: '#f0a19a' }
+const MARIAN = { color: '#3c6ea8', tint: '#e8f0fa', onDark: '#a9c8ef' }
 const PLAIN = { color: '#5c5f66', tint: '#efefef', onDark: '#c4c7cc' }
 
 /** Today's decoration, or null in Ordinary Time (or when switched off). */
@@ -46,6 +47,21 @@ export function seasonTheme(today: string, mode: SeasonMode = 'auto'): SeasonThe
   const { season } = liturgicalInfo(today)
   const e = easter(year)
   const md = today.slice(5)
+
+  // Great solemnities that outrank the season they fall in.
+  if (t === parseISODate(immaculateDate(year))) {
+    return { key: 'immaculate', art: 'lily', eyebrow: 'Solemnity of the Immaculate Conception', title: 'Mary, conceived without sin', line: 'Thou art all fair, O my love, and there is not a spot in thee.', cite: 'Canticle of Canticles 4:7', href: '/rosary', cta: 'Pray the Rosary', ...MARIAN }
+  }
+  if (md === '08-15') {
+    return { key: 'assumption', art: 'stars', eyebrow: 'Solemnity of the Assumption', title: 'Mary, taken up body and soul into heaven', line: 'A woman clothed with the sun, and the moon under her feet, and on her head a crown of twelve stars.', cite: 'Apocalypse 12:1', href: '/rosary', cta: 'Pray the Rosary', ...MARIAN }
+  }
+  // Corpus Christi: Thursday after Holy Trinity, kept on the following Sunday in many countries, so both days.
+  if (t === e + 60 * DAY || t === e + 63 * DAY) {
+    return { key: 'corpuschristi', art: 'monstrance', eyebrow: 'Solemnity of the Most Holy Body and Blood of Christ', title: 'Corpus Christi: Jesus, truly present', line: 'I am the living bread which came down from heaven.', cite: 'John 6:51', href: '/mass-readings', cta: 'Today’s readings', ...GOLD }
+  }
+  if (t === e + 68 * DAY) {
+    return { key: 'sacredheart', art: 'heart', eyebrow: 'Solemnity of the Most Sacred Heart of Jesus', title: 'Most Sacred Heart of Jesus, have mercy on us', line: 'Learn of me, because I am meek, and humble of heart.', cite: 'Matthew 11:29', href: '/mass-readings', cta: 'Today’s readings', ...RED }
+  }
 
   if (season === 'Advent') {
     const adv = adventStart(year)
@@ -103,6 +119,10 @@ function forced(key: SeasonKey, today: string): SeasonTheme {
     easter: iso(easter(Number(today.slice(0, 4))) + 14 * DAY),
     pentecost: iso(easter(Number(today.slice(0, 4))) + 49 * DAY),
     christking: iso(adventStart(Number(today.slice(0, 4))) - 7 * DAY),
+    immaculate: immaculateDate(Number(today.slice(0, 4))),
+    assumption: `${today.slice(0, 4)}-08-15`,
+    corpuschristi: iso(easter(Number(today.slice(0, 4))) + 60 * DAY),
+    sacredheart: iso(easter(Number(today.slice(0, 4))) + 68 * DAY),
   }
   // Inside the real season, use today's own wording (e.g. the right Advent week).
   const real = seasonTheme(today, 'auto')
@@ -110,3 +130,8 @@ function forced(key: SeasonKey, today: string): SeasonTheme {
   return seasonTheme(sample[key], 'auto')!
 }
 
+
+/** 8 December, moved to Monday 9 December when it falls on a Sunday of Advent (the Church's rule). */
+function immaculateDate(year: number): string {
+  return new Date(Date.UTC(year, 11, 8)).getUTCDay() === 0 ? `${year}-12-09` : `${year}-12-08`
+}
