@@ -8,8 +8,8 @@ import Link from 'next/link'
 import { todayISO } from '@/lib/liturgical'
 
 export const metadata: Metadata = {
-  title: 'Saint of the Day',
-  description: "Today's Catholic saint: life story, patronage and a prayer to the saint.",
+  title: 'Saint or Feast of the Day',
+  description: "Today's Catholic saint or Church feast: the life story or meaning of the day, with a prayer.",
   alternates: { canonical: '/saint-of-the-day' },
 }
 

@@ -24,7 +24,7 @@ export async function whatsappBriefing(date: string): Promise<string> {
   const main = saints[0]
   if (main) {
     const snippet = (main.life_md ?? '').split('\n\n')[0].replace(/[*_]/g, '').split(/(?<=[.!?])\s+/)[0]
-    lines.push('', `${main.kind === 'celebration' ? '⛪ *Today in the Church*' : '😇 *Saint of the Day*'}: ${main.name}${main.celebration ? ` (${main.celebration})` : ''}`)
+    lines.push('', `${main.kind === 'celebration' ? '⛪ *Feast of the Day*' : '😇 *Saint of the Day*'}: ${main.name}${main.celebration ? ` (${main.celebration})` : ''}`)
     if (snippet) lines.push(snippet)
     if (saints.length > 1) lines.push(`Also remembered: ${saints.slice(1).map((s) => s.name).join('; ')}`)
     lines.push(`👉 ${SITE}/saint-of-the-day/${main.slug}`)

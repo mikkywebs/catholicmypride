@@ -15,6 +15,9 @@ export function recentHeading(list: Saint[]) {
   return 'Recent saints & celebrations'
 }
 
+/** A Church feast or solemnity is "Feast of the Day"; a holy person is "Saint of the Day". */
+export const dayLabel = (x: Pick<Saint, 'kind'>) => (x.kind === 'celebration' ? 'Feast of the Day' : 'Saint of the Day')
+
 export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Settings; week: Saint[]; others?: Saint[] }) {
   const facts = [
     ['Feast day', saint.feast_label],
@@ -25,14 +28,14 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
   return (
     <div className="mx-auto flex max-w-[820px] flex-col gap-6 px-6 pb-[72px] pt-8">
       <JsonLd data={articleLd({ title: saint.name, description: saint.seo_description, image: saint.featured_image, path: `/saint-of-the-day/${saint.slug}`, published: saint.show_on })} />
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Saint of the Day', href: '/saint-of-the-day' }, { label: saint.name }]} />
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: dayLabel(saint), href: '/saint-of-the-day' }, { label: saint.name }]} />
       <div className="flex flex-col items-center gap-3 text-center">
-        <p className="eyebrow m-0">{saint.kind === 'celebration' ? 'Today in the Church' : 'Saint of the Day'}{saint.show_on ? ` · ${formatShort(saint.show_on)}` : ''}</p>
+        <p className="eyebrow m-0">{dayLabel(saint)}{saint.show_on ? ` · ${formatShort(saint.show_on)}` : ''}</p>
         <h1 className="m-0 font-serif text-[42px] font-semibold leading-[1.08] sm:text-[54px]">{saint.name}</h1>
         <div className="flex flex-wrap justify-center gap-x-4 text-[15px] text-muted">
           {saint.celebration && <span>{saint.celebration}</span>}
           <span>{readMinutes(saint.life_md)} min read</span>
-          <ViewCount section="Saint of the Day" threshold={s.view_threshold} />
+          <ViewCount section={dayLabel(saint)} threshold={s.view_threshold} />
         </div>
       </div>
       <div className="flex flex-wrap items-start gap-6">
@@ -50,7 +53,7 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
           {saint.patronage.length > 0 && (
             <div className="flex flex-wrap items-center gap-2"><strong className="mr-1 text-[15px]">Patron of</strong>{saint.patronage.map((p) => <Chip key={p}>{p}</Chip>)}</div>
           )}
-          <ShareBar title={saint.kind === 'celebration' ? saint.name : `Saint of the Day: ${saint.name}`} />
+          <ShareBar title={`${dayLabel(saint)}: ${saint.name}`} />
         </div>
       </div>
       {saint.life_md && (

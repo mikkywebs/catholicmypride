@@ -113,7 +113,7 @@ export async function dailyPrayerFor(date: string): Promise<Prayer | null> {
     `This prayer is drawn from the Scriptures proclaimed at Mass today, so that the Word of God may shape our prayer and our day.`)
   if (main) {
     const snippet = (main.life_md ?? "").split('\n\n')[0].split(/(?<=[.!?])\s+/).slice(0, 2).join(' ')
-    parts.push(`### ${main.kind === 'celebration' ? 'Today in the Church' : 'Saint of the day'}: ${main.name}\n\n${snippet} [Read more](/saint-of-the-day/${main.slug})` +
+    parts.push(`### ${main.kind === 'celebration' ? 'Feast of the day' : 'Saint of the day'}: ${main.name}\n\n${snippet} [Read more](/saint-of-the-day/${main.slug})` +
       (saints.length > 1 ? `\n\nAlso remembered today: ${saints.slice(1).map((s) => s.name).join('; ')}.` : ''))
   }
   parts.push(`### Today's readings\n\n` + [

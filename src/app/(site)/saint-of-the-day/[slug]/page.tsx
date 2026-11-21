@@ -8,8 +8,9 @@ export async function generateMetadata({ params }: PageProps<'/saint-of-the-day/
   const { slug } = await params
   const saint = await getSaint(slug)
   if (!saint) return {}
-  const title = saint.seo_title || `${saint.name}: Life, Patronage and Prayer`
-  const description = saint.seo_description || `The life story of ${saint.name}${saint.patronage.length ? `, patron of ${saint.patronage.join(', ')}` : ''}, with a prayer.`
+  const feast = saint.kind === 'celebration'
+  const title = saint.seo_title || (feast ? `${saint.name}: Meaning of the Feast and Prayer` : `${saint.name}: Life, Patronage and Prayer`)
+  const description = saint.seo_description || (feast ? `What the Church celebrates on the ${saint.name}${saint.feast_label ? ` (${saint.feast_label})` : ''}, with a prayer for the day.` : undefined) || `The life story of ${saint.name}${saint.patronage.length ? `, patron of ${saint.patronage.join(', ')}` : ''}, with a prayer.`
   return { title, description, alternates: { canonical: `/saint-of-the-day/${slug}` }, openGraph: { title, description, images: saint.featured_image ? [saint.featured_image] : undefined } }
 }
 

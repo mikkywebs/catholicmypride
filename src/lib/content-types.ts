@@ -166,7 +166,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     orderBy: 'show_on', tags: ['saints', 'content'], seo: true, status: true,
     fields: [
       { name: 'name', label: 'Name of the saint or feast', type: 'text', required: true },
-      { name: 'kind', label: 'This is a…', type: 'select', options: ['saint', 'celebration'], required: true, half: true, help: 'saint = a holy person. celebration = a Church feast or event (e.g. the Presentation of Mary, the Assumption, the Chair of Saint Peter). Celebrations are shown as “Today in the Church”.' },
+      { name: 'kind', label: 'This is a…', type: 'select', options: ['saint', 'celebration'], required: true, half: true, help: 'saint = a holy person. celebration = a Church feast or event (e.g. the Presentation of Mary, the Assumption, the Chair of Saint Peter). Celebrations are shown as “Feast of the Day”, without Born, Died, Canonised or Patron of.' },
       { name: 'slug', label: 'Web address (slug)', type: 'text', required: true },
       { name: 'show_on', label: 'Show on (date)', type: 'date', half: true },
       { name: 'celebration', label: 'Celebration', type: 'select', options: ['Solemnity', 'Feast', 'Memorial', 'Optional Memorial', 'Local Memorial'], half: true, empty: '—' },
