@@ -97,3 +97,28 @@ skipped = sorted(k for k in RANK if k not in seen)
 print('saints', len(saints), '| days', len(by_date), '| calendar entries without a saint page:', len(skipped))
 for k in skipped: print('  skipped', k)
 json.dump({'saints': saints, 'byDate': dict(sorted(by_date.items()))}, open(OUT, 'w'), ensure_ascii=False, separators=(',', ':'))
+
+
+# Feasts of Our Lady, the angels and events in the lives of saints are Church celebrations, not saints.
+CHURCH_FEASTS = [
+ "mary-the-holy-mother-of-god",
+ "our-lady-of-lourdes",
+ "our-lady-of-fatima",
+ "the-visitation-of-the-blessed-virgin-mary",
+ "our-lady-of-mount-carmel",
+ "the-assumption-of-the-blessed-virgin-mary",
+ "the-queenship-of-the-blessed-virgin-mary",
+ "the-nativity-of-the-blessed-virgin-mary",
+ "the-most-holy-name-of-mary",
+ "our-lady-of-sorrows",
+ "our-lady-of-the-rosary",
+ "the-presentation-of-the-blessed-virgin-mary",
+ "the-immaculate-conception-of-the-blessed-virgin-mary",
+ "our-lady-of-loreto",
+ "our-lady-of-guadalupe",
+ "the-holy-guardian-angels",
+ "the-conversion-of-saint-paul",
+ "the-chair-of-saint-peter",
+ "the-nativity-of-saint-john-the-baptist",
+ "the-passion-of-saint-john-the-baptist"
+]

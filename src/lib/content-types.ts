@@ -156,12 +156,13 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     ],
   },
   saints: {
-    key: 'saints', table: 'saints', singular: 'saint', plural: 'Saint of the Day', titleField: 'name', slugFrom: 'name',
+    key: 'saints', table: 'saints', singular: 'saint or feast', plural: 'Saints & Feasts', titleField: 'name', slugFrom: 'name',
     publicBase: '/saint-of-the-day/', publicField: 'slug',
-    listColumns: [{ field: 'name', label: 'Saint' }, { field: 'show_on', label: 'Shown on' }, { field: 'celebration', label: 'Celebration' }, { field: 'auto_filled', label: 'Auto-filled' }, { field: 'status', label: 'Status' }],
+    listColumns: [{ field: 'name', label: 'Saint or feast' }, { field: 'kind', label: 'Type' }, { field: 'show_on', label: 'Shown on' }, { field: 'celebration', label: 'Celebration' }, { field: 'auto_filled', label: 'Auto-filled' }, { field: 'status', label: 'Status' }],
     orderBy: 'show_on', tags: ['saints', 'content'], seo: true, status: true,
     fields: [
-      { name: 'name', label: "Saint's name", type: 'text', required: true },
+      { name: 'name', label: 'Name of the saint or feast', type: 'text', required: true },
+      { name: 'kind', label: 'This is a…', type: 'select', options: ['saint', 'celebration'], required: true, half: true, help: 'saint = a holy person. celebration = a Church feast or event (e.g. the Presentation of Mary, the Assumption, the Chair of Saint Peter). Celebrations are shown as “Today in the Church”.' },
       { name: 'slug', label: 'Web address (slug)', type: 'text', required: true },
       { name: 'show_on', label: 'Show as Saint of the Day on', type: 'date', half: true },
       { name: 'celebration', label: 'Celebration', type: 'select', options: ['Solemnity', 'Feast', 'Memorial', 'Optional Memorial', 'Local Memorial'], half: true, empty: '—' },
