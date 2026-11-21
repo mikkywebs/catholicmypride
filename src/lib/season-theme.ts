@@ -1,12 +1,12 @@
 // Seasonal decoration, worked out from the Church calendar for any year.
 import { adventStart, easter, liturgicalInfo, parseISODate } from './liturgical'
 
-export type SeasonKey = 'advent' | 'christmas' | 'lent' | 'holyweek' | 'easter' | 'pentecost'
+export type SeasonKey = 'advent' | 'christmas' | 'lent' | 'holyweek' | 'easter' | 'pentecost' | 'christking'
 export type SeasonMode = 'auto' | 'off' | SeasonKey
-export const SEASON_MODES: SeasonMode[] = ['auto', 'off', 'advent', 'christmas', 'lent', 'holyweek', 'easter', 'pentecost']
+export const SEASON_MODES: SeasonMode[] = ['auto', 'off', 'advent', 'christmas', 'lent', 'holyweek', 'easter', 'pentecost', 'christking']
 
 /** Picture drawn in the banner. */
-export type Art = 'wreath' | 'star' | 'newyear' | 'cross' | 'palm' | 'chalice' | 'baretree' | 'tomb' | 'risen' | 'flame'
+export type Art = 'wreath' | 'star' | 'newyear' | 'cross' | 'palm' | 'chalice' | 'baretree' | 'tomb' | 'risen' | 'flame' | 'crown'
 
 export type SeasonTheme = {
   key: SeasonKey
@@ -86,6 +86,10 @@ export function seasonTheme(today: string, mode: SeasonMode = 'auto'): SeasonThe
     const octave = t - e < 8 * DAY
     return { key: 'easter', art: octave ? 'tomb' : 'risen', eyebrow: t === e ? 'Easter Sunday' : octave ? 'Easter Octave' : `${ORD[Math.min(week, 7) - 1]} Week of Easter`, title: 'Alleluia! He is risen!', line: 'The Lord is risen indeed. Alleluia!', cite: 'Luke 24:34', href: '/mass-readings', cta: 'Today’s readings', ...GOLD }
   }
+  // Christ the King: the last Sunday of the Church's year, the Sunday before Advent.
+  if (t === adventStart(year) - 7 * DAY) {
+    return { key: 'christking', art: 'crown', eyebrow: 'Solemnity of Christ the King', title: 'Our Lord Jesus Christ, King of the Universe', line: 'King of kings, and Lord of lords.', cite: 'Apocalypse 19:16', href: '/mass-readings', cta: 'Today’s readings', ...GOLD }
+  }
   return null
 }
 
@@ -98,6 +102,7 @@ function forced(key: SeasonKey, today: string): SeasonTheme {
     holyweek: iso(easter(Number(today.slice(0, 4))) - 5 * DAY),
     easter: iso(easter(Number(today.slice(0, 4))) + 14 * DAY),
     pentecost: iso(easter(Number(today.slice(0, 4))) + 49 * DAY),
+    christking: iso(adventStart(Number(today.slice(0, 4))) - 7 * DAY),
   }
   // Inside the real season, use today's own wording (e.g. the right Advent week).
   const real = seasonTheme(today, 'auto')

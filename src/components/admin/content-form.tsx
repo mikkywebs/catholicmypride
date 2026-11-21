@@ -222,15 +222,30 @@ export function ContentForm({ type, row, cats, action, novenaDays, options = {} 
       const f = list[i]
       const half = 'half' in f && f.half
       const next = list[i + 1]
+      // A field shown only for one value of another field (e.g. Born/Died only for saints) is wrapped so it can be hidden.
+      const when = (x: Field, el: React.ReactNode) => (x.showWhen ? <div key={x.name} data-show-field={x.showWhen.field} data-show-is={x.showWhen.is}>{el}</div> : el)
       if (half && next && 'half' in next && next.half) {
-        out.push(<div key={f.name} className="grid gap-4 sm:grid-cols-2"><FieldInput f={f} row={row} cats={cats} slugFrom={type.slugFrom} options={options} /><FieldInput f={next} row={row} cats={cats} slugFrom={type.slugFrom} options={options} /></div>)
+        out.push(when(f, <div key={f.name} className="grid gap-4 sm:grid-cols-2"><FieldInput f={f} row={row} cats={cats} slugFrom={type.slugFrom} options={options} /><FieldInput f={next} row={row} cats={cats} slugFrom={type.slugFrom} options={options} /></div>))
         i++
-      } else out.push(<FieldInput key={f.name} f={f} row={row} cats={cats} slugFrom={type.slugFrom} options={options} />)
+      } else out.push(when(f, <FieldInput key={f.name} f={f} row={row} cats={cats} slugFrom={type.slugFrom} options={options} />))
       if (type.key === 'readings' && f.name === 'date') out.push(<LectionaryFill key="lectionary" />)
       if (type.key === 'regions' && f.name === 'province') out.push(<RegionFill key="region-fill" />)
     }
     return out
   }
+
+  // Show or hide fields that depend on another field (e.g. saint-only fields when this is a Church feast).
+  useEffect(() => {
+    const form = ref.current
+    if (!form) return
+    const apply = () => form.querySelectorAll<HTMLElement>('[data-show-field]').forEach((el) => {
+      const input = form.elements.namedItem(el.dataset.showField!) as HTMLSelectElement | null
+      el.hidden = !!input && input.value !== el.dataset.showIs
+    })
+    apply()
+    form.addEventListener('change', apply)
+    return () => form.removeEventListener('change', apply)
+  }, [])
 
   return (
     <form ref={ref} action={formAction} className="flex flex-wrap items-start gap-6">

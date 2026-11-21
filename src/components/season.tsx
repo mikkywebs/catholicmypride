@@ -49,7 +49,7 @@ export function SeasonArt({ art, candles = 0, className = '' }: { art: Art; cand
   const label: Record<Art, string> = {
     wreath: `Advent wreath with ${candles} of 4 candles lit`, star: 'Star of Bethlehem', newyear: 'Star with sparkles for the New Year',
     cross: 'A simple cross with a violet cloth', palm: 'Palm branches', chalice: 'Chalice and host', baretree: 'The wooden cross',
-    tomb: 'The empty tomb at sunrise', risen: 'The cross at sunrise with lilies', flame: 'Flames of the Holy Spirit',
+    tomb: 'The empty tomb at sunrise', risen: 'The cross at sunrise with lilies', flame: 'Flames of the Holy Spirit', crown: 'A royal crown with a cross, for Christ the King',
   }
   return (
     <svg viewBox="0 0 200 140" role="img" aria-label={label[art]} className={className}>
@@ -151,6 +151,21 @@ export function SeasonArt({ art, candles = 0, className = '' }: { art: Art; cand
             </g>
           )}
           <path d="M30 134 H170" stroke="#9b958a" strokeWidth="3" strokeLinecap="round" />
+        </g>
+      )}
+      {art === 'crown' && (
+        <g>
+          {Array.from({ length: 13 }, (_, i) => {
+            const a = Math.PI + (i / 12) * Math.PI
+            return <line key={i} x1={100 + Math.cos(a) * 40} y1={92 + Math.sin(a) * 40} x2={100 + Math.cos(a) * 70} y2={92 + Math.sin(a) * 70} stroke={GOLD} strokeWidth="2.5" strokeLinecap="round" opacity="0.55" />
+          })}
+          {/* Crown: band, five points with pearls, jewels, and a cross on top */}
+          <path d="M52 112 L46 64 L70 86 L84 52 L100 80 L116 52 L130 86 L154 64 L148 112 Z" fill={GOLD} stroke="#b9892a" strokeWidth="2" strokeLinejoin="round" />
+          <rect x="50" y="108" width="100" height="16" rx="3" fill="#c9962e" />
+          {[[46, 62], [84, 50], [116, 50], [154, 62]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="5" fill="#fffaf0" stroke="#b9892a" strokeWidth="1.5" />)}
+          {[70, 100, 130].map((x, i) => <circle key={i} cx={x} cy="116" r="4.5" fill={i === 1 ? '#a8322b' : '#2f5f9e'} />)}
+          <rect x="96" y="30" width="8" height="34" rx="1.5" fill="#c9962e" />
+          <rect x="88" y="38" width="24" height="7" rx="1.5" fill="#c9962e" />
         </g>
       )}
       {art === 'flame' && (

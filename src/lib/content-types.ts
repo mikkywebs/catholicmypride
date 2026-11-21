@@ -1,7 +1,7 @@
 // One description of every editable content type. The admin list, form,
 // save action and cache refresh all read from this.
 
-export type Field =
+export type Field = (
   | { name: string; label: string; type: 'text' | 'url' | 'date' | 'datetime' | 'number'; required?: boolean; help?: string; placeholder?: string; half?: boolean }
   | { name: string; label: string; type: 'textarea' | 'markdown'; rows?: number; required?: boolean; help?: string; placeholder?: string }
   | { name: string; label: string; type: 'select'; options: string[]; required?: boolean; help?: string; half?: boolean; empty?: string }
@@ -17,6 +17,10 @@ export type Field =
   | { name: string; label: string; type: 'weekdays'; help?: string }
   | { name: string; label: string; type: 'time'; help?: string; half?: boolean }
   | { name: string; label: string; type: 'musicbar' }
+) & {
+  /** Show this field only when another field has a given value (e.g. only for saints, not feasts). */
+  showWhen?: { field: string; is: string }
+}
 
 export type ContentType = {
   key: string
@@ -164,17 +168,17 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'name', label: 'Name of the saint or feast', type: 'text', required: true },
       { name: 'kind', label: 'This is a…', type: 'select', options: ['saint', 'celebration'], required: true, half: true, help: 'saint = a holy person. celebration = a Church feast or event (e.g. the Presentation of Mary, the Assumption, the Chair of Saint Peter). Celebrations are shown as “Today in the Church”.' },
       { name: 'slug', label: 'Web address (slug)', type: 'text', required: true },
-      { name: 'show_on', label: 'Show as Saint of the Day on', type: 'date', half: true },
+      { name: 'show_on', label: 'Show on (date)', type: 'date', half: true },
       { name: 'celebration', label: 'Celebration', type: 'select', options: ['Solemnity', 'Feast', 'Memorial', 'Optional Memorial', 'Local Memorial'], half: true, empty: '—' },
       { name: 'featured_image', label: 'Featured image (portrait 4:5, like Instagram)', type: 'image', shape: '4:5', altField: 'image_alt' },
-      { name: 'feast_label', label: 'Feast day', type: 'text', placeholder: 'e.g. 14 November' },
-      { name: 'born', label: 'Born', type: 'text', half: true },
-      { name: 'died', label: 'Died', type: 'text', half: true },
-      { name: 'canonised', label: 'Canonised', type: 'text', half: true },
-      { name: 'patronage', label: 'Patron of', type: 'tags', placeholder: 'students, travellers' },
-      { name: 'life_md', label: 'Life story', type: 'markdown', rows: 14 },
-      { name: 'quote', label: 'A saying of the saint (optional)', type: 'textarea', rows: 2 },
-      { name: 'prayer_md', label: 'Prayer to the saint', type: 'markdown', rows: 6 },
+      { name: 'feast_label', label: 'Feast day', type: 'text', placeholder: 'e.g. 21 November' },
+      { name: 'born', label: 'Born', type: 'text', half: true, showWhen: { field: 'kind', is: 'saint' } },
+      { name: 'died', label: 'Died', type: 'text', half: true, showWhen: { field: 'kind', is: 'saint' } },
+      { name: 'canonised', label: 'Canonised', type: 'text', half: true, showWhen: { field: 'kind', is: 'saint' } },
+      { name: 'patronage', label: 'Patron of', type: 'tags', placeholder: 'students, travellers', showWhen: { field: 'kind', is: 'saint' } },
+      { name: 'life_md', label: 'Life story (for a saint) or what the Church celebrates (for a feast)', type: 'markdown', rows: 14 },
+      { name: 'quote', label: 'A saying of the saint (optional)', type: 'textarea', rows: 2, showWhen: { field: 'kind', is: 'saint' } },
+      { name: 'prayer_md', label: 'Prayer (to the saint, or for the feast)', type: 'markdown', rows: 6 },
       ...SEO_FIELDS,
       ...STATUS_FIELDS,
     ],
