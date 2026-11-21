@@ -8,7 +8,8 @@ import { AudioPlayer } from '@/components/audio-player'
 import { Reactions, ShareBar, ViewCount } from '@/components/engage'
 import { Breadcrumb, Chip, Featured, Prose, ReadTime } from '@/components/ui'
 import { getPost, getRelatedPosts, getSettings } from '@/lib/data'
-import { dateLabel, duration, md, readMinutes } from '@/lib/format'
+import { dateLabel, duration, mdWithToc, readMinutes } from '@/lib/format'
+import { TableOfContents } from '@/components/toc'
 
 export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): Promise<Metadata> {
   const { slug } = await params
@@ -36,6 +37,7 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
   if (!p) notFound()
   const related = await getRelatedPosts(p)
   const listen = duration(p.audio_seconds)
+  const body = mdWithToc(p.body_md)
   return (
     <div className="mx-auto flex max-w-[780px] flex-col gap-6 px-6 pb-[72px] pt-8">
       <JsonLd data={articleLd({ title: p.title, description: p.seo_description || p.excerpt, image: p.featured_image, path: `/blog/${slug}`, published: p.published_at, modified: p.updated_at, author: p.author })} />
@@ -55,7 +57,8 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       <Featured src={p.featured_image} alt={p.image_alt} priority />
       <ShareBar title={p.title} />
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen to this post" initialSeconds={p.audio_seconds} />}
-      <Prose html={md(p.body_md)} />
+      <TableOfContents items={body.toc} />
+      <Prose html={body.html} />
       {p.tags.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Tags">{p.tags.map((t) => <Chip key={t}>{t}</Chip>)}</div>}
       <Reactions type="post" id={p.id} kinds={['love', 'amen', 'thumbs']} title="Did this bless you?" />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />

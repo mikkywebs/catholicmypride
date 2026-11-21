@@ -179,3 +179,6 @@
 @keyframes cmp-flicker { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.08, 0.93); } }
 .cmp-flame { transform-box: fill-box; transform-origin: center bottom; animation: cmp-flicker 1.8s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .cmp-flame { animation: none; } }
+
+/* Jump links land below the sticky top bar and header */
+.prose-cmp :is(h2, h3)[id] { scroll-margin-top: 120px; }

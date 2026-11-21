@@ -68,7 +68,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'is_contributor', label: 'Written by a reader (shows a “Contributor” label)', type: 'boolean' },
       featured(),
       { name: 'excerpt', label: 'Short summary', type: 'textarea', rows: 2, help: 'Shown on cards and in search results if no meta description.' },
-      { name: 'body_md', label: 'Article', type: 'markdown', rows: 18, required: true },
+      { name: 'body_md', label: 'Article', type: 'markdown', rows: 18, required: true, help: 'Tip: start each section with ## Heading (and ### for a sub-section). With 3 or more headings, readers get an “In this article” contents box.' },
       { name: 'audio_url', label: 'Audio version (optional)', type: 'audio', secondsField: 'audio_seconds' },
       { name: 'tags', label: 'Tags', type: 'tags', placeholder: 'rosary, advent, mercy' },
       { name: 'focus_keyword', label: 'Focus keyword', type: 'text', help: 'The phrase people would type into Google to find this post.' },

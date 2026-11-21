@@ -13,6 +13,26 @@ export function md(text: string | null | undefined) {
   })
 }
 
+export type TocItem = { id: string; text: string; level: 2 | 3 }
+
+const decode = (t: string) => t.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, '’').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim()
+
+/** Like md(), but gives every ## and ### heading an anchor and returns the list, for a table of contents. */
+export function mdWithToc(text: string | null | undefined): { html: string; toc: TocItem[] } {
+  const toc: TocItem[] = []
+  const used = new Map<string, number>()
+  const html = md(text).replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (_m, lvl: string, inner: string) => {
+    const label = decode(inner)
+    const base = label.toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'section'
+    const n = used.get(base) ?? 0
+    used.set(base, n + 1)
+    const id = n ? `${base}-${n + 1}` : base
+    toc.push({ id, text: label, level: Number(lvl) as 2 | 3 })
+    return `<h${lvl} id="${id}">${inner}</h${lvl}>`
+  })
+  return { html, toc }
+}
+
 export function readMinutes(...texts: (string | null | undefined)[]) {
   const words = texts.join(' ').trim().split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.round(words / 200))
