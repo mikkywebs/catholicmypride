@@ -340,10 +340,10 @@ export async function createIdeaDraft(idea: import('@/lib/blog-ideas').BlogIdea)
   const body = [
     `> ✍️ Draft from Blog Ideas. Replace the notes under each heading with your own writing, then delete this line. Publish by ${idea.publishBy}.`,
     idea.outlineMd,
-    '## Frequently asked questions (answer each in 2–3 sentences)',
+    '## Frequently asked questions',
     idea.faqs.map((q) => `### ${q}
 
-- …`).join('\n\n'),
+- Write your answer here in 2–3 sentences, then delete this line.`).join('\n\n'),
     '---',
     `**Link to:** ${idea.links.map((l) => `[${l.label}](${l.href})`).join(' · ')}`,
     `**Image idea:** ${idea.image} · **Alt text:** ${idea.imageAlt}`,

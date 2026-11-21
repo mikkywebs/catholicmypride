@@ -92,7 +92,6 @@ function saintIdea(s: Saint, date: string, today: string, ahead: number): BlogId
         '## What the Bible and the Church teach', '- Quote one Scripture passage (Douay-Rheims) and one line of the Catechism.',
         `## How to celebrate ${name} today`, '- Mass, a prayer at home, a family custom, a work of mercy.',
         '## A prayer for the day', '- Write a short original prayer (6–8 lines).',
-        '## Frequently asked questions', '- Answer the two or three questions below in 2–3 sentences each.',
         `## Pray with us`, `- Link to today’s Mass readings and the Feast of the Day page; invite readers to the WhatsApp Channel.`,
       ]
     : [
@@ -102,7 +101,6 @@ function saintIdea(s: Saint, date: string, today: string, ahead: number): BlogId
         '## Miracles, patronage and symbols', `- Patron of: ${(s.patronage ?? []).join(', ') || 'check reliable sources'}; how they are shown in art.`,
         `## What ${name} teaches us today`, '- One lesson for ordinary Catholics, with a practical step.',
         `## Prayer to ${name}`, s.prayer_md ? `- Use or adapt the prayer on our Feast of the Day page.` : '- Write a short original prayer asking for their intercession.',
-        '## Frequently asked questions', '- Answer the questions below in 2–3 sentences each.',
       ]
   return {
     key: `saint:${s.slug}:${date}`, kind: isEvent ? 'feast' : 'saint', ...base(date, today),
