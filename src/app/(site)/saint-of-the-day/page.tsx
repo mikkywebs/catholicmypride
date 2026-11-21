@@ -24,7 +24,7 @@ async function Today() {
   if (!saint) {
     // No saint or feast in the calendar today: the day's readings take the space.
     const r = await getReading(today)
-    if (!r) return <div className="mx-auto max-w-[820px] px-6 py-16 text-center"><H1>Saint of the Day</H1><EmptyState>Today&apos;s saint will be posted soon.</EmptyState></div>
+    if (!r) return <div className="mx-auto max-w-[820px] px-6 py-16 text-center"><H1>Feast of the Day</H1><EmptyState>Today&apos;s saint or feast will be posted soon.</EmptyState></div>
     return (
       <div className="mx-auto flex max-w-[820px] flex-col gap-6 px-6 pb-[72px] pt-10">
         <div className="flex flex-col items-center gap-3 text-center">

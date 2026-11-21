@@ -73,7 +73,7 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
             <Link href="/about" className={a}>About us</Link>
             <Link href="/contact" className={a}>Contact us</Link>
             <Link href="/prayer-requests" className={a}>Prayer Requests</Link>
-            {flags.saints && <Link href="/saint-of-the-day" className={a}>Saint of the Day</Link>}
+            {flags.saints && <Link href="/saint-of-the-day" className={a}>Feast of the Day</Link>}
             <Link href="/quiz" className={a}>Quiz Time</Link>
             <Link href="/write-for-us" className={a}>Write for Us</Link>
           </nav>

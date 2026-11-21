@@ -93,7 +93,7 @@ function saintIdea(s: Saint, date: string, today: string, ahead: number): BlogId
         `## How to celebrate ${name} today`, '- Mass, a prayer at home, a family custom, a work of mercy.',
         '## A prayer for the day', '- Write a short original prayer (6–8 lines).',
         '## Frequently asked questions', '- Answer the two or three questions below in 2–3 sentences each.',
-        `## Pray with us`, `- Link to today’s Mass readings and the Saint of the Day page; invite readers to the WhatsApp Channel.`,
+        `## Pray with us`, `- Link to today’s Mass readings and the Feast of the Day page; invite readers to the WhatsApp Channel.`,
       ]
     : [
         `**Write by ${formatLong(today)} · feast day ${formatLong(date)} (${rank})**`,
@@ -101,7 +101,7 @@ function saintIdea(s: Saint, date: string, today: string, ahead: number): BlogId
         `## The life of ${name}`, '- Three or four key moments; keep it accurate and give sources.',
         '## Miracles, patronage and symbols', `- Patron of: ${(s.patronage ?? []).join(', ') || 'check reliable sources'}; how they are shown in art.`,
         `## What ${name} teaches us today`, '- One lesson for ordinary Catholics, with a practical step.',
-        `## Prayer to ${name}`, s.prayer_md ? `- Use or adapt the prayer on our Saint of the Day page.` : '- Write a short original prayer asking for their intercession.',
+        `## Prayer to ${name}`, s.prayer_md ? `- Use or adapt the prayer on our Feast of the Day page.` : '- Write a short original prayer asking for their intercession.',
         '## Frequently asked questions', '- Answer the questions below in 2–3 sentences each.',
       ]
   return {
@@ -118,7 +118,7 @@ function saintIdea(s: Saint, date: string, today: string, ahead: number): BlogId
     outlineMd: outline.join('\n\n'),
     links: [{ label: `Saint of the Day: ${name}`, href: `${SITE}/saint-of-the-day/${s.slug}` }, { label: `Mass readings for ${day}`, href: `${SITE}/mass-readings/${date}` }, { label: 'Send a prayer request', href: `${SITE}/prayer-requests` }],
     faqs: isEvent ? [`When is ${name}?`, `Is ${name} a holy day of obligation?`, `What is the meaning of ${name}?`] : [`When is the feast day of ${name}?`, `What is ${name} the patron saint of?`, `How do I pray to ${name}?`],
-    image: s.featured_image ? 'Use the featured image of our Saint of the Day page' : `A respectful image of ${name} (public domain or your own)`,
+    image: s.featured_image ? 'Use the featured image of our Feast of the Day page' : `A respectful image of ${name} (public domain or your own)`,
     imageAlt: `${name}${isEvent ? '' : ', Catholic saint'} — Catholic My Pride`,
     weight: RANK[rank] ?? 40, lead: (RANK[rank] ?? 40) >= 80 ? 7 : (RANK[rank] ?? 40) >= 45 ? 4 : 3, score: 0,
   }

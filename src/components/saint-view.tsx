@@ -28,7 +28,7 @@ export function SaintView({ saint, s, week, others = [] }: { saint: Saint; s: Se
   return (
     <div className="mx-auto flex max-w-[820px] flex-col gap-6 px-6 pb-[72px] pt-8">
       <JsonLd data={articleLd({ title: saint.name, description: saint.seo_description, image: saint.featured_image, path: `/saint-of-the-day/${saint.slug}`, published: saint.show_on })} />
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: dayLabel(saint), href: '/saint-of-the-day' }, { label: saint.name }]} />
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Feast of the Day', href: '/saint-of-the-day' }, { label: saint.name }]} />
       <div className="flex flex-col items-center gap-3 text-center">
         <p className="eyebrow m-0">{dayLabel(saint)}{saint.show_on ? ` · ${formatShort(saint.show_on)}` : ''}</p>
         <h1 className="m-0 font-serif text-[42px] font-semibold leading-[1.08] sm:text-[54px]">{saint.name}</h1>

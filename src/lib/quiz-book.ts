@@ -120,7 +120,7 @@ export async function downloadQuizBook({ name, country, logoUrl }: { name: strin
   y += 2
   const offers: [string, string, string][] = [
     ['Mass Readings and reflections', 'The readings of the day, with a reflection', '/mass-readings'],
-    ['Saint of the Day', 'The lives of the saints and the feasts of the Church', '/saint-of-the-day'],
+    ['Feast of the Day', 'The lives of the saints and the feasts of the Church', '/saint-of-the-day'],
     ['Daily Prayers', 'A prayer drawn from each day’s Scripture', '/daily-prayers'],
     ['Novenas', 'Pray along, day by day, for every feast', '/novenas'],
     ['The Holy Rosary', 'Today’s mysteries with Scripture', '/rosary'],

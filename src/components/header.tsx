@@ -71,7 +71,7 @@ export function HeaderShell({ nav, path }: { nav: NavData; path: string }) {
       <Link href="/" className={link('/')}>Home</Link>
       <Link href="/about" className={link('/about')}>About</Link>
       <Dropdown label="Pray" items={nav.pray} active={prayActive} />
-      {nav.saint && <Link href="/saint-of-the-day" className={link('/saint-of-the-day')}>Saint of the Day</Link>}
+      {nav.saint && <Link href="/saint-of-the-day" className={link('/saint-of-the-day')}>Feast of the Day</Link>}
       <Dropdown label="Resources" items={nav.resources} active={resActive} />
       <Link href="/prayer-requests" className={link('/prayer-requests')}>Prayer Requests</Link>
     </>
