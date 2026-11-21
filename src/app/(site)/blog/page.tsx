@@ -15,8 +15,8 @@ export async function generateMetadata(props: PageProps<'/blog'>): Promise<Metad
   const cat = typeof sp.category === 'string' ? sp.category : undefined
   const qs = new URLSearchParams({ ...(cat ? { category: cat } : {}), ...(page > 1 ? { page: String(page) } : {}) }).toString()
   return {
-    title: `Blog: Catholic Teachings and Reflections${page > 1 ? ` (page ${page})` : ''}`,
-    description: 'Catholic teachings, Scripture reflections, feasts and seasons, and news from the Catholic My Pride apostolate.',
+    title: `Catholic Blog: Faith, Saints, Feasts and Church News${page > 1 ? ` (page ${page})` : ''}`,
+    description: 'Catholic faith and teaching, the saints and feasts of the Church, and news from the Pope and the Church worldwide, from the Catholic My Pride apostolate.',
     alternates: { canonical: `/blog${qs ? `?${qs}` : ''}` },
   }
 }
@@ -45,7 +45,7 @@ async function Content({ searchParams }: { searchParams: PageProps<'/blog'>['sea
   const pages = Math.max(1, Math.ceil(total / PER))
   return (
     <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pb-[72px] pt-10">
-      <div className="text-center"><Eyebrow>Blog</Eyebrow><H1 className="mt-2">Teachings &amp; reflections</H1></div>
+      <div className="text-center"><Eyebrow>Blog</Eyebrow><H1 className="mt-2">Faith, Feasts &amp; Church News</H1></div>
       {cats.length > 0 && (
         <nav aria-label="Categories" className="flex flex-wrap justify-center gap-2">
           <Link href="/blog" className={`rounded-full border px-4 py-2 no-underline ${!cat ? 'border-accent bg-accent text-accent-ink' : 'border-line bg-surface text-ink'}`}>All</Link>

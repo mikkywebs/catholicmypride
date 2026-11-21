@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       { source: '/novenas/novena-immaculate-conception-2026', destination: '/novenas/novena-immaculate-conception', permanent: true },
       // The audio section moved from /music (it holds songs, prayers and announcements).
       { source: '/music', destination: '/audio', permanent: true },
+      // The blog category 'archive' was renamed Church News.
+      { source: '/blog', has: [{ type: 'query', key: 'category', value: 'archive' }], destination: '/blog?category=church-news', permanent: true },
       { source: '/music/:slug', destination: '/audio/:slug', permanent: true },
     ]
   },
