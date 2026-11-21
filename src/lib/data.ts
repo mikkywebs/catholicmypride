@@ -82,6 +82,23 @@ export async function getSectionFlags() {
 }
 
 // ---------- Blog ----------
+/** One page of the blog list, newest first, with the total for page numbers. */
+export async function getPostsPage(page: number, per: number, categorySlug?: string): Promise<{ posts: Post[]; total: number }> {
+  'use cache'
+  cacheLife('minutes')
+  cacheTag('posts')
+  const db = publicClient()
+  if (!db) return { posts: [], total: 0 }
+  let q = db.from('posts').select('*, category:categories(*)', { count: 'exact' }).order('published_at', { ascending: false }).range((page - 1) * per, page * per - 1)
+  if (categorySlug) {
+    const { data: cat } = await db.from('categories').select('id').eq('kind', 'blog').eq('slug', categorySlug).maybeSingle()
+    if (!cat) return { posts: [], total: 0 }
+    q = q.eq('category_id', cat.id)
+  }
+  const { data, count } = await q
+  return { posts: (data as Post[]) ?? [], total: count ?? 0 }
+}
+
 export async function getPosts(limit = 12, categorySlug?: string): Promise<Post[]> {
   'use cache'
   cacheLife('minutes')

@@ -3,14 +3,35 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { EmptyState, Eyebrow, Featured, H1 } from '@/components/ui'
-import { getCategories, getPosts } from '@/lib/data'
+import { getCategories, getPostsPage } from '@/lib/data'
+import { Pager } from '@/components/pager'
 import { dateLabel, readMinutes } from '@/lib/format'
 
-export const metadata: Metadata = {
-  title: 'Blog: Catholic Teachings and Reflections',
-  description: 'Catholic teachings, Scripture reflections, feasts and seasons, and news from the Catholic My Pride apostolate.',
-  alternates: { canonical: '/blog' },
+const PER = 12
+
+export async function generateMetadata(props: PageProps<'/blog'>): Promise<Metadata> {
+  const sp = await props.searchParams
+  const page = pageOf(sp.page)
+  const cat = typeof sp.category === 'string' ? sp.category : undefined
+  const qs = new URLSearchParams({ ...(cat ? { category: cat } : {}), ...(page > 1 ? { page: String(page) } : {}) }).toString()
+  return {
+    title: `Blog: Catholic Teachings and Reflections${page > 1 ? ` (page ${page})` : ''}`,
+    description: 'Catholic teachings, Scripture reflections, feasts and seasons, and news from the Catholic My Pride apostolate.',
+    alternates: { canonical: `/blog${qs ? `?${qs}` : ''}` },
+  }
 }
+
+function pageOf(v: string | string[] | undefined) {
+  const n = Number(typeof v === 'string' ? v : 1)
+  return Number.isInteger(n) && n > 1 ? Math.min(n, 1000) : 1
+}
+
+/** Link to a page of the list, keeping the chosen category. */
+function pageHref(page: number, cat?: string) {
+  const qs = new URLSearchParams({ ...(cat ? { category: cat } : {}), ...(page > 1 ? { page: String(page) } : {}) }).toString()
+  return `/blog${qs ? `?${qs}` : ''}`
+}
+
 
 export default function Page(props: PageProps<'/blog'>) {
   return <Suspense fallback={<div className="h-96" />}><Content searchParams={props.searchParams} /></Suspense>
@@ -19,7 +40,9 @@ export default function Page(props: PageProps<'/blog'>) {
 async function Content({ searchParams }: { searchParams: PageProps<'/blog'>['searchParams'] }) {
   const sp = await searchParams
   const cat = typeof sp.category === 'string' ? sp.category : undefined
-  const [posts, cats] = await Promise.all([getPosts(30, cat), getCategories('blog')])
+  const page = pageOf(sp.page)
+  const [{ posts, total }, cats] = await Promise.all([getPostsPage(page, PER, cat), getCategories('blog')])
+  const pages = Math.max(1, Math.ceil(total / PER))
   return (
     <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pb-[72px] pt-10">
       <div className="text-center"><Eyebrow>Blog</Eyebrow><H1 className="mt-2">Teachings &amp; reflections</H1></div>
@@ -29,7 +52,7 @@ async function Content({ searchParams }: { searchParams: PageProps<'/blog'>['sea
           {cats.map((c) => <Link key={c.id} href={`/blog?category=${c.slug}`} className={`rounded-full border px-4 py-2 no-underline ${cat === c.slug ? 'border-accent bg-accent text-accent-ink' : 'border-line bg-surface text-ink'}`}>{c.name}</Link>)}
         </nav>
       )}
-      {posts.length === 0 ? <EmptyState>No articles here yet.</EmptyState> : (
+      {posts.length === 0 ? <EmptyState>{page > 1 ? <>No more articles. <Link href={pageHref(1, cat)}>Back to the first page</Link></> : 'No articles here yet.'}</EmptyState> : (
         <div className="grid gap-8 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
           {posts.map((p) => (
             <Link key={p.id} href={`/blog/${p.slug}`} className="reveal flex flex-col gap-3 text-ink no-underline">
@@ -42,6 +65,7 @@ async function Content({ searchParams }: { searchParams: PageProps<'/blog'>['sea
           ))}
         </div>
       )}
+      <Pager page={Math.min(page, pages)} pages={pages} href={(n) => pageHref(n, cat)} label="Blog pages" />
     </div>
   )
 }
