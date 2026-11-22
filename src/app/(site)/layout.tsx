@@ -2,6 +2,8 @@ import { Footer } from '@/components/footer'
 import { Suspense } from 'react'
 import { Header, HeaderShell, type NavData } from '@/components/header'
 import { MusicBar } from '@/components/music-bar'
+import { AdminEditButton } from '@/components/admin-edit'
+import { CONTENT_TYPES } from '@/lib/content-types'
 import { ScrollTools } from '@/components/engage'
 import { Ticker } from '@/components/ticker'
 import { SeasonRibbon } from '@/components/season'
@@ -57,6 +59,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main id="main" className="flex-1">{children}</main>
       <Footer s={s} flags={flags} />
       <MusicBar library={library} slots={slots} fallback={fallback} timed={timed} />
+      <Suspense fallback={null}><AdminEditButton bases={Object.values(CONTENT_TYPES).flatMap((t) => (t.publicBase && t.publicField ? [t.publicBase] : []))} /></Suspense>
     </div>
   )
 }

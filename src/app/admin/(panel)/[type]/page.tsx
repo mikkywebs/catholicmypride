@@ -12,9 +12,13 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
   if (!t) notFound()
   const { db } = await requireAdmin()
   const q = typeof sp.q === 'string' ? sp.q.trim() : ''
-  let query = db.from(t.table).select((t.table === 'churches' ? '*, diocese:dioceses(kind, name)' : '*') as '*').order(t.orderBy, { ascending: false }).limit(200)
+  const PER = 100
+  const page = Math.max(1, Math.floor(Number(sp.page) || 1))
+  let query = db.from(t.table).select((t.table === 'churches' ? '*, diocese:dioceses(kind, name)' : '*') as '*', { count: 'exact' }).order(t.orderBy, { ascending: false }).range((page - 1) * PER, page * PER - 1)
   if (q) query = query.ilike(t.titleField === 'date' ? 'title' : t.titleField, `%${q}%`)
-  const { data: rows } = await query
+  const { data: rows, count } = await query
+  const pages = Math.max(1, Math.ceil((count ?? 0) / PER))
+  const pageLink = (n: number) => `/admin/${t.key}?${new URLSearchParams({ ...(q ? { q } : {}), page: String(n) }).toString()}`
   const fmt = (v: unknown) => (Array.isArray(v) ? (v.length ? v.join(', ') : '—') : v === true ? 'Yes' : v === false ? '—' : v == null || v === '' ? '—' : typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v) ? new Date(v).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : String(v))
   return (
     <div className="flex flex-col gap-5">
@@ -46,7 +50,7 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
           </form>
         )
       })}
-      <form className="flex gap-2"><input name="q" defaultValue={q} placeholder="Search…" className="min-h-11 flex-1 rounded-lg border border-field bg-surface px-3" /><button className="rounded-md border border-field bg-surface px-4 font-semibold">Search</button></form>
+      <form className="flex gap-2"><input name="q" aria-label="Search by name or title" defaultValue={q} placeholder="Search…" className="min-h-11 flex-1 rounded-lg border border-field bg-surface px-3" /><button className="rounded-md border border-field bg-surface px-4 font-semibold">Search</button></form>
       <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
         <table className="w-full min-w-[640px] border-collapse text-[15px]">
           <thead><tr className="text-left text-[13px] uppercase tracking-wider text-muted">{t.listColumns.map((c) => <th key={c.field} className="border-b border-line px-4 py-3">{c.label}</th>)}<th className="border-b border-line px-4 py-3 text-right">Actions</th></tr></thead>
@@ -73,6 +77,15 @@ export default async function Page(props: PageProps<'/admin/[type]'>) {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 text-[15px]">
+        <span className="text-muted">{count ?? 0} in all{pages > 1 ? ` · page ${page} of ${pages}` : ''}</span>
+        {pages > 1 && (
+          <span className="flex gap-2">
+            {page > 1 && <Link href={pageLink(page - 1)} className="rounded-md border border-field bg-surface px-4 py-2 font-semibold no-underline">← Previous</Link>}
+            {page < pages && <Link href={pageLink(page + 1)} className="rounded-md border border-field bg-surface px-4 py-2 font-semibold no-underline">Next →</Link>}
+          </span>
+        )}
       </div>
     </div>
   )
