@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { announcePlay, onOtherPlay } from './audio-bus'
 import { NextIcon, PauseIcon, PlayIcon, PrevIcon, VolumeIcon } from './icons'
 import { useClientValue } from './use-client'
@@ -50,6 +50,7 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
   const volume = volOverride ?? storedVolume
   const muted = muteOverride ?? storedMuted
   const userPaused = useRef(false)
+  const [loadError, setLoadError] = useState(false)
   useEffect(() => { try { userPaused.current = sessionStorage.getItem('cmp-paused') === '1' } catch {} }, [])
 
   useEffect(() => {
@@ -119,9 +120,24 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
     return () => clearTimeout(id)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Phones only allow sound that starts inside the tap itself, so load and play the prayer right here,
+  // not after the next render.
+  const startedBy = useRef<string | null>(null)
+  const loadSrc = (src: string) => {
+    const a = audio.current
+    if (a && a.dataset.src !== src) { a.src = src; a.dataset.src = src; setLoadError(false) }
+  }
   const prayLate = () => {
     if (!late) return
     if (late.key !== 'preview') try { localStorage.setItem('cmp-timed', late.key) } catch {}
+    const track = byId.get(late.id)
+    const a = audio.current
+    if (a && track) {
+      loadSrc(track.src)
+      startedBy.current = late.id
+      announcePlay(ID)
+      a.play().then(() => setPlaying(true)).catch(() => setPrayer((p) => (p ? { ...p, blocked: true } : p)))
+    }
     setLate(null)
     setPrayer({ id: late.id, label: `${late.time} · ${late.title}`, resume: playing, blocked: false })
   }
@@ -133,6 +149,7 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
   // When a prayer is set, play it; if the browser blocks sound (no tap yet), show a button.
   useEffect(() => {
     if (!prayer || prayer.blocked || !audio.current) return
+    if (startedBy.current === prayer.id) { startedBy.current = null; return } // already started by the tap
     const a = audio.current
     announcePlay(ID)
     a.play().then(() => setPlaying(true)).catch(() => setPrayer((p) => (p ? { ...p, blocked: true } : p)))
@@ -172,16 +189,18 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
       </div>
     </div>
   ) : null
-  if (!tracks.length && !prayerTrack) return lateBanner
   const extraTrack = extra ? byId.get(extra) : undefined
-  const t = prayerTrack ?? extraTrack ?? tracks[i]
+  const t: Track | undefined = prayerTrack ?? extraTrack ?? tracks[i]
+  // Keep the player on the current item. Set here by code (not as a React prop), so a tap that has
+  // already started a prayer is never cut off by a re-render. Runs before any queued play().
+  useLayoutEffect(() => { if (t?.src) loadSrc(t.src) }, [t?.src])
   const step = (d: number) => {
     if (prayer) { setPrayer(null); setTimeout(() => { if (playing) play() }, 0); return }
     if (tracks.length > 1 && !extraTrack) {
       setI((i + d + tracks.length) % tracks.length)
     } else if (rotation.length > 1) {
       // Only one item scheduled: go through all the audio, so Next always brings something different.
-      const at = Math.max(0, rotation.findIndex((x) => x.id === t.id))
+      const at = Math.max(0, rotation.findIndex((x) => x.id === t?.id))
       setExtra(rotation[(at + d + rotation.length) % rotation.length].id)
     }
     setTimeout(() => { if (playing) play() }, 0)
@@ -204,19 +223,24 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
     else setPlaying(false)
   }
 
+  const audioEl = (
+    <audio
+      ref={audio}
+      preload="none"
+      controlsList="nodownload noplaybackrate"
+      onContextMenu={(e) => e.preventDefault()}
+      onEnded={ended}
+      onError={() => { if (audio.current?.dataset.src) setLoadError(true) }}
+    />
+  )
+  if (!t) return <>{audioEl}{lateBanner}</>
+
   return (
     <>
+    {audioEl}
     {lateBanner}
     {blockedBanner}
     <div data-music-bar role="region" aria-label="Music player" className="sticky bottom-0 z-40 border-t-2 border-gold bg-navy px-5 py-2.5 text-navy-ink shadow-[0_-4px_16px_rgba(0,0,0,0.15)]">
-      <audio
-        ref={audio}
-        src={t.src}
-        preload="none"
-        controlsList="nodownload noplaybackrate"
-        onContextMenu={(e) => e.preventDefault()}
-        onEnded={ended}
-      />
       <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-x-5 gap-y-2">
         <div className="flex min-w-0 flex-1 basis-60 items-center gap-3">
           <div className="relative size-11 shrink-0 overflow-hidden rounded-lg bg-[#3a4050]">
@@ -224,7 +248,7 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
           </div>
           <div className="min-w-0">
             <a href={`/audio/${t.slug}`} className="block truncate font-semibold text-navy-ink no-underline">{t.title}</a>
-            <div className="text-[13px] text-navy-muted">{prayer ? `${prayer.label}${prayer.blocked ? ' · tap play to pray along' : ''}` : 'Catholic My Pride'}</div>
+            <div className="text-[13px] text-navy-muted">{loadError ? 'This recording could not be loaded. Please try again later.' : prayer ? `${prayer.label}${prayer.blocked ? ' · tap play to pray along' : ''}` : 'Catholic My Pride'}</div>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
