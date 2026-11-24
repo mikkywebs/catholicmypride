@@ -8,6 +8,8 @@ import type { Saint } from './types'
 
 export type BlogIdea = {
   key: string
+  /** What the idea is about (a saint, feast or novena name), to spot posts already written on it. */
+  topic: string
   kind: 'feast' | 'saint' | 'sunday' | 'novena' | 'season'
   eventDate: string
   publishBy: string
@@ -38,8 +40,15 @@ const plain = (md: string | null | undefined) => (md ?? '').replace(/[#*_>`\[\]]
 const firstSentence = (s: string) => (s.match(/^[^.!?]+[.!?]/)?.[0] ?? s).trim()
 const RANK: Record<string, number> = { Solemnity: 100, Feast: 80, Memorial: 50, 'Optional Memorial': 30, 'Local Memorial': 35 }
 
-/** Ideas whose event falls 3–7 days after `today`, best first. */
-export async function ideasFor(today: string, limit = 3, exclude: Set<string> = new Set()): Promise<BlogIdea[]> {
+/** True when one of your post titles is already about this topic (e.g. “Saint Andrew the Apostle: His Life…”). */
+export function covered(topic: string, titles: string[]) {
+  const t = topic.toLowerCase().replace(/^the /, '').trim()
+  return t.length > 3 && titles.some((x) => x.toLowerCase().includes(t))
+}
+
+/** Ideas whose event falls 3–7 days after `today`, best first.
+ *  Left out: ideas whose key or web address is in `exclude` (drafted or skipped), and topics a post title already covers. */
+export async function ideasFor(today: string, limit = 3, exclude: Set<string> = new Set(), titles: string[] = []): Promise<BlogIdea[]> {
   const all: BlogIdea[] = []
   const novenas = await getNovenas()
   for (let ahead = 3; ahead <= 7; ahead++) {
@@ -59,7 +68,7 @@ export async function ideasFor(today: string, limit = 3, exclude: Set<string> = 
     const ahead = Math.round((Date.parse(i.eventDate) - Date.parse(today)) / 86_400_000)
     i.score = i.weight + 12 - 4 * Math.abs(ahead - i.lead)
   }
-  const due = all.filter((i) => !exclude.has(i.slug))
+  const due = all.filter((i) => !exclude.has(i.slug) && !exclude.has(i.key) && !covered(i.topic, titles))
   // Best first, one idea per event, and a mix of kinds.
   const seen = new Set<string>()
   const picked: BlogIdea[] = []
@@ -103,7 +112,7 @@ function saintIdea(s: Saint, date: string, today: string, ahead: number): BlogId
         `## Prayer to ${name}`, s.prayer_md ? `- Use or adapt the prayer on our Feast of the Day page.` : '- Write a short original prayer asking for their intercession.',
       ]
   return {
-    key: `saint:${s.slug}:${date}`, kind: isEvent ? 'feast' : 'saint', ...base(date, today),
+    key: `saint:${s.slug}:${date}`, topic: name, kind: isEvent ? 'feast' : 'saint', ...base(date, today),
     title, slug: slugify(`${name} ${isEvent ? 'meaning history prayer' : 'life feast day prayer'}`).slice(0, 80),
     seoTitle: clip(isEvent ? `${name} ${year(date)}: Meaning and Prayer` : `${name}: Life, Feast Day (${day}) and Prayer`, 60),
     seoDescription: clip(isEvent
@@ -127,7 +136,7 @@ function sundayIdea(r: { title: string | null; gospel_ref: string | null; gospel
   const verse = firstSentence(plain(r.gospel_text))
   const theme = verse ? clip(verse.replace(/^(At that time|In that time)[,:]?\s*/i, ''), 50) : 'Sunday Gospel'
   return {
-    key: `sunday:${date}`, kind: 'sunday', ...base(date, today),
+    key: `sunday:${date}`, topic: '', kind: 'sunday', ...base(date, today),
     title: clip(`${sunday}: Gospel Reflection (${r.gospel_ref ?? 'Gospel'})`, 75),
     slug: slugify(`${sunday} gospel reflection ${year(date)}`).slice(0, 80),
     seoTitle: clip(`${sunday} ${year(date)}: Gospel Reflection`, 60),
@@ -155,7 +164,7 @@ function sundayIdea(r: { title: string | null; gospel_ref: string | null; gospel
 
 function novenaIdea(title: string, slug: string, feast: string | null, date: string, today: string, ahead: number): BlogIdea {
   return {
-    key: `novena:${slug}:${date}`, kind: 'novena', ...base(date, today),
+    key: `novena:${slug}:${date}`, topic: title, kind: 'novena', ...base(date, today),
     title: clip(`${title}: When to Start and How to Pray It`, 75),
     slug: slugify(`${title} when to start how to pray ${year(date)}`).slice(0, 80),
     seoTitle: clip(`${title} ${year(date)}: Start Date and Prayers`, 60),
@@ -184,7 +193,7 @@ function seasonIdea(season: string, date: string, today: string, ahead: number):
   const name = season === 'Holy Week' ? 'Holy Week' : season
   const how: Record<string, string> = { Advent: 'Prepare for Christmas', Lent: 'Make the Most of Lent', Christmas: 'Celebrate Christmas as a Catholic', Easter: 'Live the Easter Season', 'Holy Week': 'Pray Through Holy Week' }
   return {
-    key: `season:${season}:${date}`, kind: 'season', ...base(date, today),
+    key: `season:${season}:${date}`, topic: '', kind: 'season', ...base(date, today),
     title: clip(`${name} ${year(date)}: How to ${how[season] ?? `Live ${name}`}`, 75),
     slug: slugify(`${name} ${year(date)} catholic guide`).slice(0, 80),
     seoTitle: clip(`${name} ${year(date)}: A Catholic Guide`, 60),

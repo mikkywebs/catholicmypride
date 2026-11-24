@@ -330,6 +330,19 @@ export async function answerSubmission(id: string, question: string) {
   redirect(`/admin/faqs/new?question=${encodeURIComponent(question)}`)
 }
 
+/** Blog Ideas: hide an idea you will not write (the next best one takes its place), or bring it back. */
+export async function skipIdea(idea: string, title: string) {
+  const { db } = await requireAdmin()
+  const { error } = await db.from('blog_idea_skips').upsert({ idea, title })
+  if (error) redirect(`/admin/blog-ideas?error=${encodeURIComponent(/blog_idea_skips/.test(error.message) ? 'Please run database update 0033 first, then try again.' : error.message)}`)
+  redirect('/admin/blog-ideas')
+}
+export async function unskipIdea(idea: string) {
+  const { db } = await requireAdmin()
+  await db.from('blog_idea_skips').delete().eq('idea', idea)
+  redirect('/admin/blog-ideas')
+}
+
 /** Blog Ideas: turn a suggestion into a draft post with all the SEO fields filled in, then open it. */
 export async function createIdeaDraft(idea: import('@/lib/blog-ideas').BlogIdea) {
   const { db } = await requireAdmin()
