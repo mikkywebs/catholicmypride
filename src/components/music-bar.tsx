@@ -17,6 +17,7 @@ function subscribeClock(cb: () => void) {
   return () => clearInterval(t)
 }
 const minuteNow = () => Math.floor(Date.now() / 60_000)
+const setMute = (el: HTMLAudioElement, m: boolean) => { el.muted = m }
 
 /**
  * Sticky music bar. Music starts only when the visitor presses Play, plays the list once and stops
@@ -50,6 +51,7 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
   const volume = volOverride ?? storedVolume
   const muted = muteOverride ?? storedMuted
   const userPaused = useRef(false)
+  const unlocking = useRef(false) // a first-tap unlock is in progress (see below)
   const [loadError, setLoadError] = useState(false)
   useEffect(() => { try { userPaused.current = sessionStorage.getItem('cmp-paused') === '1' } catch {} }, [])
 
@@ -62,6 +64,7 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
 
   const play = async () => {
     if (!audio.current) return
+    unlocking.current = false
     try {
       announcePlay(ID)
       await audio.current.play()
@@ -76,6 +79,26 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
   const pause = () => { audio.current?.pause(); setPlaying(false) }
 
   useEffect(() => onOtherPlay(ID, pause), [])
+
+  // Phones only let a page start sound by itself after the visitor has tapped it, and an iPhone only lets
+  // a player that a tap has started once play later on its own. So the first tap anywhere on the site
+  // starts and stops the (silent, muted) player once. After that, a prayer at its set time can start by itself.
+  useEffect(() => {
+    const unlock = () => {
+      const a = audio.current
+      if (!a || !a.paused || a.dataset.unlocked) return
+      const wasMuted = a.muted
+      unlocking.current = true
+      a.muted = true
+      a.play().then(() => {
+        a.dataset.unlocked = '1'
+        if (unlocking.current) { a.pause(); a.currentTime = 0 }
+      }).catch(() => {}).finally(() => { setMute(a, wasMuted); unlocking.current = false })
+    }
+    const opts = { capture: true, passive: true } as const
+    for (const e of ['pointerdown', 'touchend', 'keydown']) document.addEventListener(e, unlock, opts)
+    return () => { for (const e of ['pointerdown', 'touchend', 'keydown']) document.removeEventListener(e, unlock, opts) }
+  }, [])
 
   // Start a prayer when its time comes (once per time, even with several tabs open).
   useEffect(() => {
@@ -134,6 +157,8 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
     const a = audio.current
     if (a && track) {
       loadSrc(track.src)
+      unlocking.current = false
+      setMute(a, muted)
       startedBy.current = late.id
       announcePlay(ID)
       a.play().then(() => setPlaying(true)).catch(() => setPrayer((p) => (p ? { ...p, blocked: true } : p)))
@@ -151,6 +176,8 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
     if (!prayer || prayer.blocked || !audio.current) return
     if (startedBy.current === prayer.id) { startedBy.current = null; return } // already started by the tap
     const a = audio.current
+    unlocking.current = false
+    setMute(a, muted)
     announcePlay(ID)
     a.play().then(() => setPlaying(true)).catch(() => setPrayer((p) => (p ? { ...p, blocked: true } : p)))
   }, [prayer?.id]) // eslint-disable-line react-hooks/exhaustive-deps

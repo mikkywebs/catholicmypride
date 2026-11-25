@@ -10,6 +10,7 @@ import { Breadcrumb, Chip, Featured, Prose, ReadTime } from '@/components/ui'
 import { getPost, getRelatedPosts, getSettings } from '@/lib/data'
 import { dateLabel, duration, mdWithToc, parseSources, readMinutes } from '@/lib/format'
 import { TableOfContents } from '@/components/toc'
+import { YouTubeEmbed } from '@/components/youtube-embed'
 
 export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): Promise<Metadata> {
   const { slug } = await params
@@ -58,6 +59,7 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       <Featured src={p.featured_image} alt={p.image_alt} priority />
       <ShareBar title={p.title} />
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen to this post" initialSeconds={p.audio_seconds} downloadName={p.allow_download ? `${p.slug}.mp3` : undefined} />}
+      <YouTubeEmbed url={p.youtube_url} title={p.title} />
       <TableOfContents items={body.toc} />
       <Prose html={body.html} />
       {sources.length > 0 && (

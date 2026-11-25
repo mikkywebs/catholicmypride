@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { JsonLd, articleLd } from '@/components/article-bits'
 import { ShareBar, ViewCount } from '@/components/engage'
 import { NovenaDays } from '@/components/novena-days'
+import { YouTubeEmbed } from '@/components/youtube-embed'
 import { Breadcrumb, Featured } from '@/components/ui'
 import { getNovena, getNovenas, getSettings } from '@/lib/data'
 import { dateLabel, md } from '@/lib/format'
@@ -58,6 +59,7 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
       <Featured src={n.featured_image} alt={n.image_alt} priority />
       <ShareBar title={n.title} />
       {n.intro_md && <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: md(n.intro_md) }} />}
+      <YouTubeEmbed url={n.youtube_url} title={n.title} />
       <NovenaDays novenaId={n.id} days={days} startISO={start} length={length} hasOpening={Boolean(n.has_opening)} commonHtml={md(n.common_prayers_md)} repeat={n.repeat_prayer_md ? { html: md(n.repeat_prayer_md), count: n.repeat_count } : null} initial={initial} allowDownload={Boolean(n.allow_download)} />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       {upcoming.length > 0 && (

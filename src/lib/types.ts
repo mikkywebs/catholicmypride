@@ -41,6 +41,7 @@ export type Post = Seo & {
   tags: string[]; audio_url: string | null; audio_seconds: number | null; author: string | null
   author_country?: string | null; is_contributor?: boolean | null
   sources?: string | null
+  youtube_url?: string | null
   allow_download?: boolean | null
   focus_keyword: string | null; keywords: string | null; noindex: boolean
   published_at: string | null; updated_at: string
@@ -82,7 +83,7 @@ export type Novena = Seo & {
   id: string; slug: string; title: string; feast_name: string | null; feast_date: string
   featured_image: string | null; image_alt: string | null; common_prayers_md: string | null
   start_date: string | null; days_count: number | null; has_opening: boolean | null; repeats_yearly: boolean | null
-  allow_download?: boolean | null
+  allow_download?: boolean | null; youtube_url?: string | null
   intro_md: string | null; repeat_prayer_md: string | null; repeat_count: number | null; invitation_md: string | null
   days?: NovenaDay[]
 }
