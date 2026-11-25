@@ -6,7 +6,7 @@ import { connection } from 'next/server'
 import { PrayerForm } from '@/components/prayer-form'
 import { SongRow } from '@/components/song-row'
 import { ButtonLink, Cover, Eyebrow, Featured, H2, SectionHead } from '@/components/ui'
-import { readingImage } from '@/lib/reading-image'
+import { prayerImage, readingImage } from '@/lib/reading-image'
 import { getBooks, getDailyPrayer, getHomeImages, getNovenas, getPosts, getPrayers, getReading, getSaintForDate, getSettings, getSongs } from '@/lib/data'
 import { dateLabel, duration } from '@/lib/format'
 import { formatLong, liturgicalInfo, todayISO } from '@/lib/liturgical'
@@ -91,7 +91,7 @@ async function TodaySections() {
   const cards = [
     reading && { key: 'r', tag: 'Mass Readings', title: [reading.first_ref, reading.psalm_ref, reading.gospel_ref].filter(Boolean).join(' · ') || (reading.title ?? 'Today’s readings'), text: reading.reflection_title, img: readingPic, href: `/mass-readings/${today}`, cta: 'Read with reflection' },
     saint && { key: 's', tag: saint.kind === 'celebration' ? 'Feast of the Day' : 'Saint of the Day', title: saint.name, text: saint.celebration, img: saint.featured_image, href: `/saint-of-the-day/${saint.slug}`, cta: saint.kind === 'celebration' ? 'Read more' : 'Read the story' },
-    prayer && { key: 'p', tag: 'Daily Prayer', title: prayer.title, text: null, img: prayer.featured_image || (prayer === daily ? s.default_prayer_image : null), href: `/daily-prayers/${prayer.slug}`, cta: 'Pray now' },
+    prayer && { key: 'p', tag: 'Daily Prayer', title: prayer.title, text: null, img: prayer === daily ? prayerImage(today, prayer, homeImgs, { url: s.default_prayer_image }).url : prayer.featured_image, href: `/daily-prayers/${prayer.slug}`, cta: 'Pray now' },
   ].filter(Boolean) as { key: string; tag: string; title: string; text: string | null; img: string | null; href: string; cta: string }[]
 
   return (

@@ -5,7 +5,8 @@ import { Suspense } from 'react'
 import { AudioPlayer } from '@/components/audio-player'
 import { Reactions, ShareBar, ViewCount } from '@/components/engage'
 import { Breadcrumb, Featured, Prose } from '@/components/ui'
-import { getPrayer, getSettings } from '@/lib/data'
+import { getHomeImages, getPrayer, getSettings } from '@/lib/data'
+import { prayerImage } from '@/lib/reading-image'
 import { dateFromPrayerSlug } from '@/lib/daily-prayer'
 import { addDays, formatLong } from '@/lib/liturgical'
 import Link from 'next/link'
@@ -13,11 +14,13 @@ import { md, readMinutes } from '@/lib/format'
 
 export async function generateMetadata({ params }: PageProps<'/daily-prayers/[slug]'>): Promise<Metadata> {
   const { slug } = await params
-  const p = await getPrayer(slug)
+  const [p, images, s] = await Promise.all([getPrayer(slug), getHomeImages(), getSettings()])
   if (!p) return {}
+  const day = dateFromPrayerSlug(p.slug)
+  const pic = day ? prayerImage(day, p, images, { url: s.default_prayer_image }).url : p.featured_image
   const title = p.seo_title || p.title
   const description = p.seo_description || `Pray the ${p.title}. ${p.body_md.slice(0, 120).replace(/[#*_>\n]/g, ' ').trim()}…`
-  return { title, description, alternates: { canonical: `/daily-prayers/${slug}` }, openGraph: { title, description, images: p.featured_image ? [p.featured_image] : undefined } }
+  return { title, description, alternates: { canonical: `/daily-prayers/${slug}` }, openGraph: { title, description, images: pic ? [pic] : undefined } }
 }
 
 export default function Page(props: PageProps<'/daily-prayers/[slug]'>) {
@@ -26,8 +29,11 @@ export default function Page(props: PageProps<'/daily-prayers/[slug]'>) {
 
 async function Content({ params }: { params: PageProps<'/daily-prayers/[slug]'>['params'] }) {
   const { slug } = await params
-  const [p, s] = await Promise.all([getPrayer(slug), getSettings()])
+  const [p, s, images] = await Promise.all([getPrayer(slug), getSettings(), getHomeImages()])
   if (!p) notFound()
+  // A dated daily prayer uses that weekday's picture from Settings unless it has its own.
+  const day = dateFromPrayerSlug(p.slug)
+  const pic = day ? prayerImage(day, p, images, { url: s.default_prayer_image, alt: s.default_prayer_alt }) : { url: p.featured_image, alt: p.image_alt }
   return (
     <div className="mx-auto flex max-w-[780px] flex-col gap-6 px-6 pb-[72px] pt-8">
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Daily Prayers', href: '/daily-prayers' }, { label: p.title }]} />
@@ -37,7 +43,7 @@ async function Content({ params }: { params: PageProps<'/daily-prayers/[slug]'>[
         <h1 className="m-0 font-serif text-[40px] font-semibold leading-[1.1] sm:text-[50px]">{p.title}</h1>
         <div className="flex flex-wrap justify-center gap-x-4 text-[15px] text-muted"><span>{readMinutes(p.body_md)} min</span><ViewCount section="Daily Prayers" threshold={s.view_threshold} /></div>
       </div>
-      <Featured src={p.featured_image || (dateFromPrayerSlug(p.slug) ? s.default_prayer_image : null)} alt={p.featured_image ? p.image_alt : s.default_prayer_alt} priority />
+      <Featured src={pic.url} alt={pic.alt} priority />
       <ShareBar title={p.title} />
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen and pray along" initialSeconds={p.audio_seconds} />}
       <Prose html={md(p.body_md)} />

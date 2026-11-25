@@ -4,7 +4,8 @@ import { Suspense } from 'react'
 import { connection } from 'next/server'
 import { PrayerTabs, type TabPrayer } from '@/components/prayer-tabs'
 import { EmptyState, Eyebrow, H1 } from '@/components/ui'
-import { getDailyPrayer, getPrayers, getSettings } from '@/lib/data'
+import { getDailyPrayer, getPrayers, getSettings, getHomeImages } from '@/lib/data'
+import { prayerImage } from '@/lib/reading-image'
 import { Featured } from '@/components/ui'
 import { addDays, formatLong } from '@/lib/liturgical'
 import { md, readMinutes } from '@/lib/format'
@@ -24,7 +25,8 @@ export default function Page() {
 async function Content() {
   await connection()
   const today = todayISO()
-  const [all, daily, s] = await Promise.all([getPrayers(), getDailyPrayer(today), getSettings()])
+  const [all, daily, s, images] = await Promise.all([getPrayers(), getDailyPrayer(today), getSettings(), getHomeImages()])
+  const dailyPic = prayerImage(today, daily, images, { url: s.default_prayer_image, alt: s.default_prayer_alt })
   const pick = (k: Prayer['time_of_day']): TabPrayer => {
     const list = all.filter((p) => p.time_of_day === k)
     const p = list.find((x) => x.show_on === today) ?? list.sort((a, b) => (b.show_on ?? '').localeCompare(a.show_on ?? ''))[0]
@@ -43,7 +45,7 @@ async function Content() {
       </div>
       {daily && (
         <Link href={`/daily-prayers/${daily.slug}`} className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface text-ink no-underline md:flex-row">
-          {(daily.featured_image || s.default_prayer_image) && <div className="md:w-[45%]"><Featured src={daily.featured_image || s.default_prayer_image} alt={daily.featured_image ? daily.image_alt : s.default_prayer_alt} rounded="rounded-none" className="h-full" /></div>}
+          {dailyPic.url && <div className="md:w-[45%]"><Featured src={dailyPic.url} alt={dailyPic.alt} rounded="rounded-none" className="h-full" /></div>}
           <div className="flex flex-1 flex-col gap-2.5 px-6 py-7 sm:px-8">
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-accent">Today&apos;s prayer from the Word</p>
             <h2 className="m-0 font-serif text-[32px] font-semibold leading-tight">{daily.title}</h2>

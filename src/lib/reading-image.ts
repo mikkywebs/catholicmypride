@@ -48,3 +48,25 @@ export function readingImage(
   for (const k of readingImageKeys(date)) if (images[k]?.url) return { url: images[k].url, alt: images[k].alt }
   return { url: fallback?.url ?? null, alt: fallback?.alt ?? null }
 }
+
+/** Daily prayer pictures, one for each day of the week (Settings › Daily prayers: pictures by day). */
+export const PRAYER_IMAGE_SLOTS = [
+  { key: 'prayer_mon', label: 'Monday' }, { key: 'prayer_tue', label: 'Tuesday' }, { key: 'prayer_wed', label: 'Wednesday' },
+  { key: 'prayer_thu', label: 'Thursday' }, { key: 'prayer_fri', label: 'Friday' }, { key: 'prayer_sat', label: 'Saturday' },
+  { key: 'prayer_sun', label: 'Sunday' },
+] as const
+
+const WEEKDAY_KEY = ['prayer_sun', 'prayer_mon', 'prayer_tue', 'prayer_wed', 'prayer_thu', 'prayer_fri', 'prayer_sat']
+
+/** Prayer's own image → that weekday's picture → the old single default. */
+export function prayerImage(
+  date: string,
+  own: { featured_image?: string | null; image_alt?: string | null } | null | undefined,
+  images: Record<string, Img>,
+  fallback?: { url?: string | null; alt?: string | null },
+): { url: string | null; alt: string | null } {
+  if (own?.featured_image) return { url: own.featured_image, alt: own.image_alt ?? null }
+  const k = WEEKDAY_KEY[new Date(parseISODate(date)).getUTCDay()]
+  if (images[k]?.url) return { url: images[k].url, alt: images[k].alt }
+  return { url: fallback?.url ?? null, alt: fallback?.alt ?? null }
+}

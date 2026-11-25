@@ -6,7 +6,7 @@ import { saveSettings, type FormState } from '@/app/admin/actions'
 import type { Settings } from '@/lib/types'
 import { BrandIcon, BRANDS } from '../icons'
 import { ImageUpload } from './upload'
-import { READING_IMAGE_SLOTS } from '@/lib/reading-image'
+import { PRAYER_IMAGE_SLOTS, READING_IMAGE_SLOTS } from '@/lib/reading-image'
 import { ExtraSocialField } from './extra-social'
 
 const input = 'min-h-11 w-full rounded-lg border border-field bg-surface px-3 py-2.5 font-normal text-ink'
@@ -53,6 +53,15 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
                 <ImageUpload name={`img_${x.key}`} label={x.label} shape="16:9" initial={images[x.key]?.url} altName={`img_${x.key}_alt`} altInitial={images[x.key]?.alt} />
                 <p className="m-0 text-[13px] text-muted">{x.help}</p>
               </div>
+            ))}
+          </div>
+        </section>
+        <section className={card}>
+          <h2 className="m-0 text-xl">Daily prayers: pictures by day</h2>
+          <p className="m-0 -mt-2 text-sm text-muted">Each day&apos;s prayer from the Word uses that weekday&apos;s picture, chosen automatically. A prayer with its own image keeps it. An empty day falls back to the “Daily prayer” image above.</p>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {PRAYER_IMAGE_SLOTS.map((x) => (
+              <ImageUpload key={x.key} name={`img_${x.key}`} label={x.label} shape="16:9" initial={images[x.key]?.url} altName={`img_${x.key}_alt`} altInitial={images[x.key]?.alt} />
             ))}
           </div>
         </section>
