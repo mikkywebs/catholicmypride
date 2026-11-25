@@ -40,7 +40,7 @@ async function Content({ params }: { params: PageProps<'/chaplets/[slug]'>['para
       <Featured src={c.featured_image} alt={c.image_alt} priority />
       <ShareBar title={c.title} />
       {c.intro && <p className="m-0 text-[19px] leading-relaxed text-body">{c.intro}</p>}
-      {c.audio_url && <AudioPlayer src={c.audio_url} label="Pray along" initialSeconds={c.audio_seconds} />}
+      {c.audio_url && <AudioPlayer src={c.audio_url} label="Pray along" initialSeconds={c.audio_seconds} downloadName={c.allow_download ? `${c.slug}.mp3` : undefined} />}
       <Prose html={md(c.body_md)} />
       <Reactions type="chaplet" id={c.id} kinds={['love', 'amen', 'thumbs']} title="Did you pray along?" />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />

@@ -57,7 +57,7 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       </div>
       <Featured src={p.featured_image} alt={p.image_alt} priority />
       <ShareBar title={p.title} />
-      {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen to this post" initialSeconds={p.audio_seconds} />}
+      {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen to this post" initialSeconds={p.audio_seconds} downloadName={p.allow_download ? `${p.slug}.mp3` : undefined} />}
       <TableOfContents items={body.toc} />
       <Prose html={body.html} />
       {sources.length > 0 && (

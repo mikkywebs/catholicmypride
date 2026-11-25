@@ -13,9 +13,9 @@ function localISO() {
 }
 
 /** Day picker (opening day + Day 1…length). Opens on today's day if the novena is running. */
-export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commonHtml, repeat, initial }: {
+export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commonHtml, repeat, initial, allowDownload = false }: {
   novenaId: string; days: Day[]; startISO: string; length: number; hasOpening: boolean; commonHtml: string
-  repeat: { html: string; count: number | null } | null; initial: number | null
+  repeat: { html: string; count: number | null } | null; initial: number | null; allowDownload?: boolean
 }) {
   const first = hasOpening ? 0 : 1
   const today = useClientValue(() => {
@@ -69,7 +69,7 @@ export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commo
       <article className="flex flex-col gap-5">
         <p className="eyebrow m-0">{sel === 0 ? 'Opening day' : `Day ${sel} of ${length}`}</p>
         <h2 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[40px]">{d?.title || label(sel)}</h2>
-        {d?.audio_url && <AudioPlayer key={sel} src={d.audio_url} label={`Pray along · ${label(sel)}`} initialSeconds={d.audio_seconds} downloadName={`novena-${sel === 0 ? 'opening' : `day-${sel}`}.mp3`} />}
+        {d?.audio_url && <AudioPlayer key={sel} src={d.audio_url} label={`Pray along · ${label(sel)}`} initialSeconds={d.audio_seconds} downloadName={allowDownload ? `novena-${sel === 0 ? 'opening' : `day-${sel}`}.mp3` : undefined} />}
         {d?.html ? <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: d.html }} /> : <p className="text-muted">This day&apos;s prayer will be added soon.</p>}
         {repeat && sel > 0 && <RepeatPrayer key={sel} id={`${novenaId}:${sel}`} html={repeat.html} count={repeat.count} />}
         {commonHtml && (

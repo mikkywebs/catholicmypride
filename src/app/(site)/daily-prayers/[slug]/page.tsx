@@ -45,7 +45,7 @@ async function Content({ params }: { params: PageProps<'/daily-prayers/[slug]'>[
       </div>
       <Featured src={pic.url} alt={pic.alt} priority />
       <ShareBar title={p.title} />
-      {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen and pray along" initialSeconds={p.audio_seconds} />}
+      {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen and pray along" initialSeconds={p.audio_seconds} downloadName={p.allow_download ? `${p.slug}.mp3` : undefined} />}
       <Prose html={md(p.body_md)} />
       <Reactions type="prayer" id={p.slug} kinds={['love', 'amen', 'thumbs']} title="Did you pray along?" />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />

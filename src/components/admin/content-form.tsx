@@ -141,7 +141,7 @@ function FieldInput({ f, row, cats, slugFrom, options }: { f: Field; row: Row; c
     case 'musicbar':
       return <MusicBarField row={row} />
     case 'boolean':
-      return <label className="flex items-center gap-2.5 text-[15px]"><input type="checkbox" name={f.name} defaultChecked={Boolean(row[f.name] ?? (f.name === 'allow_download' || f.name === 'is_free'))} className="size-5 accent-accent" />{f.label}</label>
+      return <label className="flex items-center gap-2.5 text-[15px]"><input type="checkbox" name={f.name} defaultChecked={Boolean(row[f.name] ?? f.name === 'is_free')} className="size-5 accent-accent" />{f.label}</label>
   }
 }
 

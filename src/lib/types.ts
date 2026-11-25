@@ -41,6 +41,7 @@ export type Post = Seo & {
   tags: string[]; audio_url: string | null; audio_seconds: number | null; author: string | null
   author_country?: string | null; is_contributor?: boolean | null
   sources?: string | null
+  allow_download?: boolean | null
   focus_keyword: string | null; keywords: string | null; noindex: boolean
   published_at: string | null; updated_at: string
   category?: Category | null
@@ -61,7 +62,7 @@ export type Song = Seo & {
 export type Chaplet = Seo & {
   id: string; slug: string; title: string; intro: string | null; body_md: string
   featured_image: string | null; image_alt: string | null
-  audio_url: string | null; audio_seconds: number | null; sort: number
+  audio_url: string | null; audio_seconds: number | null; sort: number; allow_download?: boolean | null
 }
 
 export type Reading = Seo & {
@@ -81,6 +82,7 @@ export type Novena = Seo & {
   id: string; slug: string; title: string; feast_name: string | null; feast_date: string
   featured_image: string | null; image_alt: string | null; common_prayers_md: string | null
   start_date: string | null; days_count: number | null; has_opening: boolean | null; repeats_yearly: boolean | null
+  allow_download?: boolean | null
   intro_md: string | null; repeat_prayer_md: string | null; repeat_count: number | null; invitation_md: string | null
   days?: NovenaDay[]
 }
@@ -96,7 +98,7 @@ export type Saint = Seo & {
 export type Prayer = Seo & {
   id: string; slug: string; title: string; category_id: string | null
   time_of_day: 'morning' | 'midday' | 'evening' | 'night' | null; show_on: string | null
-  body_md: string; audio_url: string | null; audio_seconds: number | null
+  body_md: string; audio_url: string | null; audio_seconds: number | null; allow_download?: boolean | null
   featured_image: string | null; image_alt: string | null
   category?: Category | null
 }

@@ -58,7 +58,7 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
       <Featured src={n.featured_image} alt={n.image_alt} priority />
       <ShareBar title={n.title} />
       {n.intro_md && <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: md(n.intro_md) }} />}
-      <NovenaDays novenaId={n.id} days={days} startISO={start} length={length} hasOpening={Boolean(n.has_opening)} commonHtml={md(n.common_prayers_md)} repeat={n.repeat_prayer_md ? { html: md(n.repeat_prayer_md), count: n.repeat_count } : null} initial={initial} />
+      <NovenaDays novenaId={n.id} days={days} startISO={start} length={length} hasOpening={Boolean(n.has_opening)} commonHtml={md(n.common_prayers_md)} repeat={n.repeat_prayer_md ? { html: md(n.repeat_prayer_md), count: n.repeat_count } : null} initial={initial} allowDownload={Boolean(n.allow_download)} />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       {upcoming.length > 0 && (
         <section className="reveal flex flex-col gap-3.5">
