@@ -6,7 +6,7 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }} />
 }
 
-export function articleLd(o: { title: string; description?: string | null; image?: string | null; path: string; published?: string | null; modified?: string | null; author?: string | null }) {
+export function articleLd(o: { title: string; description?: string | null; image?: string | null; path: string; published?: string | null; modified?: string | null; author?: string | null; citations?: { title: string; url: string }[] }) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -18,6 +18,7 @@ export function articleLd(o: { title: string; description?: string | null; image
     dateModified: o.modified ?? o.published ?? undefined,
     author: { '@type': 'Organization', name: o.author || 'Catholic My Pride' },
     publisher: { '@type': 'Organization', name: 'Catholic My Pride', logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon-512.png` } },
+    citation: o.citations?.length ? o.citations.map((c) => ({ '@type': 'CreativeWork', name: c.title, url: c.url })) : undefined,
   }
 }
 

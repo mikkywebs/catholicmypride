@@ -40,6 +40,7 @@ export type Post = Seo & {
   featured_image: string | null; image_alt: string | null; category_id: string | null
   tags: string[]; audio_url: string | null; audio_seconds: number | null; author: string | null
   author_country?: string | null; is_contributor?: boolean | null
+  sources?: string | null
   focus_keyword: string | null; keywords: string | null; noindex: boolean
   published_at: string | null; updated_at: string
   category?: Category | null

@@ -351,7 +351,7 @@ export async function createIdeaDraft(idea: import('@/lib/blog-ideas').BlogIdea)
   const { data: cats } = await db.from('categories').select('id, name').eq('kind', 'blog')
   const cat = (cats ?? []).find((c) => (c.name as string).toLowerCase() === idea.category.toLowerCase())
   const body = [
-    `> ✍️ Draft from Blog Ideas. Replace the notes under each heading with your own writing, then delete this line. Publish by ${idea.publishBy}.`,
+    `> ✍️ Draft from Blog Ideas. Replace the notes under each heading with your own writing, add the sources you used in the References box below the article, then delete this line. Publish by ${idea.publishBy}.`,
     idea.outlineMd,
     '## Frequently asked questions',
     idea.faqs.map((q) => `### ${q}

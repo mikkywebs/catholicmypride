@@ -13,6 +13,26 @@ export function md(text: string | null | undefined) {
   })
 }
 
+export type Source = { title: string; url: string; host: string }
+
+/** References typed one per line as “Title | link”, “[Title](link)” or just a link. Only web links are kept. */
+export function parseSources(text: string | null | undefined): Source[] {
+  const out: Source[] = []
+  for (const raw of (text ?? '').split(/\r?\n/)) {
+    const line = raw.trim().replace(/^[-*•\d.)\s]+(?=\S)/, '')
+    if (!line) continue
+    const md = line.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/)
+    const rawUrl = md?.[2] ?? line.match(/https?:\/\/\S+/)?.[0]
+    const url = rawUrl?.replace(/[.,;)]+$/, '')
+    if (!url || !rawUrl) continue
+    let host = ''
+    try { host = new URL(url).hostname.replace(/^www\./, '') } catch { continue }
+    const title = (md?.[1] ?? line.replace(rawUrl, '').replace(/[|–—:\-\s]+$/, '').replace(/^[|–—:\-\s]+/, '')).trim()
+    out.push({ title: title || host, url, host })
+  }
+  return out
+}
+
 export type TocItem = { id: string; text: string; level: 2 | 3 }
 
 const decode = (t: string) => t.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, '’').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim()

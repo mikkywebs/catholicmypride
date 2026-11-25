@@ -8,7 +8,7 @@ import { AudioPlayer } from '@/components/audio-player'
 import { Reactions, ShareBar, ViewCount } from '@/components/engage'
 import { Breadcrumb, Chip, Featured, Prose, ReadTime } from '@/components/ui'
 import { getPost, getRelatedPosts, getSettings } from '@/lib/data'
-import { dateLabel, duration, mdWithToc, readMinutes } from '@/lib/format'
+import { dateLabel, duration, mdWithToc, parseSources, readMinutes } from '@/lib/format'
 import { TableOfContents } from '@/components/toc'
 
 export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): Promise<Metadata> {
@@ -38,9 +38,10 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
   const related = await getRelatedPosts(p)
   const listen = duration(p.audio_seconds)
   const body = mdWithToc(p.body_md)
+  const sources = parseSources(p.sources)
   return (
     <div className="mx-auto flex max-w-[780px] flex-col gap-6 px-6 pb-[72px] pt-8">
-      <JsonLd data={articleLd({ title: p.title, description: p.seo_description || p.excerpt, image: p.featured_image, path: `/blog/${slug}`, published: p.published_at, modified: p.updated_at, author: p.author })} />
+      <JsonLd data={articleLd({ title: p.title, description: p.seo_description || p.excerpt, image: p.featured_image, path: `/blog/${slug}`, published: p.published_at, modified: p.updated_at, author: p.author, citations: sources })} />
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Blog', href: '/blog' }, ...(p.category ? [{ label: p.category.name, href: `/blog?category=${p.category.slug}` }] : [])]} />
       <div className="flex flex-col gap-3.5">
         {p.category && <p className="eyebrow m-0">{p.category.name}</p>}
@@ -59,6 +60,19 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen to this post" initialSeconds={p.audio_seconds} />}
       <TableOfContents items={body.toc} />
       <Prose html={body.html} />
+      {sources.length > 0 && (
+        <section aria-labelledby="references" className="flex flex-col gap-2 border-t border-line pt-5">
+          <h2 id="references" className="m-0 font-serif text-[24px] font-semibold">References</h2>
+          <ol className="m-0 flex list-decimal flex-col gap-1.5 pl-6 marker:font-semibold text-[15px] text-muted">
+            {sources.map((r) => (
+              <li key={r.url} className="break-words pl-1">
+                <a href={r.url} target="_blank" rel="noopener noreferrer" className="font-semibold">{r.title}</a>
+                {r.title !== r.host && <span> · {r.host}</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
       {p.tags.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Tags">{p.tags.map((t) => <Chip key={t}>{t}</Chip>)}</div>}
       <Reactions type="post" id={p.id} kinds={['love', 'amen', 'thumbs']} title="Did this bless you?" />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />

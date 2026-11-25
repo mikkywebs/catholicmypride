@@ -69,6 +69,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       featured(),
       { name: 'excerpt', label: 'Short summary', type: 'textarea', rows: 2, help: 'Shown on cards and in search results if no meta description.' },
       { name: 'body_md', label: 'Article', type: 'markdown', rows: 18, required: true, help: 'Tip: start each section with ## Heading (and ### for a sub-section). With 3 or more headings, readers get an “In this article” contents box.' },
+      { name: 'sources', label: 'References (sources you used)', type: 'textarea', rows: 5, placeholder: 'Catechism of the Catholic Church, 2558 | https://www.vatican.va/archive/ENG0015/__P8Z.HTM\nSaint Andrew, Catholic Encyclopedia | https://www.newadvent.org/cathen/01471a.htm', help: 'One per line: the title, a | sign, then the link. A link on its own also works. They are listed as “References” at the end of the post.' },
       { name: 'audio_url', label: 'Audio version (optional)', type: 'audio', secondsField: 'audio_seconds' },
       { name: 'tags', label: 'Tags', type: 'tags', placeholder: 'rosary, advent, mercy' },
       { name: 'focus_keyword', label: 'Focus keyword', type: 'text', help: 'The phrase people would type into Google to find this post.' },
