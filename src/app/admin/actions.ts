@@ -265,7 +265,8 @@ export async function saveSettings(_: FormState, form: FormData): Promise<FormSt
   const { error } = await db.from('settings').update(row).eq('id', 1)
   if (error) return { ok: false, message: error.message }
 
-  for (const key of ['hero', 'prayer', 'donate']) {
+  const { READING_IMAGE_SLOTS } = await import('@/lib/reading-image')
+  for (const key of ['hero', 'prayer', 'donate', ...READING_IMAGE_SLOTS.map((x) => x.key)]) {
     const url = String(form.get(`img_${key}`) ?? '').trim()
     const alt = String(form.get(`img_${key}_alt`) ?? '').trim() || null
     if (url) await db.from('homepage_images').upsert({ key, url, alt, updated_at: new Date().toISOString() })

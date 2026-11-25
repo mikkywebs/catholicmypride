@@ -1,5 +1,7 @@
 import { StayConnected } from './whatsapp-join'
 import Link from 'next/link'
+import { getHomeImages } from '@/lib/data'
+import { readingImage } from '@/lib/reading-image'
 import { JsonLd, articleLd } from './article-bits'
 import { Reactions, ShareBar, ViewCount } from './engage'
 import { Breadcrumb, Featured, Prose } from './ui'
@@ -22,11 +24,13 @@ function Part({ id, title, refText, body, response, closing }: { id: string; tit
   )
 }
 
-export function ReadingView({ r, s }: { r: Reading; s: Settings }) {
+export async function ReadingView({ r, s }: { r: Reading; s: Settings }) {
   const info = liturgicalInfo(r.date)
   const vest = r.vestment ?? info.vestment
-  const image = r.featured_image || s.default_reading_image || null
-  const imageAlt = r.featured_image ? r.image_alt : s.default_reading_alt
+  // The day's own picture, else the seasonal one chosen in Settings (Sunday, Gaudete, Laetare, Advent…).
+  const pic = readingImage(r.date, r, await getHomeImages(), { url: s.default_reading_image, alt: s.default_reading_alt })
+  const image = pic.url
+  const imageAlt = pic.alt
   const mins = readMinutes(r.first_text, r.psalm_text, r.second_text, r.gospel_text, r.reflection_md)
   const word = 'The word of the Lord. — Thanks be to God.'
   const jumps = [

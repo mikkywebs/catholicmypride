@@ -6,6 +6,7 @@ import { saveSettings, type FormState } from '@/app/admin/actions'
 import type { Settings } from '@/lib/types'
 import { BrandIcon, BRANDS } from '../icons'
 import { ImageUpload } from './upload'
+import { READING_IMAGE_SLOTS } from '@/lib/reading-image'
 import { ExtraSocialField } from './extra-social'
 
 const input = 'min-h-11 w-full rounded-lg border border-field bg-surface px-3 py-2.5 font-normal text-ink'
@@ -42,6 +43,18 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
           <p className="m-0 -mt-2 text-sm text-muted">Used on every day that has no image of its own. You can still give any single day its own image.</p>
           <ImageUpload name="default_reading_image" label="Mass readings and reflection" shape="16:9" initial={s.default_reading_image} altName="default_reading_alt" altInitial={s.default_reading_alt} />
           <ImageUpload name="default_prayer_image" label="Daily prayer" shape="16:9" initial={s.default_prayer_image} altName="default_prayer_alt" altInitial={s.default_prayer_alt} />
+        </section>
+        <section className={card}>
+          <h2 className="m-0 text-xl">Mass readings: pictures by season</h2>
+          <p className="m-0 -mt-2 text-sm text-muted">Each day&apos;s readings use the picture that fits the Church calendar, chosen automatically: Gaudete or Laetare Sunday first, then Sundays, then the season. A day with its own image keeps it. Empty boxes fall back to the next one, and finally to the “Mass readings and reflection” image above.</p>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {READING_IMAGE_SLOTS.map((x) => (
+              <div key={x.key} className="flex flex-col gap-1">
+                <ImageUpload name={`img_${x.key}`} label={x.label} shape="16:9" initial={images[x.key]?.url} altName={`img_${x.key}_alt`} altInitial={images[x.key]?.alt} />
+                <p className="m-0 text-[13px] text-muted">{x.help}</p>
+              </div>
+            ))}
+          </div>
         </section>
         <section className={card}>
           <h2 className="m-0 text-xl">Home page</h2>
