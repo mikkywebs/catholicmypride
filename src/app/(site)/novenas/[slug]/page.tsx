@@ -10,14 +10,14 @@ import { YouTubeEmbed } from '@/components/youtube-embed'
 import { Breadcrumb, Featured } from '@/components/ui'
 import { getNovena, getNovenas, getSettings } from '@/lib/data'
 import { dateLabel, md } from '@/lib/format'
-import { currentCycle, novenaEnd, novenaFirstDate, novenaLength, novenaStart } from '@/lib/novena-days'
+import { currentCycle, novenaEnd, novenaFirstDate, novenaInterval, novenaLength, novenaSpan, novenaStart, novenaUnit } from '@/lib/novena-days'
 import { todayISO } from '@/lib/liturgical'
 
 export async function generateMetadata({ params }: PageProps<'/novenas/[slug]'>): Promise<Metadata> {
   const { slug } = await params
   const n = await getNovena(slug)
   if (!n) return {}
-  const title = n.seo_title || `${n.title}: ${novenaLength(n)} Days of Prayer`
+  const title = n.seo_title || `${n.title}: ${novenaSpan(n).replace(/^\w|\s\w/g, (c) => c.toUpperCase())} of Prayer`
   // Yearly novenas: dates without the year, so the description stays true every year.
   const when = (iso: string) => (n.repeats_yearly ? dateLabel(iso).replace(/ \d{4}$/, '') : dateLabel(iso))
   const description = n.seo_description || `Pray the ${n.title} from ${when(novenaFirstDate(n))} to ${when(novenaEnd(n))}, with a prayer for each day.`
@@ -49,7 +49,7 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
       <div className="flex flex-col items-center gap-3 text-center">
         <p className="eyebrow m-0">Novena · Feast day {dateLabel(n.feast_date)}</p>
         <h1 className="m-0 font-serif text-[40px] font-semibold leading-[1.1] sm:text-[52px]">{n.title}</h1>
-        <div className="flex flex-wrap justify-center gap-x-4 text-[15px] text-muted"><span>{length} days · {dateLabel(novenaFirstDate(n))} – {dateLabel(novenaEnd(n))}</span><ViewCount section="Novenas" threshold={s.view_threshold} /></div>
+        <div className="flex flex-wrap justify-center gap-x-4 text-[15px] text-muted"><span>{novenaSpan(n)} · {dateLabel(novenaFirstDate(n))} – {dateLabel(novenaEnd(n))}</span><ViewCount section="Novenas" threshold={s.view_threshold} /></div>
       </div>
       {today === n.feast_date ? (
         <p role="status" className="m-0 rounded-2xl bg-accent-soft px-6 py-4 text-center text-[17px] font-semibold text-eyebrow">
@@ -60,7 +60,7 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
       <ShareBar title={n.title} />
       {n.intro_md && <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: md(n.intro_md) }} />}
       <YouTubeEmbed url={n.youtube_url} title={n.title} />
-      <NovenaDays novenaId={n.id} days={days} startISO={start} length={length} hasOpening={Boolean(n.has_opening)} commonHtml={md(n.common_prayers_md)} repeat={n.repeat_prayer_md ? { html: md(n.repeat_prayer_md), count: n.repeat_count } : null} initial={initial} allowDownload={Boolean(n.allow_download)} />
+      <NovenaDays novenaId={n.id} days={days} startISO={start} length={length} hasOpening={Boolean(n.has_opening)} commonHtml={md(n.common_prayers_md)} repeat={n.repeat_prayer_md ? { html: md(n.repeat_prayer_md), count: n.repeat_count } : null} initial={initial} allowDownload={Boolean(n.allow_download)} interval={novenaInterval(n)} unit={novenaUnit(n)} />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       {upcoming.length > 0 && (
         <section className="reveal flex flex-col gap-3.5">

@@ -10,7 +10,7 @@ import { prayerImage, readingImage } from '@/lib/reading-image'
 import { getBooks, getDailyPrayer, getHomeImages, getNovenas, getPosts, getPrayers, getReading, getSaintForDate, getSettings, getSongs } from '@/lib/data'
 import { dateLabel, duration } from '@/lib/format'
 import { formatLong, liturgicalInfo, todayISO } from '@/lib/liturgical'
-import { activeNovenas, dayLabel, novenaLength } from '@/lib/novena-days'
+import { activeNovenas, dayLabel, novenaInterval, novenaLength, novenaUnit } from '@/lib/novena-days'
 import { SeasonBanner } from '@/components/season'
 import { seasonTheme } from '@/lib/season-theme'
 import { getQuotes, quoteFor } from '@/lib/quotes'
@@ -167,7 +167,7 @@ function NovenaBlock({ running }: { running: { novena: Novena; day: number }[] }
             // Long novenas (e.g. 25 days): a progress bar instead of 25 circles.
             <div role="img" aria-label={dayLabel(novena, day)} className="flex flex-col gap-2 py-2">
               <div className="h-3 overflow-hidden rounded-full bg-[#3a4150]"><div className="h-full rounded-full bg-gold" style={{ width: `${(day / novenaLength(novena)) * 100}%` }} /></div>
-              <span className="text-sm text-navy-muted">{day === 0 ? 'Begins tomorrow with Day 1' : `${novenaLength(novena) - day} days to go`}</span>
+              <span className="text-sm text-navy-muted">{day === 0 ? `Begins tomorrow with ${novenaUnit(novena)} 1` : `${novenaLength(novena) - day} ${novenaInterval(novena) === 7 ? `${novenaUnit(novena)}s` : 'days'} to go`}</span>
             </div>
           )}
           <div className="flex flex-wrap gap-3 pt-1.5">

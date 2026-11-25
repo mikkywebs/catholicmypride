@@ -179,7 +179,7 @@ function NovenaDaysEditor({ days, initialCount }: { days: NovenaDayRow[]; initia
   useEffect(() => {
     const input = box.current?.closest('form')?.querySelector<HTMLInputElement>('input[name="days_count"]')
     if (!input) return
-    const on = () => setCount(Math.min(40, Math.max(1, Number.parseInt(input.value, 10) || 9)))
+    const on = () => setCount(Math.min(60, Math.max(1, Number.parseInt(input.value, 10) || 9)))
     input.addEventListener('input', on)
     return () => input.removeEventListener('input', on)
   }, [])
@@ -251,7 +251,7 @@ export function ContentForm({ type, row, cats, action, novenaDays, options = {} 
     <form ref={ref} action={formAction} className="flex flex-wrap items-start gap-6">
       <div className="flex min-w-0 flex-[999_1_620px] flex-col gap-4 rounded-2xl border border-line bg-surface p-6">
         {renderFields(main)}
-        {type.key === 'novenas' && <NovenaDaysEditor days={novenaDays ?? []} initialCount={Math.min(40, Math.max(1, Number(row.days_count) || 9))} />}
+        {type.key === 'novenas' && <NovenaDaysEditor days={novenaDays ?? []} initialCount={Math.min(60, Math.max(1, Number(row.days_count) || 9))} />}
       </div>
       <aside className="flex min-w-0 flex-[1_1_340px] flex-col gap-4 lg:sticky lg:top-4">
         <section className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5">

@@ -13,15 +13,19 @@ function localISO() {
 }
 
 /** Day picker (opening day + Day 1…length). Opens on today's day if the novena is running. */
-export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commonHtml, repeat, initial, allowDownload = false }: {
+export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commonHtml, repeat, initial, allowDownload = false, interval = 1, unit = 'Day' }: {
   novenaId: string; days: Day[]; startISO: string; length: number; hasOpening: boolean; commonHtml: string
   repeat: { html: string; count: number | null } | null; initial: number | null; allowDownload?: boolean
+  /** 1 for a normal novena; 7 for a weekly devotion, whose numbered days are called e.g. “Sunday”. */
+  interval?: number; unit?: string
 }) {
   const first = hasOpening ? 0 : 1
   const today = useClientValue(() => {
     const start = new Date(startISO + 'T00:00:00')
     const now = new Date(localISO() + 'T00:00:00')
-    const n = Math.round((now.getTime() - start.getTime()) / 86_400_000) + 1
+    const diff = Math.round((now.getTime() - start.getTime()) / 86_400_000)
+    // Weekly devotions: between two Sundays, the last Sunday reached is “this week’s”.
+    const n = diff < 0 ? (diff === -1 ? 0 : -1) : Math.floor(diff / interval) + 1
     return n >= first && n <= length ? n : null
   }, null)
   const [picked, setSel] = useState<number | null>(initial)
@@ -34,7 +38,7 @@ export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commo
     url.searchParams.set('day', String(n))
     window.history.replaceState(null, '', url)
   }
-  const label = (n: number) => (n === 0 ? 'Opening' : `Day ${n}`)
+  const label = (n: number) => (n === 0 ? 'Opening' : `${unit} ${n}`)
   const buttons = Array.from({ length: length - first + 1 }, (_, i) => i + first)
   // Up to 10 buttons share one row; longer novenas wrap into rows of small squares.
   const cols = buttons.length <= 10 ? `repeat(${buttons.length}, minmax(0, 1fr))` : 'repeat(auto-fill, minmax(2.9rem, 1fr))'
@@ -43,8 +47,8 @@ export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commo
     <>
       <section className="flex flex-col gap-3.5 rounded-2xl border border-line bg-surface px-6 py-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="m-0 font-serif text-[26px] font-semibold">Choose a day</h2>
-          {today !== null && <span className="text-[15px] text-muted">Today is <strong className="text-ink">{today === 0 ? 'the opening day' : `Day ${today}`}</strong></span>}
+          <h2 className="m-0 font-serif text-[26px] font-semibold">{interval === 7 ? `Choose a ${unit}` : "Choose a day"}</h2>
+          {today !== null && <span className="text-[15px] text-muted">{interval === 7 ? "This week: " : "Today is "}<strong className="text-ink">{today === 0 ? 'the opening day' : `${unit} ${today}`}</strong></span>}
         </div>
         <div role="tablist" aria-label="Novena days" className="grid gap-2" style={{ gridTemplateColumns: cols }}>
           {buttons.map((n) => {
@@ -67,7 +71,7 @@ export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commo
         </div>
       </section>
       <article className="flex flex-col gap-5">
-        <p className="eyebrow m-0">{sel === 0 ? 'Opening day' : `Day ${sel} of ${length}`}</p>
+        <p className="eyebrow m-0">{sel === 0 ? 'Opening day' : `${unit} ${sel} of ${length}`}</p>
         <h2 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[40px]">{d?.title || label(sel)}</h2>
         {d?.audio_url && <AudioPlayer key={sel} src={d.audio_url} label={`Pray along · ${label(sel)}`} initialSeconds={d.audio_seconds} downloadName={allowDownload ? `novena-${sel === 0 ? 'opening' : `day-${sel}`}.mp3` : undefined} />}
         {d?.html ? <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: d.html }} /> : <p className="text-muted">This day&apos;s prayer will be added soon.</p>}
@@ -78,7 +82,7 @@ export function NovenaDays({ novenaId, days, startISO, length, hasOpening, commo
             <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: commonHtml }} />
           </div>
         )}
-        <Reactions key={`r${sel}`} type="novena" id={`${novenaId}:day${sel}`} kinds={['love', 'amen', 'thumbs']} title={`Did you pray ${sel === 0 ? 'the opening prayer' : `Day ${sel}`}?`} compact />
+        <Reactions key={`r${sel}`} type="novena" id={`${novenaId}:day${sel}`} kinds={['love', 'amen', 'thumbs']} title={`Did you pray ${sel === 0 ? 'the opening prayer' : `${unit} ${sel}`}?`} compact />
         <div className="flex flex-wrap justify-between gap-3 border-t border-line pt-4">
           <button type="button" disabled={sel === first} onClick={() => go(sel - 1)} className="min-h-12 rounded-md border border-ink px-6 font-semibold text-ink disabled:opacity-40">← {label(Math.max(first, sel - 1))}</button>
           <button type="button" disabled={sel === length} onClick={() => go(sel + 1)} className="min-h-12 rounded-md bg-accent px-6 font-semibold text-accent-ink disabled:opacity-40">{label(Math.min(length, sel + 1))} →</button>

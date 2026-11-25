@@ -117,7 +117,7 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   if (t.key === 'saints') row.auto_filled = false
   if (t.key === 'prayers') row.auto_filled = false
   if (t.key === 'novenas') {
-    row.days_count = Math.min(40, Math.max(1, Number(row.days_count) || 9))
+    row.days_count = Math.min(60, Math.max(1, Number(row.days_count) || 9))
     row.repeat_count = row.repeat_count ? Math.min(100, Math.max(1, Number(row.repeat_count))) : null
     const opening = String(form.get('day0_prayer') ?? '').trim() || String(form.get('day0_title') ?? '').trim()
     row.has_opening = Boolean(opening)

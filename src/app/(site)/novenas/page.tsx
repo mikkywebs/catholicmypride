@@ -6,7 +6,7 @@ import { dateLabel } from '@/lib/format'
 import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { todayISO } from '@/lib/liturgical'
-import { currentCycle, novenaEnd, novenaFirstDate, novenaLength } from '@/lib/novena-days'
+import { currentCycle, novenaEnd, novenaFirstDate, novenaSpan } from '@/lib/novena-days'
 
 export const metadata: Metadata = {
   title: 'Catholic Novenas: Pray Day by Day',
@@ -37,7 +37,7 @@ async function List() {
           {list.map((n) => (
             <Link key={n.id} href={`/novenas/${n.slug}`} className="reveal flex flex-col gap-3 text-ink no-underline">
               <Featured src={n.featured_image} alt={n.image_alt} rounded="rounded-2xl" />
-              <p className="m-0 text-[13px] uppercase tracking-[0.1em] text-eyebrow">Begins {dateLabel(novenaFirstDate(n))} · {novenaLength(n)} days</p>
+              <p className="m-0 text-[13px] uppercase tracking-[0.1em] text-eyebrow">Begins {dateLabel(novenaFirstDate(n))} · {novenaSpan(n)}</p>
               <h2 className="m-0 font-serif text-[28px] font-semibold leading-tight">{n.title}</h2>
             </Link>
           ))}

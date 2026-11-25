@@ -1,12 +1,34 @@
 import { addDays } from './liturgical'
 import type { Novena } from './types'
 
-/** Number of numbered days (9 unless the admin set another number). */
-export const novenaLength = (n: Pick<Novena, 'days_count'>) => Math.min(40, Math.max(1, n.days_count || 9))
-/** Date of Day 1: the date set by the admin, or 9 days before the feast. */
-export const novenaStart = (n: Pick<Novena, 'start_date' | 'feast_date'>) => n.start_date || addDays(n.feast_date, -9)
+const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1)
+
+/** Number of numbered days or weeks (9 unless the admin set another number). */
+export const novenaLength = (n: Pick<Novena, 'days_count'>) => Math.min(60, Math.max(1, n.days_count || 9))
+/** Days between two numbered days: 1 for a normal novena, 7 for a weekly devotion (e.g. the Seven Sundays). */
+export const novenaInterval = (n: Pick<Novena, 'weekly_on'>) => (n.weekly_on && WEEKDAYS.includes(n.weekly_on) ? 7 : 1)
+/** What one numbered day is called: “Day”, or “Sunday” for a weekly devotion on Sundays. */
+export const novenaUnit = (n: Pick<Novena, 'weekly_on'>) => (novenaInterval(n) === 7 ? cap(n.weekly_on!) : 'Day')
+/** “9 days”, “7 Sundays”, “13 Tuesdays”. */
+export const novenaSpan = (n: Pick<Novena, 'weekly_on' | 'days_count'>) => `${novenaLength(n)} ${novenaInterval(n) === 7 ? `${novenaUnit(n)}s` : 'days'}`
+
+/** Date of Day 1: the date set by the admin; otherwise the novena ends the day before the feast.
+ *  A weekly devotion ends on the last chosen weekday before the feast (e.g. the 7th Sunday before 19 March is Day 1). */
+export function novenaStart(n: Pick<Novena, 'start_date' | 'feast_date' | 'days_count' | 'weekly_on'>) {
+  if (n.start_date) return n.start_date
+  const len = novenaLength(n)
+  if (novenaInterval(n) === 7) {
+    const feastDow = new Date(`${n.feast_date}T12:00:00Z`).getUTCDay()
+    const back = ((feastDow - WEEKDAYS.indexOf(n.weekly_on!) + 7) % 7) || 7
+    return addDays(n.feast_date, -back - 7 * (len - 1))
+  }
+  return addDays(n.feast_date, -len)
+}
+/** Date of a numbered day. */
+export const novenaDate = (n: Novena, day: number) => addDays(novenaStart(n), (day - 1) * novenaInterval(n))
 /** Last numbered day. */
-export const novenaEnd = (n: Novena) => addDays(novenaStart(n), novenaLength(n) - 1)
+export const novenaEnd = (n: Novena) => novenaDate(n, novenaLength(n))
 /** First date anything is prayed (the opening day, if there is one). */
 export const novenaFirstDate = (n: Novena) => (n.has_opening ? addDays(novenaStart(n), -1) : novenaStart(n))
 
@@ -16,7 +38,7 @@ export function novenaDay(n: Novena, today: string): number | null {
   const start = novenaStart(n)
   if (today < start) return 0
   let day = 1
-  for (let d = 1; d <= novenaLength(n); d++) if (addDays(start, d - 1) <= today) day = d
+  for (let d = 1; d <= novenaLength(n); d++) if (novenaDate(n, d) <= today) day = d
   return day
 }
 
@@ -43,7 +65,7 @@ export function currentCycle(n: Novena, today: string): Novena {
 }
 
 /** “Day 6 of 25” or “Opening day”. */
-export const dayLabel = (n: Novena, day: number) => (day === 0 ? 'Opening day' : `Day ${day} of ${novenaLength(n)}`)
+export const dayLabel = (n: Novena, day: number) => (day === 0 ? 'Opening day' : `${novenaUnit(n)} ${day} of ${novenaLength(n)}`)
 
 /** Novenas being prayed today, the one ending soonest first. */
 export function activeNovenas(list: Novena[], today: string) {
