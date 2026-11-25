@@ -65,6 +65,8 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
             ))}
           </div>
         </section>
+      </div>
+      <div className="flex min-w-0 flex-[1_1_420px] flex-col gap-6">
         <section className={card}>
           <h2 className="m-0 text-xl">Home page</h2>
           <ImageUpload name="img_hero" label="Hero image" shape="16:9" initial={images.hero?.url ?? s.hero_image_url} altName="img_hero_alt" altInitial={images.hero?.alt} />
@@ -78,8 +80,6 @@ export function SettingsForm({ s, images }: { s: Settings; images: Record<string
           <T name="about_story_title" label="Our story: heading" s={s} />
           <T name="about_story_md" label="Our story: text" s={s} rows={8} help="Markdown formatting works here." />
         </section>
-      </div>
-      <div className="flex min-w-0 flex-[1_1_420px] flex-col gap-6">
         <section className={card}>
           <h2 className="m-0 text-xl">Social media</h2>
           <label className="flex flex-col gap-1.5 rounded-xl bg-[#25D366]/10 p-3 text-sm font-semibold">
