@@ -33,6 +33,14 @@ export function parseSources(text: string | null | undefined): Source[] {
   return out
 }
 
+/** Splits rendered HTML after its first paragraph, to place something (e.g. a video) there. */
+export function splitAfterFirstParagraph(html: string): [string, string] {
+  const m = html.match(/(?:^|\n)<p>[\s\S]*?<\/p>/)
+  if (!m || m.index === undefined) return [html, '']
+  const end = m.index + m[0].length
+  return [html.slice(0, end), html.slice(end)]
+}
+
 export type TocItem = { id: string; text: string; level: 2 | 3 }
 
 const decode = (t: string) => t.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, '’').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim()

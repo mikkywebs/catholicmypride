@@ -9,7 +9,7 @@ import { NovenaDays } from '@/components/novena-days'
 import { YouTubeEmbed } from '@/components/youtube-embed'
 import { Breadcrumb, Featured } from '@/components/ui'
 import { getNovena, getNovenas, getSettings } from '@/lib/data'
-import { dateLabel, md } from '@/lib/format'
+import { dateLabel, md, splitAfterFirstParagraph } from '@/lib/format'
 import { currentCycle, novenaEnd, novenaFirstDate, novenaInterval, novenaLength, novenaSpan, novenaStart, novenaUnit } from '@/lib/novena-days'
 import { todayISO } from '@/lib/liturgical'
 
@@ -41,6 +41,10 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
   const dayParam = typeof sp.day === 'string' && sp.day !== '' ? Number(sp.day) : NaN
   const initial = Number.isInteger(dayParam) && dayParam >= (n.has_opening ? 0 : 1) && dayParam <= length ? dayParam : null
   const days = (n.days ?? []).map((d) => ({ day: d.day, title: d.title, html: md(d.prayer_md), audio_url: d.audio_url, audio_seconds: d.audio_seconds }))
+  // The video replaces the featured image, or sits after the first paragraph of the introduction (the default).
+  const videoTop = Boolean(n.youtube_url) && n.video_position === 'instead of the featured image'
+  const introHtml = md(n.intro_md)
+  const [lead, rest] = n.youtube_url && !videoTop ? splitAfterFirstParagraph(introHtml) : [introHtml, '']
   const upcoming = all.filter((x) => x.id !== n.id && novenaEnd(x) >= today).slice(0, 3)
   return (
     <div className="mx-auto flex max-w-[820px] flex-col gap-6 px-6 pb-[72px] pt-8">
@@ -56,10 +60,11 @@ async function Content({ params, searchParams }: PageProps<'/novenas/[slug]'>) {
           🎉 Today we celebrate {n.feast_name ? n.feast_name.replace(/^The /, 'the ') : 'the feast'}! Thank you for praying the novena with us.
         </p>
       ) : null}
-      <Featured src={n.featured_image} alt={n.image_alt} priority />
+      {videoTop ? <YouTubeEmbed url={n.youtube_url} title={n.title} /> : <Featured src={n.featured_image} alt={n.image_alt} priority />}
       <ShareBar title={n.title} />
-      {n.intro_md && <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: md(n.intro_md) }} />}
-      <YouTubeEmbed url={n.youtube_url} title={n.title} />
+      {lead && <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: lead }} />}
+      {n.youtube_url && !videoTop && <YouTubeEmbed url={n.youtube_url} title={n.title} />}
+      {rest && <div className="prose-cmp" dangerouslySetInnerHTML={{ __html: rest }} />}
       <NovenaDays novenaId={n.id} days={days} startISO={start} length={length} hasOpening={Boolean(n.has_opening)} commonHtml={md(n.common_prayers_md)} repeat={n.repeat_prayer_md ? { html: md(n.repeat_prayer_md), count: n.repeat_count } : null} initial={initial} allowDownload={Boolean(n.allow_download)} interval={novenaInterval(n)} unit={novenaUnit(n)} />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
       {upcoming.length > 0 && (

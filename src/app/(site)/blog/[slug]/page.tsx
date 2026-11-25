@@ -8,7 +8,7 @@ import { AudioPlayer } from '@/components/audio-player'
 import { Reactions, ShareBar, ViewCount } from '@/components/engage'
 import { Breadcrumb, Chip, Featured, Prose, ReadTime } from '@/components/ui'
 import { getPost, getRelatedPosts, getSettings } from '@/lib/data'
-import { dateLabel, duration, mdWithToc, parseSources, readMinutes } from '@/lib/format'
+import { dateLabel, duration, mdWithToc, parseSources, readMinutes, splitAfterFirstParagraph } from '@/lib/format'
 import { TableOfContents } from '@/components/toc'
 import { YouTubeEmbed } from '@/components/youtube-embed'
 
@@ -40,6 +40,9 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
   const listen = duration(p.audio_seconds)
   const body = mdWithToc(p.body_md)
   const sources = parseSources(p.sources)
+  // The video replaces the featured image, or sits after the first paragraph of the article (the default).
+  const videoTop = Boolean(p.youtube_url) && p.video_position === 'instead of the featured image'
+  const [lead, rest] = p.youtube_url && !videoTop ? splitAfterFirstParagraph(body.html) : [body.html, '']
   return (
     <div className="mx-auto flex max-w-[780px] flex-col gap-6 px-6 pb-[72px] pt-8">
       <JsonLd data={articleLd({ title: p.title, description: p.seo_description || p.excerpt, image: p.featured_image, path: `/blog/${slug}`, published: p.published_at, modified: p.updated_at, author: p.author, citations: sources })} />
@@ -56,12 +59,13 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
           <ViewCount section="Blog" threshold={s.view_threshold} />
         </div>
       </div>
-      <Featured src={p.featured_image} alt={p.image_alt} priority />
+      {videoTop ? <YouTubeEmbed url={p.youtube_url} title={p.title} /> : <Featured src={p.featured_image} alt={p.image_alt} priority />}
       <ShareBar title={p.title} />
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen to this post" initialSeconds={p.audio_seconds} downloadName={p.allow_download ? `${p.slug}.mp3` : undefined} />}
-      <YouTubeEmbed url={p.youtube_url} title={p.title} />
       <TableOfContents items={body.toc} />
-      <Prose html={body.html} />
+      <Prose html={lead} />
+      {p.youtube_url && !videoTop && <YouTubeEmbed url={p.youtube_url} title={p.title} />}
+      {rest && <Prose html={rest} />}
       {sources.length > 0 && (
         <section aria-labelledby="references" className="flex flex-col gap-2 border-t border-line pt-5">
           <h2 id="references" className="m-0 font-serif text-[24px] font-semibold">References</h2>
