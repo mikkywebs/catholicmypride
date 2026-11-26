@@ -118,8 +118,8 @@ export type Region = { id: string; continent: string; country: string; province:
 export type Church = {
   id: string; name: string; address: string | null; map_url: string | null; deanery: string | null; diocese_id: string | null; diocese?: Diocese | null
   slug?: string | null; mass_times?: string | null; phone?: string | null; email?: string | null; website?: string | null; lat?: number | null; lng?: number | null; updated_at?: string | null; featured_image?: string | null; image_alt?: string | null
-  /** parish (default), special (special jurisdiction) or chaplaincy; needs database update 0044. */
-  kind?: 'parish' | 'special' | 'chaplaincy' | null
+  /** parish (default), pastoral (pastoral area), special (special jurisdiction) or chaplaincy; needs database updates 0044 and 0045. */
+  kind?: 'parish' | 'pastoral' | 'special' | 'chaplaincy' | null
 }
 
 export type PublicPrayerRequest = { id: string; first_name: string; country: string | null; body: string; prayed_count: number; created_at: string; approved_at: string | null }

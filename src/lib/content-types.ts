@@ -345,7 +345,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     fields: [
       { name: 'diocese_id', label: 'Where is it?', type: 'diocese', deaneryName: 'deanery', help: 'Choose continent, country, then the archdiocese or diocese. Missing? Add it under Dioceses first.' },
       { name: 'name', label: 'Parish name', type: 'text', required: true, placeholder: 'e.g. St Leo Catholic Church' },
-      { name: 'kind', label: 'Type', type: 'select', options: ['parish', 'special', 'chaplaincy'], half: true, help: 'parish = a full parish (counted as a parish). special = a special jurisdiction. chaplaincy = a school, hospital, police or military chaplaincy. The last two are listed apart and not counted as parishes.' },
+      { name: 'kind', label: 'Type', type: 'select', options: ['parish', 'pastoral', 'special', 'chaplaincy'], half: true, help: 'parish = a full parish (counted as a parish). pastoral = a pastoral area. special = a special jurisdiction. chaplaincy = a school, hospital, police or military chaplaincy. The last two are listed apart and not counted as parishes.' },
       { name: 'featured_image', label: 'Photo of the parish church (optional)', type: 'image', shape: '16:9', altField: 'image_alt' },
       { name: 'address', label: 'Address (optional)', type: 'textarea', rows: 2, help: 'Shown with a map on the directory.' },
       { name: 'map_url', label: 'Google Maps link (optional)', type: 'url', help: 'Paste a link from Google Maps for exact directions. A full link (with @ and numbers) also gives the parish its position for “Parishes near me”.' },

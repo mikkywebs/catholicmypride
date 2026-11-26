@@ -44,6 +44,7 @@ export function massLines(text: string | null | undefined): [string, string][] {
 /** Only true parishes count as "parishes"; chaplaincies and special jurisdictions are listed apart. */
 export const isParish = (c: Pick<Church, 'kind'>) => !c.kind || c.kind === 'parish'
 export const CHURCH_KINDS = [
+  { kind: 'pastoral', one: 'pastoral area', many: 'pastoral areas', title: 'Pastoral areas' },
   { kind: 'special', one: 'special jurisdiction', many: 'special jurisdictions', title: 'Special jurisdictions' },
   { kind: 'chaplaincy', one: 'chaplaincy', many: 'chaplaincies', title: 'Chaplaincies' },
 ] as const
