@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { themeScript } from '@/components/theme'
+import { OfflineGuard } from '@/components/offline-guard'
 import { SITE_URL } from '@/lib/format'
 import './globals.css'
 
@@ -28,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen antialiased">{children}<OfflineGuard /></body>
     </html>
   )
 }

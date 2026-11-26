@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>You're offline | Catholic My Pride</title>
+<style>
+  :root { --bg: #f7f3e8; --ink: #2a2d33; --muted: #6b6f78; --art: #9a9da3; --btn: #2a2d33; --btn-ink: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #14171f; --ink: #e9eaee; --muted: #a2a6b0; --art: #6d717b; --btn: #e9eaee; --btn-ink: #14171f; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; text-align: center; padding: 24px; }
+  main { max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .logo { width: 84px; height: 84px; border-radius: 50%; filter: grayscale(1); opacity: .85; }
+  .art { color: var(--art); width: min(320px, 86vw); }
+  .art svg { width: 100%; height: auto; }
+  h1 { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-size: 36px; font-weight: 600; }
+  p { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.5; }
+  ul { margin: 0; padding: 0; list-style: none; color: var(--muted); font-size: 15px; line-height: 1.7; }
+  button { margin-top: 6px; border: 0; border-radius: 10px; background: var(--btn); color: var(--btn-ink); font-size: 17px; font-weight: 600; padding: 14px 26px; cursor: pointer; }
+  small { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="/logo.png" alt="Catholic My Pride">
+  <div class="art"><svg viewBox="0 0 320 170" role="img" aria-label="A plug pulled out of its socket" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 112 C40 112 52 86 92 86" stroke-width="7"/><rect x="92" y="60" width="58" height="52" rx="12" stroke-width="7"/><path d="M150 74 h20 M150 98 h20" stroke-width="7"/><rect x="214" y="30" width="100" height="110" rx="22" stroke-width="7"/><circle cx="264" cy="85" r="30" stroke-width="5"/><path d="M254 74 v8 M274 74 v8" stroke-width="7"/><path d="M190 52 l-10 -16 M194 86 h-1 M190 118 l-10 16" stroke-width="5" opacity=".55"/></g></svg></div>
+  <h1>You're offline</h1>
+  <p>We can't reach Catholic My Pride right now. Please check your internet connection.</p>
+  <ul><li>Turn on mobile data or Wi-Fi</li><li>Turn off airplane mode</li><li>Check that you have data left</li></ul>
+  <button type="button" onclick="location.reload()">Try again</button>
+  <small>This page will reload by itself when you're back online.</small>
+</main>
+<script>addEventListener('online', function () { location.reload() })</script>
+</body>
+</html>
