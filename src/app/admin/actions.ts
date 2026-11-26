@@ -165,7 +165,7 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   const extra = row.slug ? [`${t.key.replace(/s$/, '')}:${row.slug}`] : row.date ? [`reading:${row.date}`] : []
   refresh([...t.tags, ...extra])
   // A parish returns to its own diocese's list, not the start of the directory.
-  redirect(t.key === 'churches' && row.diocese_id ? `/admin/churches?diocese=${row.diocese_id}&saved=1` : `/admin/${t.key}?saved=1`)
+  redirect(t.key === 'churches' && row.diocese_id ? `/admin/churches?diocese=${row.diocese_id}&saved=1` : t.key === 'dioceses' && row.country ? `/admin/dioceses?country=${encodeURIComponent(String(row.country))}&saved=1` : `/admin/${t.key}?saved=1`)
 }
 
 export async function deleteItem(typeKey: string, id: string) {
@@ -328,7 +328,7 @@ export async function seedDioceses(country: string) {
     await db.from('directory_regions').update({ province_list: Object.keys(facts.provinces) }).eq('id', region.id)
   }
   refresh(['churches', 'content'])
-  redirect(`/admin/dioceses?seeded=${added}&updated=${updated}&failed=${failed}`)
+  redirect(`/admin/dioceses?country=${encodeURIComponent(country)}&seeded=${added}&updated=${updated}&failed=${failed}`)
 }
 
 // ---------------- Questions & Answers / Quiz ----------------
