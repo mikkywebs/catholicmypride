@@ -306,7 +306,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     orderBy: 'created_at', tags: ['churches', 'content'], status: false,
     fields: [
       { name: 'continent', label: 'Continent, country and ecclesiastical province', type: 'place', countryName: 'country', provinceName: 'province', help: 'The province is the group of dioceses under a metropolitan archdiocese, usually named after it.' },
-      { name: 'kind', label: 'Type', type: 'select', options: ['Archdiocese', 'Diocese', 'Eparchy', 'Apostolic Vicariate', 'Prefecture'], half: true },
+      { name: 'kind', label: 'Type', type: 'select', options: ['Archdiocese', 'Diocese', 'Eparchy', 'Apostolic Vicariate', 'Prefecture', 'Military Ordinariate'], half: true },
       { name: 'name', label: 'Name (without the word Diocese)', type: 'text', required: true, half: true, placeholder: 'e.g. Lagos' },
       { name: 'deaneries', label: 'Deaneries / Zones in this diocese (optional)', type: 'tags', placeholder: 'e.g. Ikeja Deanery, Lekki Deanery, Badagry Deanery', help: 'Listed here, they become a dropdown when adding parishes.' },
       { name: 'address', label: 'Address (optional)', type: 'textarea', rows: 2, help: 'e.g. the cathedral or diocesan secretariat. Shown with a map on the directory.' },
