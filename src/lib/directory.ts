@@ -41,6 +41,20 @@ export function massLines(text: string | null | undefined): [string, string][] {
 }
 
 /** A parish as shown in search lists. */
+/** Only true parishes count as "parishes"; chaplaincies and special jurisdictions are listed apart. */
+export const isParish = (c: Pick<Church, 'kind'>) => !c.kind || c.kind === 'parish'
+export const CHURCH_KINDS = [
+  { kind: 'special', one: 'special jurisdiction', many: 'special jurisdictions', title: 'Special jurisdictions' },
+  { kind: 'chaplaincy', one: 'chaplaincy', many: 'chaplaincies', title: 'Chaplaincies' },
+] as const
+export const plural = (n: number, one: string, many: string) => `${n.toLocaleString('en-GB')} ${n === 1 ? one : many}`
+/** "162 parishes · 38 special jurisdictions · 18 chaplaincies" (empty kinds left out). */
+export function churchCounts(cs: Pick<Church, 'kind'>[]) {
+  const parts = [plural(cs.filter(isParish).length, 'parish', 'parishes')]
+  for (const k of CHURCH_KINDS) { const n = cs.filter((c) => c.kind === k.kind).length; if (n) parts.push(plural(n, k.one, k.many)) }
+  return parts.join(' · ')
+}
+
 export function parishItem(c: Church, d: Diocese) {
   const first = massLines(c.mass_times).find(([k]) => /sun/i.test(k)) ?? massLines(c.mass_times)[0]
   return {

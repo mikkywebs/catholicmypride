@@ -7,7 +7,7 @@ import { DirPicture, DirRows, Fold, type Row } from '@/components/directory-bits
 import { ParishList } from '@/components/parish-list'
 import { Breadcrumb } from '@/components/ui'
 import { getChurches, getDioceses } from '@/lib/data'
-import { breadcrumbLd, continentPath, countryPath, diocesePath, dioceseTitle, dirSlug, parishItem, parishPath, parseRegions } from '@/lib/directory'
+import { CHURCH_KINDS, breadcrumbLd, churchCounts, continentPath, countryPath, diocesePath, dioceseTitle, dirSlug, isParish, parishItem, parishPath, plural, parseRegions } from '@/lib/directory'
 import { SITE_URL } from '@/lib/format'
 import type { Church } from '@/lib/types'
 
@@ -19,8 +19,9 @@ async function load(countrySlug: string, dioceseSlug: string) {
   const siblings = d.province ? dioceses.filter((x) => x.country === d.country && x.province === d.province && x.id !== d.id) : []
   // The whole province: its dioceses (this one included) and every parish listed in them.
   const provinceIds = new Set([d.id, ...siblings.map((x) => x.id)])
-  const provinceParishes = d.province ? churches.filter((c) => c.diocese_id && provinceIds.has(c.diocese_id)).length : 0
-  return { d, parishes, siblings, provinceParishes }
+  // True parishes only: chaplaincies and special jurisdictions are counted apart.
+  const provinceParishes = d.province ? churches.filter((c) => c.diocese_id && provinceIds.has(c.diocese_id) && isParish(c)).length : 0
+  return { d, parishes, siblings, provinceParishes, trueParishes: parishes.filter(isParish).length }
 }
 
 export async function generateMetadata(props: PageProps<'/churches/[country]/[diocese]'>): Promise<Metadata> {
@@ -30,7 +31,7 @@ export async function generateMetadata(props: PageProps<'/churches/[country]/[di
   const t = dioceseTitle(x.d)
   const title = `Catholic Parishes in the ${t}, ${x.d.country}: Addresses and Mass Times`
   const description = x.parishes.length
-    ? `${x.parishes.length} Catholic parishes in the ${t}${x.d.province ? ` (Province of ${x.d.province})` : ''}, ${x.d.country}: addresses, Mass times, deaneries and directions.`
+    ? `${x.trueParishes || x.parishes.length} Catholic parishes in the ${t}${x.d.province ? ` (Province of ${x.d.province})` : ''}, ${x.d.country}: addresses, Mass times, deaneries and directions.`
     : `Catholic parishes in the ${t}, ${x.d.country}. Help us list them: add your parish with its address and Mass times.`
   // Until a parish is listed, the page is not offered to Google (empty pages harm a site's ranking).
   return { title, description, alternates: { canonical: diocesePath(x.d) }, robots: x.parishes.length ? undefined : { index: false, follow: true }, openGraph: { title, description, images: x.d.featured_image ? [x.d.featured_image] : undefined } }
@@ -46,7 +47,7 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
   const { country, diocese } = await params
   const x = await load(country, diocese)
   if (!x) notFound()
-  const { d, parishes, siblings, provinceParishes } = x
+  const { d, parishes, siblings, provinceParishes, trueParishes } = x
   const t = dioceseTitle(d)
   const rows = (list: Church[]): Row[] => list.map((c) => ({ id: c.id, name: c.name, href: parishPath(c, d), sub: c.address ? c.address.replace(new RegExp(`,\\s*${d.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'), '') : null, img: c.featured_image, alt: c.image_alt }))
 
@@ -61,12 +62,28 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
     const ps = inDeanery(n)
     return (
       <section key={n} className="flex flex-col gap-1 px-2">
-        <h3 className="m-0 text-[15px] font-semibold uppercase tracking-[0.08em] text-eyebrow">{n} <span className="font-normal normal-case tracking-normal text-muted">· {ps.length || 'none listed yet'}</span></h3>
-        {ps.length > 0 && <DirRows rows={rows(ps)} />}
+        <h3 className="m-0 text-[15px] font-semibold uppercase tracking-[0.08em] text-eyebrow">{n} <span className="font-normal normal-case tracking-normal text-muted">· {ps.length ? churchCounts(ps) : 'none listed yet'}</span></h3>
+        <Grouped list={ps} />
       </section>
     )
   }
-  const facts = [parishes.length ? `${parishes.length} parishes listed` : null, d.total_parishes ? `${d.total_parishes.toLocaleString('en-GB')} parishes in all` : null, d.catholic_population ? `${d.catholic_population.toLocaleString('en-GB')} Catholics` : null].filter(Boolean)
+  // Parishes first, then any special jurisdictions and chaplaincies under their own small heading.
+  const Grouped = ({ list }: { list: Church[] }) => (
+    <>
+      {list.some(isParish) && <DirRows rows={rows(list.filter(isParish))} />}
+      {CHURCH_KINDS.map((k) => {
+        const ks = list.filter((c) => c.kind === k.kind)
+        return ks.length > 0 && (
+          <div key={k.kind} className="mt-2 flex flex-col gap-1">
+            <p className="m-0 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted">{k.title} · {ks.length}</p>
+            <DirRows rows={rows(ks)} />
+          </div>
+        )
+      })}
+    </>
+  )
+  const others = parishes.length - trueParishes
+  const facts = [parishes.length ? `${churchCounts(parishes)} listed` : null, d.total_parishes ? `${d.total_parishes.toLocaleString('en-GB')} parishes in all` : null, d.catholic_population ? `${d.catholic_population.toLocaleString('en-GB')} Catholics` : null].filter(Boolean)
 
   return (
     <div className="mx-auto flex max-w-[1000px] flex-col gap-7 px-6 pb-[72px] pt-8">
@@ -83,24 +100,24 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
           {d.province && (
             <p className="m-0 text-[15px]">
               <Link href={`${countryPath(d.country)}?province=${dirSlug(d.province)}#${dirSlug(d.province)}`} className="font-semibold">Province of {d.province}</Link>
-              <span className="text-muted">: {siblings.length + 1} {siblings.length ? 'dioceses' : 'diocese'} · {provinceParishes.toLocaleString('en-GB')} parishes listed</span>
+              <span className="text-muted">: {siblings.length + 1} {siblings.length ? 'dioceses' : 'diocese'} · {plural(provinceParishes, 'parish', 'parishes')} listed</span>
             </p>
           )}
           {d.address && <p className="m-0 text-[15px] text-muted">📍 {d.address} · <a href={d.map_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${d.address}, ${d.country}`)}`} target="_blank" rel="noopener noreferrer">Directions</a></p>}
         </div>
       </header>
 
-      {parishes.length > 0 && <ParishList items={parishes.map((c) => parishItem(c, d))} placeholder={`Search ${parishes.length} parishes in the ${t}`} />}
+      {parishes.length > 0 && <ParishList items={parishes.map((c) => parishItem(c, d))} placeholder={`Search ${others ? 'parishes and chaplaincies' : `${parishes.length} parishes`} in the ${t}`} />}
 
       {parishes.length > 0 ? (
         <section className="flex flex-col gap-3">
           <h2 className="m-0 font-serif text-[28px] font-semibold">Browse the parishes</h2>
           {regionBlocks.map(({ r, ds }) => (
-            <Fold key={r} id={`region-${anchor(r)}`} title={r} meta={`${ds.length} deaneries · ${ds.reduce((n, x) => n + inDeanery(x).length, 0)} parishes listed`}>{ds.map(deaneryBlock)}</Fold>
+            <Fold key={r} id={`region-${anchor(r)}`} title={r} meta={`${ds.length} deaneries · ${plural(ds.reduce((n, x) => n + inDeanery(x).filter(isParish).length, 0), 'parish', 'parishes')} listed`}>{ds.map(deaneryBlock)}</Fold>
           ))}
-          {!regionBlocks.length && unplaced.map((n) => <Fold key={n} title={n} meta={`${inDeanery(n).length || 'No'} parishes listed`}><DirRows rows={rows(inDeanery(n))} /></Fold>)}
+          {!regionBlocks.length && unplaced.map((n) => <Fold key={n} title={n} meta={inDeanery(n).length ? `${churchCounts(inDeanery(n))} listed` : 'No parishes listed'}><Grouped list={inDeanery(n)} /></Fold>)}
           {regionBlocks.length > 0 && unplaced.length > 0 && <Fold title="Other deaneries" meta={`${unplaced.length} deaneries`}>{unplaced.map(deaneryBlock)}</Fold>}
-          {loose.length > 0 && (deaneries.length ? <Fold title="Parishes without a deanery yet" meta={`${loose.length} parishes`}><DirRows rows={rows(loose)} /></Fold> : <DirRows rows={rows(loose)} />)}
+          {loose.length > 0 && (deaneries.length ? <Fold title="Parishes without a deanery yet" meta={churchCounts(loose)}><Grouped list={loose} /></Fold> : <Grouped list={loose} />)}
         </section>
       ) : <p className="m-0 rounded-2xl border border-line bg-surface p-6 text-center text-muted">No parishes are listed here yet.</p>}
 

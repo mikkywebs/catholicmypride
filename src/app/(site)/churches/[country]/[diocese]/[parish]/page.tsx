@@ -65,7 +65,7 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
       <header className={c.featured_image ? 'grid items-center gap-6 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]' : 'flex flex-col gap-2'}>
         {c.featured_image && <DirPicture src={c.featured_image} alt={c.image_alt ?? c.name} className="aspect-[4/3] w-full rounded-2xl" sizes="(max-width: 768px) 100vw, 440px" priority />}
         <div className="flex flex-col gap-2">
-          <p className="eyebrow m-0">{[c.deanery, region].filter(Boolean).join(' · ') || 'Catholic parish'}</p>
+          <p className="eyebrow m-0">{[c.kind === 'chaplaincy' ? 'Chaplaincy' : c.kind === 'special' ? 'Special jurisdiction' : null, c.deanery, region].filter(Boolean).join(' · ') || 'Catholic parish'}</p>
           <h1 className="m-0 font-serif text-[34px] font-semibold leading-tight sm:text-[44px]">{c.name}</h1>
           <p className="m-0 text-muted"><Link href={diocesePath(d)}>{t}</Link> · {d.country}</p>
           {c.address && <p className="m-0 text-[17px]">📍 {c.address}</p>}

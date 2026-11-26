@@ -6,7 +6,7 @@ import { AddParishBox } from '@/components/add-parish-box'
 import { ParishList } from '@/components/parish-list'
 import { Eyebrow, H1 } from '@/components/ui'
 import { getChurches, getDioceses } from '@/lib/data'
-import { continentPath, parishItem } from '@/lib/directory'
+import { continentPath, isParish, parishItem } from '@/lib/directory'
 import { CONTINENTS } from '@/lib/geo'
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ async function Content() {
     x.dioceses++
     countries.set(d.country, x)
   }
-  for (const c of churches) { const d = c.diocese_id ? byId.get(c.diocese_id) : null; if (d) countries.get(d.country)!.parishes++ }
+  for (const c of churches) { const d = c.diocese_id ? byId.get(c.diocese_id) : null; if (d && isParish(c)) countries.get(d.country)!.parishes++ }
   return (
     <div className="mx-auto flex max-w-[1100px] flex-col gap-8 px-6 pb-[72px] pt-10">
       <div className="text-center">

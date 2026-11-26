@@ -341,7 +341,7 @@ export async function getChurches(): Promise<Church[]> {
   if (!db) return []
   // The extra parish details need database update 0040; until it is run, the basic list still loads.
   const cols = 'id, name, address, map_url, deanery, diocese_id, slug, mass_times, phone, email, website, lat, lng, updated_at'
-  for (const extra of [', featured_image, image_alt', '']) {
+  for (const extra of [', featured_image, image_alt, kind', ', featured_image, image_alt', '']) {
     const full = await db.from('churches').select(`${cols}${extra}, diocese:dioceses(*)`).not('diocese_id', 'is', null).eq('status', 'published').order('name').limit(10000)
     if (!full.error) return (full.data as unknown as Church[]) ?? []
   }
