@@ -1,11 +1,12 @@
 import 'server-only'
+import { SITE_URL } from './text'
 import { getDailyPrayer, getNovenas, getPosts, getReading, getSaintsForDate } from './data'
 import { activeNovenas, dayLabel } from './novena-days'
 import { mysteriesFor } from './rosary'
 import { getQuotes, quoteFor } from './quotes'
 import { formatLong } from './liturgical'
 
-const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.catholicmypride.org').replace(/\/$/, '').replace('://catholicmypride.org', '://www.catholicmypride.org')
+const SITE = SITE_URL
 
 /** Today's message for the WhatsApp Channel, in WhatsApp formatting (*bold*, _italic_). */
 export async function whatsappBriefing(date: string): Promise<string> {

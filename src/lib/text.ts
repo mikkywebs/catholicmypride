@@ -25,7 +25,9 @@ export function cleanYouTubeUrl(u: string) {
   }
 }
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://catholicmypride.org'
+// The live site is served at www.catholicmypride.org (the bare domain redirects there), so every canonical link,
+// share link and sitemap entry uses www: Google then sees one address per page, with no redirect in between.
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.catholicmypride.org').replace(/\/$/, '').replace('://catholicmypride.org', '://www.catholicmypride.org')
 
 /** Matches the database rule: web addresses are not allowed in prayer requests. */
 export const LINK_PATTERN = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|org|net|ng|io|co|info|xyz|ly|me|uk|app|link)\b)/i
