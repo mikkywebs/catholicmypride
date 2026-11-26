@@ -44,7 +44,7 @@ export function parishItem(c: Church, d: Diocese) {
   const first = massLines(c.mass_times).find(([k]) => /sun/i.test(k)) ?? massLines(c.mass_times)[0]
   return {
     id: c.id, name: c.name, href: parishPath(c, d), address: c.address, place: d.name, deanery: c.deanery,
-    lat: c.lat ?? null, lng: c.lng ?? null, mass: first ? (first[0] ? `${first[0]}: ${first[1]}` : first[1]).slice(0, 70) : null,
+    img: c.featured_image ?? null, lat: c.lat ?? null, lng: c.lng ?? null, mass: first ? (first[0] ? `${first[0]}: ${first[1]}` : first[1]).slice(0, 70) : null,
   }
 }
 

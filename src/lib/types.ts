@@ -112,12 +112,12 @@ export type Book = Seo & {
   category?: Category | null
 }
 
-export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address?: string | null; map_url?: string | null; total_parishes?: number | null; total_priests?: number | null; catholic_population?: number | null; deaneries?: string[]; deanery_regions?: string | null }
+export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address?: string | null; map_url?: string | null; total_parishes?: number | null; total_priests?: number | null; catholic_population?: number | null; deaneries?: string[]; deanery_regions?: string | null; featured_image?: string | null; image_alt?: string | null; cathedral?: string | null }
 export type Region = { id: string; continent: string; country: string; province: string | null; total_provinces: number | null; total_dioceses: number | null; total_parishes: number | null; total_priests: number | null; catholic_population: number | null }
 
 export type Church = {
   id: string; name: string; address: string | null; map_url: string | null; deanery: string | null; diocese_id: string | null; diocese?: Diocese | null
-  slug?: string | null; mass_times?: string | null; phone?: string | null; email?: string | null; website?: string | null; lat?: number | null; lng?: number | null; updated_at?: string | null
+  slug?: string | null; mass_times?: string | null; phone?: string | null; email?: string | null; website?: string | null; lat?: number | null; lng?: number | null; updated_at?: string | null; featured_image?: string | null; image_alt?: string | null
 }
 
 export type PublicPrayerRequest = { id: string; first_name: string; country: string | null; body: string; prayed_count: number; created_at: string; approved_at: string | null }

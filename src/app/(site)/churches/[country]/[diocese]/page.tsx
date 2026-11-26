@@ -2,14 +2,14 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { AddParishBox } from '@/components/add-parish-box'
 import { JsonLd } from '@/components/article-bits'
+import { DirPicture, DirRows, Fold, type Row } from '@/components/directory-bits'
 import { ParishList } from '@/components/parish-list'
-import { PlaceMap } from '@/components/place-map'
 import { Breadcrumb } from '@/components/ui'
 import { getChurches, getDioceses } from '@/lib/data'
-import { breadcrumbLd, countryPath, diocesePath, dioceseTitle, dirSlug, parishItem, parseRegions } from '@/lib/directory'
+import { breadcrumbLd, countryPath, diocesePath, dioceseTitle, dirSlug, parishItem, parishPath, parseRegions } from '@/lib/directory'
 import { SITE_URL } from '@/lib/format'
+import type { Church } from '@/lib/types'
 
 async function load(countrySlug: string, dioceseSlug: string) {
   const [dioceses, churches] = await Promise.all([getDioceses(), getChurches()])
@@ -30,12 +30,14 @@ export async function generateMetadata(props: PageProps<'/churches/[country]/[di
     ? `${x.parishes.length} Catholic parishes in the ${t}${x.d.province ? ` (Province of ${x.d.province})` : ''}, ${x.d.country}: addresses, Mass times, deaneries and directions.`
     : `Catholic parishes in the ${t}, ${x.d.country}. Help us list them: add your parish with its address and Mass times.`
   // Until a parish is listed, the page is not offered to Google (empty pages harm a site's ranking).
-  return { title, description, alternates: { canonical: diocesePath(x.d) }, robots: x.parishes.length ? undefined : { index: false, follow: true }, openGraph: { title, description } }
+  return { title, description, alternates: { canonical: diocesePath(x.d) }, robots: x.parishes.length ? undefined : { index: false, follow: true }, openGraph: { title, description, images: x.d.featured_image ? [x.d.featured_image] : undefined } }
 }
 
 export default function Page(props: PageProps<'/churches/[country]/[diocese]'>) {
   return <Suspense fallback={<div className="h-96" />}><Content params={props.params} /></Suspense>
 }
+
+const anchor = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
 async function Content({ params }: { params: PageProps<'/churches/[country]/[diocese]'>['params'] }) {
   const { country, diocese } = await params
@@ -43,59 +45,66 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
   if (!x) notFound()
   const { d, parishes, siblings } = x
   const t = dioceseTitle(d)
-  const items = parishes.map((c) => parishItem(c, d))
-  // Large dioceses (e.g. Lagos) group their deaneries into regions.
+  const rows = (list: Church[]): Row[] => list.map((c) => ({ id: c.id, name: c.name, href: parishPath(c, d), sub: c.address ? c.address.replace(new RegExp(`,\\s*${d.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'), '') : null, img: c.featured_image, alt: c.image_alt }))
+
+  // Region › Deanery › Parish (regions only where the diocese has them).
   const reg = parseRegions(d.deanery_regions)
-  const deaneryNames = [...new Set([...(d.deaneries ?? []), ...parishes.map((c) => c.deanery).filter(Boolean) as string[]])]
-  const regions = reg.order.length ? { order: reg.order, of: Object.fromEntries(deaneryNames.map((n) => [n, reg.regionOf(n) ?? ''])) } : undefined
-  const perDeanery = (n: string) => parishes.filter((c) => c.deanery === n).length
-  const facts = ([['Province', d.province ? `Ecclesiastical Province of ${d.province}` : null], ['Parishes (official)', d.total_parishes], ['Priests', d.total_priests], ['Catholics', d.catholic_population]] as const).filter(([, v]) => v)
+  const deaneries = [...new Set([...(d.deaneries ?? []), ...parishes.map((c) => c.deanery).filter(Boolean) as string[]])].sort()
+  const inDeanery = (n: string) => parishes.filter((c) => c.deanery === n)
+  const loose = parishes.filter((c) => !c.deanery)
+  const regionBlocks = reg.order.map((r) => ({ r, ds: deaneries.filter((n) => reg.regionOf(n) === r) })).filter((b) => b.ds.length)
+  const unplaced = reg.order.length ? deaneries.filter((n) => !reg.regionOf(n)) : deaneries
+  const deaneryBlock = (n: string) => {
+    const ps = inDeanery(n)
+    return (
+      <section key={n} className="flex flex-col gap-1 px-2">
+        <h3 className="m-0 text-[15px] font-semibold uppercase tracking-[0.08em] text-eyebrow">{n} <span className="font-normal normal-case tracking-normal text-muted">· {ps.length || 'none listed yet'}</span></h3>
+        {ps.length > 0 && <DirRows rows={rows(ps)} />}
+      </section>
+    )
+  }
+  const facts = [d.province && `Province of ${d.province}`, parishes.length ? `${parishes.length} parishes listed` : null, d.total_parishes ? `${d.total_parishes.toLocaleString('en-GB')} parishes in all` : null, d.catholic_population ? `${d.catholic_population.toLocaleString('en-GB')} Catholics` : null].filter(Boolean)
+
   return (
-    <div className="mx-auto flex max-w-[1100px] flex-col gap-8 px-6 pb-[72px] pt-8">
+    <div className="mx-auto flex max-w-[1000px] flex-col gap-7 px-6 pb-[72px] pt-8">
       <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: d.country, path: countryPath(d.country) }, { name: t, path: diocesePath(d) }])} />
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: d.country, href: countryPath(d.country) }, { label: t }]} />
-      <div className="flex flex-col gap-3 text-center">
-        <p className="eyebrow m-0">{d.province ? `Province of ${d.province} · ${d.country}` : d.country}</p>
-        <h1 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[46px]">Catholic Parishes in the {t}</h1>
-        <p className="mx-auto m-0 max-w-2xl text-muted">{parishes.length ? `${parishes.length} parishes listed, with addresses, Mass times and directions.` : 'No parishes are listed here yet. Be the first to add yours.'}</p>
-      </div>
-      {facts.length > 0 && (
-        <dl className="m-0 grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(170px,1fr))]">
-          {facts.map(([k, v]) => <div key={k} className="rounded-2xl border border-line bg-surface px-4 py-3 text-center"><dt className="text-[13px] text-muted">{k}</dt><dd className="m-0 font-semibold">{typeof v === 'number' ? v.toLocaleString('en-GB') : v}</dd></div>)}
-        </dl>
-      )}
-      {(d.address || d.map_url) && (
-        <section className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-5">
-          <h2 className="m-0 text-lg font-semibold">Diocesan office</h2>
-          {d.address && <p className="m-0 text-muted">{d.address}</p>}
-          <PlaceMap name={t} address={d.address} country={d.country} mapUrl={d.map_url} />
-        </section>
-      )}
-      {regions && (
+
+      <header className={d.featured_image ? 'grid items-center gap-6 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]' : 'flex flex-col'}>
+        {d.featured_image && <DirPicture src={d.featured_image} alt={d.image_alt ?? d.cathedral} className="aspect-[4/3] w-full rounded-2xl" sizes="(max-width: 768px) 100vw, 460px" priority />}
+        <div className="flex flex-col gap-2.5">
+          <p className="eyebrow m-0">Catholic parishes · {d.country}</p>
+          <h1 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[44px]">{t}</h1>
+          {d.cathedral && <p className="m-0 text-[17px]">⛪ {d.cathedral}</p>}
+          {facts.length > 0 && <p className="m-0 text-[15px] text-muted">{facts.join(' · ')}</p>}
+          {d.address && <p className="m-0 text-[15px] text-muted">📍 {d.address} · <a href={d.map_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${d.address}, ${d.country}`)}`} target="_blank" rel="noopener noreferrer">Directions</a></p>}
+        </div>
+      </header>
+
+      {parishes.length > 0 && <ParishList items={parishes.map((c) => parishItem(c, d))} placeholder={`Search ${parishes.length} parishes in the ${t}`} />}
+
+      {parishes.length > 0 ? (
         <section className="flex flex-col gap-3">
-          <h2 className="m-0 font-serif text-[30px] font-semibold">Regions and deaneries</h2>
-          <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {reg.order.map((r) => (
-              <div key={r} className="rounded-2xl border border-line bg-surface px-4 py-3">
-                <a href={`#region-${r.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="font-semibold text-ink no-underline">{r}</a>
-                <ul className="m-0 mt-1.5 list-none p-0 text-[15px] text-muted">{deaneryNames.filter((n) => regions.of[n] === r).sort().map((n) => <li key={n}>{n} <span className="text-[13px]">· {perDeanery(n) || 'none listed yet'}</span></li>)}</ul>
-              </div>
-            ))}
-          </div>
+          <h2 className="m-0 font-serif text-[28px] font-semibold">Browse the parishes</h2>
+          {regionBlocks.map(({ r, ds }) => (
+            <Fold key={r} id={`region-${anchor(r)}`} title={r} meta={`${ds.length} deaneries · ${ds.reduce((n, x) => n + inDeanery(x).length, 0)} parishes listed`}>{ds.map(deaneryBlock)}</Fold>
+          ))}
+          {!regionBlocks.length && unplaced.map((n) => <Fold key={n} title={n} meta={`${inDeanery(n).length || 'No'} parishes listed`}><DirRows rows={rows(inDeanery(n))} /></Fold>)}
+          {regionBlocks.length > 0 && unplaced.length > 0 && <Fold title="Other deaneries" meta={`${unplaced.length} deaneries`}>{unplaced.map(deaneryBlock)}</Fold>}
+          {loose.length > 0 && (deaneries.length ? <Fold title="Parishes without a deanery yet" meta={`${loose.length} parishes`}><DirRows rows={rows(loose)} /></Fold> : <DirRows rows={rows(loose)} />)}
         </section>
-      )}
-      {items.length > 0 && (
-        <section className="flex flex-col gap-3">
-          <h2 className="m-0 font-serif text-[30px] font-semibold">Parishes</h2>
-          <ParishList items={items} showAll groupByDeanery regions={regions} placeholder={`Search parishes in the ${t}`} />
-        </section>
-      )}
-      <AddParishBox href={`/churches/add?diocese=${d.id}`} text={`Know a parish in the ${t} that is not listed? Send its address and Mass times, and we will add it after a quick check.`} />
+      ) : <p className="m-0 rounded-2xl border border-line bg-surface p-6 text-center text-muted">No parishes are listed here yet.</p>}
+
+      <p className="m-0 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-gold bg-surface px-5 py-4">
+        <span><strong>Is your parish missing?</strong> <span className="text-muted">Send its address and Mass times; we add it after a quick check.</span></span>
+        <Link href={`/churches/add?diocese=${d.id}`} className="rounded-md bg-accent px-4 py-2 font-semibold text-accent-ink no-underline">➕ Add your parish</Link>
+      </p>
+
       {siblings.length > 0 && (
-        <section className="flex flex-col gap-2.5">
-          <h2 className="m-0 text-xl font-semibold">Other dioceses in the Province of {d.province}</h2>
-          <ul className="m-0 flex list-none flex-wrap gap-2 p-0">{siblings.map((s) => <li key={s.id}><Link href={diocesePath(s)} className="inline-block rounded-full border border-line bg-surface px-4 py-2 text-ink no-underline hover:border-accent">{dioceseTitle(s)}</Link></li>)}</ul>
-        </section>
+        <nav aria-label="Other dioceses in the province" className="flex flex-col gap-2">
+          <h2 className="m-0 text-lg font-semibold">Other dioceses in the Province of {d.province}</h2>
+          <ul className="m-0 flex list-none flex-wrap gap-2 p-0">{siblings.map((s) => <li key={s.id}><Link href={diocesePath(s)} className="inline-block rounded-full border border-line bg-surface px-3.5 py-1.5 text-[15px] text-ink no-underline hover:border-accent">{dioceseTitle(s)}</Link></li>)}</ul>
+        </nav>
       )}
     </div>
   )

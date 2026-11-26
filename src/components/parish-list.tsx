@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { km } from '@/lib/directory'
+import { DirPicture } from './directory-bits'
 
-export type ParishItem = { id: string; name: string; href: string; address: string | null; place: string; deanery: string | null; lat: number | null; lng: number | null; mass: string | null }
+export type ParishItem = { id: string; name: string; href: string; address: string | null; place: string; deanery: string | null; lat: number | null; lng: number | null; mass: string | null; img?: string | null }
 
 const field = 'min-h-12 w-full rounded-xl border border-field bg-surface px-4 text-[16px] text-ink'
 
@@ -38,15 +39,16 @@ export function ParishList({ items, showAll = false, groupByDeanery = false, reg
 
   const card = (i: ParishItem) => (
     <li key={i.id}>
-      <Link href={i.href} className="flex h-full flex-col gap-1 rounded-xl border border-line bg-surface px-4 py-3 text-ink no-underline hover:border-accent">
-        <strong className="leading-snug">{i.name}</strong>
-        <span className="text-[14px] text-muted">{[i.address, i.place].filter(Boolean).join(' · ')}</span>
-        {i.mass && <span className="text-[13px] text-eyebrow">⛪ {i.mass}</span>}
-        {dist.has(i.id) && <span className="text-[13px] font-semibold text-accent">{dist.get(i.id)! < 1 ? 'Under 1 km away' : `${dist.get(i.id)!.toFixed(dist.get(i.id)! < 10 ? 1 : 0)} km away`}</span>}
+      <Link href={i.href} className="flex items-center gap-3 rounded-xl px-2 py-2 text-ink no-underline hover:bg-surface">
+        <DirPicture src={i.img} className="size-12 shrink-0 rounded-lg" sizes="48px" />
+        <span className="flex min-w-0 flex-col">
+          <strong className="line-clamp-2 leading-snug">{i.name}</strong>
+          <span className="truncate text-[13px] text-muted">{dist.has(i.id) ? <strong className="text-accent">{dist.get(i.id)! < 1 ? 'Under 1 km' : `${dist.get(i.id)!.toFixed(dist.get(i.id)! < 10 ? 1 : 0)} km`} · </strong> : null}{[i.deanery, i.place].filter(Boolean).join(' · ')}{i.mass ? ` · ${i.mass}` : ''}</span>
+        </span>
       </Link>
     </li>
   )
-  const grid = 'm-0 grid list-none gap-3 p-0 [grid-template-columns:repeat(auto-fill,minmax(260px,1fr))]'
+  const grid = 'm-0 grid list-none gap-x-6 gap-y-1 p-0 md:grid-cols-2'
   const grouped = groupByDeanery && !words.length && !me
   const regionOf = (d: string) => regions?.of[d] ?? ''
   const rank = (d: string) => { const r = regionOf(d); const i = regions ? regions.order.indexOf(r) : -1; return i < 0 ? 999 : i }

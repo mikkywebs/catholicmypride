@@ -310,6 +310,8 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'name', label: 'Name (without the word Diocese)', type: 'text', required: true, half: true, placeholder: 'e.g. Lagos' },
       { name: 'deaneries', label: 'Deaneries / Zones in this diocese (optional)', type: 'tags', placeholder: 'e.g. Ikeja Deanery, Lekki Deanery, Badagry Deanery', help: 'Listed here, they become a dropdown when adding parishes.' },
       { name: 'deanery_regions', label: 'Regions (optional, for large dioceses)', type: 'textarea', rows: 4, placeholder: 'Ikeja Region: Agege, Ikeja, Ijede, Ikorodu, Ipaja, Maryland\nLekki Region: Ajah, Epe, Lekki', help: 'One line per region: the region’s name, a colon, then its deaneries. The parish finder then groups parishes as Region › Deanery › Parish.' },
+      { name: 'cathedral', label: 'Cathedral (optional)', type: 'text', placeholder: 'e.g. Holy Cross Cathedral, Lagos' },
+      { name: 'featured_image', label: 'Cathedral photo (optional)', type: 'image', shape: '16:9', altField: 'image_alt' },
       { name: 'address', label: 'Address (optional)', type: 'textarea', rows: 2, help: 'e.g. the cathedral or diocesan secretariat. Shown with a map on the directory.' },
       { name: 'map_url', label: 'Google Maps link (optional)', type: 'url', help: 'Paste a link from Google Maps for exact directions. If empty, directions use the address.' },
       { name: 'stats', label: 'Official totals (optional — shown only when filled)', type: 'heading' },
@@ -343,6 +345,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     fields: [
       { name: 'diocese_id', label: 'Where is it?', type: 'diocese', deaneryName: 'deanery', help: 'Choose continent, country, then the archdiocese or diocese. Missing? Add it under Dioceses first.' },
       { name: 'name', label: 'Parish name', type: 'text', required: true, placeholder: 'e.g. St Leo Catholic Church' },
+      { name: 'featured_image', label: 'Photo of the parish church (optional)', type: 'image', shape: '16:9', altField: 'image_alt' },
       { name: 'address', label: 'Address (optional)', type: 'textarea', rows: 2, help: 'Shown with a map on the directory.' },
       { name: 'map_url', label: 'Google Maps link (optional)', type: 'url', help: 'Paste a link from Google Maps for exact directions. A full link (with @ and numbers) also gives the parish its position for “Parishes near me”.' },
       { name: 'mass_times', label: 'Mass times (optional)', type: 'textarea', rows: 5, placeholder: 'Sunday: 6:30am, 8:30am, 10:30am\nWeekdays: 6:30am\nSaturday: 7:00am', help: 'One line per day: the day, a colon, then the times.' },

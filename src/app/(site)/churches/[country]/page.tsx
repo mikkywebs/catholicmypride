@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { JsonLd } from '@/components/article-bits'
 import { ParishList } from '@/components/parish-list'
 import { AddParishBox } from '@/components/add-parish-box'
+import { DirRows, Fold } from '@/components/directory-bits'
 import { Breadcrumb } from '@/components/ui'
 import { getChurches, getDioceses, getDirectoryRegions } from '@/lib/data'
 import { breadcrumbLd, countryPath, diocesePath, dioceseTitle, dirSlug, parishItem } from '@/lib/directory'
@@ -47,36 +47,23 @@ async function Content({ params }: { params: PageProps<'/churches/[country]'>['p
   const byId = new Map(x.dioceses.map((d) => [d.id, d]))
   const items = x.parishes.map((c) => parishItem(c, byId.get(c.diocese_id!)!))
   const r = x.region
-  const stats = r ? ([['Provinces', r.total_provinces], ['Dioceses', r.total_dioceses], ['Parishes', r.total_parishes], ['Priests', r.total_priests], ['Catholics', r.catholic_population]] as const).filter(([, v]) => v) : []
+  const facts = r ? [r.total_dioceses && `${r.total_dioceses} dioceses`, r.total_parishes && `${Number(r.total_parishes).toLocaleString('en-GB')} parishes`, r.catholic_population && `${Number(r.catholic_population).toLocaleString('en-GB')} Catholics`].filter(Boolean) : []
   return (
-    <div className="mx-auto flex max-w-[1100px] flex-col gap-8 px-6 pb-[72px] pt-8">
+    <div className="mx-auto flex max-w-[1000px] flex-col gap-7 px-6 pb-[72px] pt-8">
       <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: x.country, path: countryPath(x.country) }])} />
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: x.country }]} />
-      <div className="flex flex-col gap-3 text-center">
+      <div className="flex flex-col gap-2 text-center">
         <p className="eyebrow m-0">Catholic Parish Directory</p>
-        <h1 className="m-0 font-serif text-[38px] font-semibold leading-tight sm:text-[48px]">Catholic Churches in {x.country}</h1>
-        <p className="mx-auto m-0 max-w-2xl text-muted">Find a parish by ecclesiastical province, archdiocese and diocese. {x.parishes.length ? `${x.parishes.length} parishes listed so far, ` : ''}with addresses, Mass times and directions.</p>
+        <h1 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[46px]">Catholic Churches in {x.country}</h1>
+        <p className="mx-auto m-0 max-w-2xl text-muted">{[...facts, x.parishes.length ? `${x.parishes.length} parishes listed here so far` : null].filter(Boolean).join(' · ')}</p>
       </div>
-      {stats.length > 0 && (
-        <dl className="m-0 grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(140px,1fr))]">
-          {stats.map(([k, v]) => <div key={k} className="rounded-2xl border border-line bg-surface px-4 py-3 text-center"><dt className="text-[13px] text-muted">{k}</dt><dd className="m-0 text-xl font-semibold">{Number(v).toLocaleString('en-GB')}</dd></div>)}
-        </dl>
-      )}
       {items.length > 0 && <ParishList items={items} placeholder={`Search parishes in ${x.country} by name, town or area`} />}
-      <section className="flex flex-col gap-6">
-        <h2 className="m-0 font-serif text-[30px] font-semibold">Provinces and dioceses</h2>
+      <section className="flex flex-col gap-3">
+        <h2 className="m-0 font-serif text-[28px] font-semibold">Provinces and dioceses</h2>
         {provinces.map(([p, ds]) => (
-          <div key={p || 'other'} className="flex flex-col gap-2.5">
-            <h3 id={p ? dirSlug(p) : 'other'} className="m-0 text-xl font-semibold">{p ? `Ecclesiastical Province of ${p}` : 'Other jurisdictions'}</h3>
-            <ul className="m-0 grid list-none gap-2.5 p-0 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-              {ds.sort(sortD).map((d) => (
-                <li key={d.id}><Link href={diocesePath(d)} className="flex flex-col rounded-xl border border-line bg-surface px-4 py-3 text-ink no-underline hover:border-accent">
-                  <strong>{dioceseTitle(d)}</strong>
-                  <span className="text-[14px] text-muted">{count.get(d.id) ? `${count.get(d.id)} parishes listed` : 'Add the first parish'}</span>
-                </Link></li>
-              ))}
-            </ul>
-          </div>
+          <Fold key={p || 'other'} id={p ? dirSlug(p) : 'other'} title={p ? `Province of ${p}` : 'Other jurisdictions'} meta={`${ds.length} ${ds.length === 1 ? 'jurisdiction' : 'dioceses'}${ds.some((d) => count.get(d.id)) ? ` · ${ds.reduce((n, d) => n + (count.get(d.id) ?? 0), 0)} parishes listed` : ''}`}>
+            <DirRows rows={ds.sort(sortD).map((d) => ({ id: d.id, name: dioceseTitle(d), href: diocesePath(d), sub: d.cathedral ?? null, note: count.get(d.id) ? `${count.get(d.id)} parishes listed` : 'Add the first parish', img: d.featured_image, alt: d.image_alt }))} />
+          </Fold>
         ))}
       </section>
       <AddParishBox href={`/churches/add?country=${encodeURIComponent(x.country)}`} />
