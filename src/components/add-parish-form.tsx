@@ -9,7 +9,10 @@ const label = 'flex flex-col gap-1.5 text-[15px] font-semibold'
 const help = 'text-[13px] font-normal text-muted'
 type D = Pick<Diocese, 'id' | 'name' | 'kind' | 'country' | 'deaneries'>
 
-export function AddParishForm({ dioceses, church, initialCountry, initialDiocese }: { dioceses: D[]; church?: Church | null; initialCountry?: string; initialDiocese?: string }) {
+export function AddParishForm({ dioceses, church, initialCountry, initialDiocese, contactEmail }: { dioceses: D[]; church?: Church | null; initialCountry?: string; initialDiocese?: string; contactEmail?: string | null }) {
+  // Contact details already listed are locked: only the parish can change them, by writing to us.
+  const locked = { phone: Boolean(church?.phone), email: Boolean(church?.email), website: Boolean(church?.website) }
+  const anyLocked = locked.phone || locked.email || locked.website
   const [state, action, busy] = useActionState<ParishState, FormData>(submitParish, null)
   const start = dioceses.find((d) => d.id === (church?.diocese_id ?? initialDiocese))
   const countries = [...new Set(dioceses.map((d) => d.country))].sort()
@@ -79,10 +82,16 @@ export function AddParishForm({ dioceses, church, initialCountry, initialDiocese
           <textarea name="mass_times" defaultValue={church?.mass_times ?? ''} rows={5} className={input} maxLength={1500} placeholder={'Sunday: 6:30am, 8:30am, 10:30am\nWeekdays: 6:30am\nSaturday: 7:00am'} />
         </label>
         <div className="grid gap-4 sm:grid-cols-3">
-          <label className={label}>Parish phone<input name="phone" defaultValue={church?.phone ?? ''} className={input} maxLength={40} /></label>
-          <label className={label}>Parish email<input name="email" type="email" defaultValue={church?.email ?? ''} className={`${input} ${err('email')}`} maxLength={120} /></label>
-          <label className={label}>Parish website<input name="website_url" defaultValue={church?.website ?? ''} className={input} maxLength={200} /></label>
+          {locked.phone ? <Locked label="Parish phone" value={church!.phone!} /> : <label className={label}>Parish phone<input name="phone" className={input} maxLength={40} /></label>}
+          {locked.email ? <Locked label="Parish email" value={church!.email!} /> : <label className={label}>Parish email<input name="email" type="email" className={`${input} ${err('email')}`} maxLength={120} /></label>}
+          {locked.website ? <Locked label="Parish website" value={church!.website!} /> : <label className={label}>Parish website<input name="website_url" className={input} maxLength={200} /></label>}
         </div>
+        {anyLocked && (
+          <p className="m-0 rounded-xl bg-accent-soft px-4 py-3 text-[14px]">
+            🔒 <strong>Listed contact details are protected</strong> so no one can replace them with a false number. If they are wrong, the parish office or parish priest should write to us{contactEmail ? <> at <a href={`mailto:${contactEmail}?subject=${encodeURIComponent(`Contact details: ${church!.name}`)}`} className="font-semibold">{contactEmail}</a></> : ' through our Contact page'}, from the parish’s official email or with a signed letter on parish letterhead.
+          </p>
+        )}
+        {!church && <p className="m-0 text-[14px] text-muted">Please give only the parish’s official phone, email and website. We confirm them with the parish before they appear.</p>}
       </fieldset>
 
       <fieldset className="m-0 flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5">
@@ -101,5 +110,14 @@ export function AddParishForm({ dioceses, church, initialCountry, initialDiocese
       {state && !state.ok && <p role="alert" className="m-0 rounded-lg bg-[#fdecea] px-4 py-3 text-[#8c1d18]">{state.message}</p>}
       <button disabled={busy} className="self-start rounded-md bg-accent px-6 py-3 text-[17px] font-semibold text-accent-ink disabled:opacity-60">{busy ? 'Sending…' : church ? 'Send the update' : 'Send the parish'}</button>
     </form>
+  )
+}
+
+function Locked({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-col gap-1.5 text-[15px] font-semibold">
+      <span>{label} 🔒</span>
+      <span className="break-words rounded-md border border-line bg-bg px-3 py-2 font-normal text-muted">{value}</span>
+    </div>
   )
 }

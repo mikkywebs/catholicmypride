@@ -55,6 +55,9 @@ export default async function Page(props: PageProps<'/admin/parish-submissions'>
               {line('Sent by', `${r.submitter_name} (${r.role ?? 'Parishioner'}) · ${r.submitter_contact}`)}
               {line('Note', r.note)}
             </dl>
+            {(r.phone || r.email || r.website) && (
+              <p className="m-0 rounded-xl bg-accent-soft px-4 py-3 text-[14px]">⚠️ <strong>New contact details.</strong> Before approving, confirm them with the parish itself (for example from its bulletin, notice board or the diocese), not with the person who sent them. A false phone number could be used to scam people.</p>
+            )}
             {r.lat != null && r.lng != null && <a href={`https://www.google.com/maps?q=${r.lat},${r.lng}`} target="_blank" rel="noreferrer" className="text-[14px]">Check the position on Google Maps →</a>}
             {r.status === 'new' && (
               <div className="flex flex-wrap gap-3">

@@ -30,11 +30,20 @@ export async function submitParish(_: ParishState, form: FormData): Promise<Pari
 
   const db = publicClient()
   if (!db) return { ok: false, message: 'Sorry, this cannot be sent right now. Please try again later.' }
+  let phone: string | null = get('phone', 40) || null, mail = email, site = website
+  if (kind === 'update') {
+    if (!church_id || !/^[0-9a-f-]{36}$/i.test(church_id)) return { ok: false, message: 'Sorry, we could not find that parish. Please open it again from the parish finder.' }
+    const { data: now } = await db.from('churches').select('phone, email, website').eq('id', church_id).maybeSingle()
+    // Listed contact details are protected: only the parish can change them, by writing to us.
+    if (now?.phone) phone = null
+    if (now?.email) mail = null
+    if (now?.website) site = null
+  }
   const { error } = await db.from('church_submissions').insert({
     kind, church_id, diocese_id, name,
     deanery: get('deanery', 80) || null, address: get('address', 300) || null, map_url,
     mass_times: String(form.get('mass_times') ?? '').replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim().slice(0, 1500) || null,
-    phone: get('phone', 40) || null, email, website,
+    phone, email: mail, website: site,
     lat: Number.isFinite(lat) ? lat : null, lng: Number.isFinite(lng) ? lng : null,
     submitter_name, submitter_contact, role: get('role', 60) || null, note: get('note', 600) || null,
   })

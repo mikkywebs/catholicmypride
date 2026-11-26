@@ -494,6 +494,9 @@ export async function approveParish(id: string) {
   for (const k of ['deanery', 'address', 'map_url', 'mass_times', 'phone', 'email', 'website', 'lat', 'lng']) if (s[k] !== null && s[k] !== '') fields[k] = s[k]
   let churchId = s.church_id as string | null
   if (s.kind === 'update' && churchId) {
+    // Listed contact details are only changed by the admin directly, after the parish writes in.
+    const { data: now } = await db.from('churches').select('phone, email, website').eq('id', churchId).maybeSingle()
+    for (const k of ['phone', 'email', 'website'] as const) if (now?.[k]) delete fields[k]
     const { error } = await db.from('churches').update({ ...fields, name: s.name, diocese_id: s.diocese_id, updated_at: new Date().toISOString() }).eq('id', churchId)
     if (error) redirect(`/admin/parish-submissions?error=${encodeURIComponent(error.message)}`)
   } else {
