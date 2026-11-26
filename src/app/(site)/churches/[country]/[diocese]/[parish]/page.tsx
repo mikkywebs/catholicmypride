@@ -8,7 +8,7 @@ import { PlaceMap } from '@/components/place-map'
 import { Breadcrumb, ButtonLink } from '@/components/ui'
 import { StayConnected } from '@/components/whatsapp-join'
 import { getChurches, getDioceses, getSettings } from '@/lib/data'
-import { breadcrumbLd, countryPath, diocesePath, dioceseTitle, dirSlug, massLines, parishPath } from '@/lib/directory'
+import { breadcrumbLd, countryPath, diocesePath, dioceseTitle, dirSlug, massLines, parishPath, parseRegions } from '@/lib/directory'
 import { SITE_URL } from '@/lib/format'
 
 async function load(countrySlug: string, dioceseSlug: string, parishSlug: string) {
@@ -60,7 +60,7 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
       <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: d.country, path: countryPath(d.country) }, { name: t, path: diocesePath(d) }, { name: c.name, path }])} />
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: d.country, href: countryPath(d.country) }, { label: d.name, href: diocesePath(d) }, { label: c.name }]} />
       <div className="flex flex-col gap-2.5">
-        <p className="eyebrow m-0">Catholic parish · {[c.deanery, t, d.country].filter(Boolean).join(' · ')}</p>
+        <p className="eyebrow m-0">Catholic parish · {[c.deanery, parseRegions(d.deanery_regions).regionOf(c.deanery), t, d.country].filter(Boolean).join(' · ')}</p>
         <h1 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[46px]">{c.name}</h1>
         {c.address && <p className="m-0 text-[17px] text-muted">📍 {c.address}</p>}
       </div>

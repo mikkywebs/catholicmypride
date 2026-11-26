@@ -55,3 +55,19 @@ export function breadcrumbLd(site: string, items: { name: string; path: string }
     itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: `${site}${it.path}` })),
   }
 }
+
+/** Regions of a large diocese, typed as lines “Ikeja Region: Agege, Ikeja, Ijede”.
+ *  Returns the regions in order, and a lookup from deanery (with or without the word “Deanery”) to its region. */
+export function parseRegions(text: string | null | undefined) {
+  const key = (s: string) => s.toLowerCase().replace(/\s+(deanery|zone)$/i, '').replace(/[^a-z0-9]/g, '')
+  const order: string[] = []
+  const of = new Map<string, string>()
+  for (const line of (text ?? '').split(/\r?\n/)) {
+    const i = line.indexOf(':')
+    if (i < 1) continue
+    const region = line.slice(0, i).trim()
+    order.push(region)
+    for (const d of line.slice(i + 1).split(',')) if (d.trim()) of.set(key(d), region)
+  }
+  return { order, regionOf: (deanery: string | null | undefined) => (deanery ? of.get(key(deanery)) ?? null : null) }
+}

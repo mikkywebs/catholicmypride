@@ -12,7 +12,7 @@ const field = 'min-h-12 w-full rounded-xl border border-field bg-surface px-4 te
  * Parish search with “Near me”. With showAll, every parish is listed (grouped by deanery) in the page itself,
  * so Google can follow each link; otherwise results appear as the visitor types.
  */
-export function ParishList({ items, showAll = false, groupByDeanery = false, placeholder = 'Search by parish name, town or area' }: { items: ParishItem[]; showAll?: boolean; groupByDeanery?: boolean; placeholder?: string }) {
+export function ParishList({ items, showAll = false, groupByDeanery = false, regions, placeholder = 'Search by parish name, town or area' }: { items: ParishItem[]; showAll?: boolean; groupByDeanery?: boolean; regions?: { order: string[]; of: Record<string, string> }; placeholder?: string }) {
   const [q, setQ] = useState('')
   const [me, setMe] = useState<{ lat: number; lng: number } | null>(null)
   const [geo, setGeo] = useState<'idle' | 'busy' | 'denied' | 'none'>('idle')
@@ -48,7 +48,9 @@ export function ParishList({ items, showAll = false, groupByDeanery = false, pla
   )
   const grid = 'm-0 grid list-none gap-3 p-0 [grid-template-columns:repeat(auto-fill,minmax(260px,1fr))]'
   const grouped = groupByDeanery && !words.length && !me
-  const groups = grouped ? [...list.reduce((m, i) => m.set(i.deanery ?? '', [...(m.get(i.deanery ?? '') ?? []), i]), new Map<string, ParishItem[]>())].sort(([a], [b]) => (a ? 0 : 1) - (b ? 0 : 1) || a.localeCompare(b)) : []
+  const regionOf = (d: string) => regions?.of[d] ?? ''
+  const rank = (d: string) => { const r = regionOf(d); const i = regions ? regions.order.indexOf(r) : -1; return i < 0 ? 999 : i }
+  const groups = grouped ? [...list.reduce((m, i) => m.set(i.deanery ?? '', [...(m.get(i.deanery ?? '') ?? []), i]), new Map<string, ParishItem[]>())].sort(([a], [b]) => (a ? 0 : 1) - (b ? 0 : 1) || rank(a) - rank(b) || a.localeCompare(b)) : []
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,9 +63,10 @@ export function ParishList({ items, showAll = false, groupByDeanery = false, pla
       {me && list.length > 0 && <p className="m-0 text-[14px] text-muted">Nearest parishes with a map position, closest first. <button type="button" className="font-semibold text-accent" onClick={() => setMe(null)}>Clear</button></p>}
       {words.length > 0 && list.length === 0 && <p className="m-0 text-muted">No parish found for “{q}”. Is it missing? <Link href="/churches/add">Add it</Link>.</p>}
       {grouped
-        ? groups.map(([d, ps]) => (
+        ? groups.map(([d, ps], gi) => (
             <section key={d || 'none'} className="flex flex-col gap-2">
-              {groups.length > 1 && <h3 className="m-0 text-[17px] font-semibold">{d || 'Other parishes'} <span className="font-normal text-muted">· {ps.length}</span></h3>}
+              {regions && regionOf(d) && regionOf(d) !== regionOf(groups[gi - 1]?.[0] ?? '') && <h3 id={`region-${regionOf(d).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="m-0 mt-3 border-b border-line pb-1.5 font-serif text-[26px] font-semibold">{regionOf(d)}</h3>}
+              {groups.length > 1 && <h4 className="m-0 text-[17px] font-semibold">{d || 'Other parishes'} <span className="font-normal text-muted">· {ps.length}</span></h4>}
               <ul className={grid}>{ps.map(card)}</ul>
             </section>
           ))

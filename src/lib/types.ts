@@ -112,7 +112,7 @@ export type Book = Seo & {
   category?: Category | null
 }
 
-export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address?: string | null; map_url?: string | null; total_parishes?: number | null; total_priests?: number | null; catholic_population?: number | null; deaneries?: string[] }
+export type Diocese = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address?: string | null; map_url?: string | null; total_parishes?: number | null; total_priests?: number | null; catholic_population?: number | null; deaneries?: string[]; deanery_regions?: string | null }
 export type Region = { id: string; continent: string; country: string; province: string | null; total_provinces: number | null; total_dioceses: number | null; total_parishes: number | null; total_priests: number | null; catholic_population: number | null }
 
 export type Church = {

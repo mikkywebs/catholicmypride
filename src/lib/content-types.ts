@@ -309,6 +309,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { name: 'kind', label: 'Type', type: 'select', options: ['Archdiocese', 'Diocese', 'Eparchy', 'Apostolic Vicariate', 'Prefecture', 'Military Ordinariate'], half: true },
       { name: 'name', label: 'Name (without the word Diocese)', type: 'text', required: true, half: true, placeholder: 'e.g. Lagos' },
       { name: 'deaneries', label: 'Deaneries / Zones in this diocese (optional)', type: 'tags', placeholder: 'e.g. Ikeja Deanery, Lekki Deanery, Badagry Deanery', help: 'Listed here, they become a dropdown when adding parishes.' },
+      { name: 'deanery_regions', label: 'Regions (optional, for large dioceses)', type: 'textarea', rows: 4, placeholder: 'Ikeja Region: Agege, Ikeja, Ijede, Ikorodu, Ipaja, Maryland\nLekki Region: Ajah, Epe, Lekki', help: 'One line per region: the region’s name, a colon, then its deaneries. The parish finder then groups parishes as Region › Deanery › Parish.' },
       { name: 'address', label: 'Address (optional)', type: 'textarea', rows: 2, help: 'e.g. the cathedral or diocesan secretariat. Shown with a map on the directory.' },
       { name: 'map_url', label: 'Google Maps link (optional)', type: 'url', help: 'Paste a link from Google Maps for exact directions. If empty, directions use the address.' },
       { name: 'stats', label: 'Official totals (optional — shown only when filled)', type: 'heading' },
