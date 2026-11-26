@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getBooks, getChaplets, getChurches, getDioceses, getNovenas, getPosts, getPrayers, getRecentReadings, getSongs } from '@/lib/data'
 import { countryPath, diocesePath, parishPath } from '@/lib/directory'
+import { getFaqs, getQuizBank } from '@/lib/faith'
+import { QUIZ_PER_PAGE, QUIZ_TOPICS, topicOf } from '@/lib/quiz-topics'
 import { publicClient } from '@/lib/supabase/public'
 import { SITE_URL } from '@/lib/format'
 
@@ -17,6 +19,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [posts, songs, books, novenas, prayers, readings, saints, chaplets, dioceses, churches] = await Promise.all([
     getPosts(1000), getSongs(1000), getBooks(), getNovenas(), getPrayers(), getRecentReadings(400), saintSlugs(), getChaplets(), getDioceses(), getChurches(),
   ])
+  const [faqs, quiz] = await Promise.all([getFaqs(), getQuizBank()])
+  // Catholic Q&A pages and quiz topic pages (every part of each topic).
+  const faith = [
+    ...faqs.map((f) => ({ url: u(`/faith-questions/${f.slug}`), priority: 0.7 })),
+    ...QUIZ_TOPICS.flatMap((t) => {
+      const n = Math.max(1, Math.ceil(quiz.filter((q) => topicOf(q) === t.slug).length / QUIZ_PER_PAGE))
+      return Array.from({ length: n }, (_, i) => ({ url: u(`/quiz/topics/${t.slug}${i ? `?page=${i + 1}` : ''}`), priority: i ? 0.5 : 0.7 }))
+    }),
+  ]
   // Parish directory: every country, each diocese that has parishes (empty ones are kept out of Google), and every parish.
   const byId = new Map(dioceses.map((d) => [d.id, d]))
   const withParishes = new Set(churches.map((c) => c.diocese_id))
@@ -36,6 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...prayers.map((p) => ({ url: u(`/daily-prayers/${p.slug}`), priority: 0.6 })),
     ...songs.map((s) => ({ url: u(`/audio/${s.slug}`), priority: 0.6 })),
     ...books.map((b) => ({ url: u(`/ebooks/${b.slug}`), priority: 0.6 })),
+    ...faith,
     ...directory,
     { url: u('/churches/add'), priority: 0.5 },
   ]
