@@ -43,11 +43,13 @@ export async function generateMetadata(props: PageProps<'/churches/[country]'>):
 }
 
 export default function Page(props: PageProps<'/churches/[country]'>) {
-  return <Suspense fallback={<div className="h-96" />}><Content params={props.params} /></Suspense>
+  return <Suspense fallback={<div className="h-96" />}><Content params={props.params} searchParams={props.searchParams} /></Suspense>
 }
 
-async function Content({ params }: { params: PageProps<'/churches/[country]'>['params'] }) {
+async function Content({ params, searchParams }: { params: PageProps<'/churches/[country]'>['params']; searchParams: PageProps<'/churches/[country]'>['searchParams'] }) {
   const { country: slug } = await params
+  const sp = await searchParams
+  const openProvince = typeof sp.province === 'string' ? sp.province : ''
   const cont = continentOf(slug)
   if (cont) {
     const [dioceses, churches] = await Promise.all([getDioceses(), getChurches()])
@@ -80,7 +82,7 @@ async function Content({ params }: { params: PageProps<'/churches/[country]'>['p
       <section className="flex flex-col gap-3">
         <h2 className="m-0 font-serif text-[28px] font-semibold">Provinces and dioceses</h2>
         {provinces.map(([p, ds]) => (
-          <Fold key={p || 'other'} id={p ? dirSlug(p) : 'other'} title={p ? `Province of ${p}` : 'Other jurisdictions'} meta={`${ds.length} ${ds.length === 1 ? 'jurisdiction' : 'dioceses'}${ds.some((d) => count.get(d.id)) ? ` · ${ds.reduce((n, d) => n + (count.get(d.id) ?? 0), 0)} parishes listed` : ''}`}>
+          <Fold key={p || 'other'} id={p ? dirSlug(p) : 'other'} open={Boolean(p) && dirSlug(p) === openProvince} title={p ? `Province of ${p}` : 'Other jurisdictions'} meta={`${ds.length} ${ds.length === 1 ? (p ? 'diocese' : 'jurisdiction') : p ? 'dioceses' : 'jurisdictions'} · ${ds.reduce((n, d) => n + (count.get(d.id) ?? 0), 0).toLocaleString('en-GB')} parishes listed`}>
             <DirRows rows={ds.sort(sortD).map((d) => ({ id: d.id, name: dioceseTitle(d), href: diocesePath(d), sub: d.cathedral ?? null, note: count.get(d.id) ? `${count.get(d.id)} parishes listed` : 'Add the first parish', img: d.featured_image, alt: d.image_alt }))} />
           </Fold>
         ))}

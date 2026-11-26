@@ -17,7 +17,10 @@ async function load(countrySlug: string, dioceseSlug: string) {
   if (!d) return null
   const parishes = churches.filter((c) => c.diocese_id === d.id)
   const siblings = d.province ? dioceses.filter((x) => x.country === d.country && x.province === d.province && x.id !== d.id) : []
-  return { d, parishes, siblings }
+  // The whole province: its dioceses (this one included) and every parish listed in them.
+  const provinceIds = new Set([d.id, ...siblings.map((x) => x.id)])
+  const provinceParishes = d.province ? churches.filter((c) => c.diocese_id && provinceIds.has(c.diocese_id)).length : 0
+  return { d, parishes, siblings, provinceParishes }
 }
 
 export async function generateMetadata(props: PageProps<'/churches/[country]/[diocese]'>): Promise<Metadata> {
@@ -43,7 +46,7 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
   const { country, diocese } = await params
   const x = await load(country, diocese)
   if (!x) notFound()
-  const { d, parishes, siblings } = x
+  const { d, parishes, siblings, provinceParishes } = x
   const t = dioceseTitle(d)
   const rows = (list: Church[]): Row[] => list.map((c) => ({ id: c.id, name: c.name, href: parishPath(c, d), sub: c.address ? c.address.replace(new RegExp(`,\\s*${d.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'), '') : null, img: c.featured_image, alt: c.image_alt }))
 
@@ -63,7 +66,7 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
       </section>
     )
   }
-  const facts = [d.province && `Province of ${d.province}`, parishes.length ? `${parishes.length} parishes listed` : null, d.total_parishes ? `${d.total_parishes.toLocaleString('en-GB')} parishes in all` : null, d.catholic_population ? `${d.catholic_population.toLocaleString('en-GB')} Catholics` : null].filter(Boolean)
+  const facts = [parishes.length ? `${parishes.length} parishes listed` : null, d.total_parishes ? `${d.total_parishes.toLocaleString('en-GB')} parishes in all` : null, d.catholic_population ? `${d.catholic_population.toLocaleString('en-GB')} Catholics` : null].filter(Boolean)
 
   return (
     <div className="mx-auto flex max-w-[1000px] flex-col gap-7 px-6 pb-[72px] pt-8">
@@ -77,6 +80,12 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
           <h1 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[44px]">{t}</h1>
           {d.cathedral && <p className="m-0 text-[17px]">⛪ {d.cathedral}</p>}
           {facts.length > 0 && <p className="m-0 text-[15px] text-muted">{facts.join(' · ')}</p>}
+          {d.province && (
+            <p className="m-0 text-[15px]">
+              <Link href={`${countryPath(d.country)}?province=${dirSlug(d.province)}#${dirSlug(d.province)}`} className="font-semibold">Province of {d.province}</Link>
+              <span className="text-muted">: {siblings.length + 1} {siblings.length ? 'dioceses' : 'diocese'} · {provinceParishes.toLocaleString('en-GB')} parishes listed</span>
+            </p>
+          )}
           {d.address && <p className="m-0 text-[15px] text-muted">📍 {d.address} · <a href={d.map_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${d.address}, ${d.country}`)}`} target="_blank" rel="noopener noreferrer">Directions</a></p>}
         </div>
       </header>
