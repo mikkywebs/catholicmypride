@@ -6,7 +6,7 @@ import { AddParishBox } from '@/components/add-parish-box'
 import { ParishList } from '@/components/parish-list'
 import { Eyebrow, H1 } from '@/components/ui'
 import { getChurches, getDioceses } from '@/lib/data'
-import { countryPath, parishItem } from '@/lib/directory'
+import { continentPath, parishItem } from '@/lib/directory'
 import { CONTINENTS } from '@/lib/geo'
 
 export const metadata: Metadata = {
@@ -39,21 +39,31 @@ async function Content() {
         <p className="mx-auto mt-3 max-w-xl text-muted">Search by parish name, town or area, or find the parishes nearest to you. Then see Mass times, the address and directions.</p>
       </div>
       <ParishList items={items} />
-      <section className="flex flex-col gap-5">
-        <h2 className="m-0 font-serif text-[30px] font-semibold">Browse by country</h2>
-        {CONTINENTS.filter((k) => [...countries.values()].some((x) => x.continent === k)).map((k) => (
-          <div key={k} className="flex flex-col gap-2.5">
-            <h3 className="m-0 text-lg font-semibold text-muted">{k}</h3>
-            <ul className="m-0 grid list-none gap-3 p-0 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
-              {[...countries.entries()].filter(([, x]) => x.continent === k).sort(([a], [b]) => a.localeCompare(b)).map(([name, x]) => (
-                <li key={name}><Link href={countryPath(name)} className="flex flex-col rounded-xl border border-line bg-surface px-4 py-3 text-ink no-underline hover:border-accent">
-                  <strong className="text-[18px]">{name}</strong>
-                  <span className="text-[14px] text-muted">{x.dioceses} dioceses · {x.parishes ? `${x.parishes} parishes listed` : 'add the first parish'}</span>
-                </Link></li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <section className="flex flex-col gap-4">
+        <h2 className="m-0 font-serif text-[30px] font-semibold">Browse by continent</h2>
+        <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
+          {CONTINENTS.map((k) => {
+            const list = [...countries.values()].filter((x) => x.continent === k)
+            const n = list.reduce((a, x) => a + x.parishes, 0)
+            return (
+              <li key={k}>
+                {list.length ? (
+                  <Link href={continentPath(k)} className="flex h-full flex-col gap-1 rounded-2xl border border-line bg-surface px-5 py-4 text-ink no-underline hover:border-accent">
+                    <strong className="font-serif text-[26px] font-semibold">{k}</strong>
+                    <span className="text-[14px] text-muted">{list.length} {list.length === 1 ? 'country' : 'countries'}{n ? ` · ${n.toLocaleString('en-GB')} parishes listed` : ''}</span>
+                    <span className="mt-1 text-[14px] font-semibold text-accent">Browse →</span>
+                  </Link>
+                ) : (
+                  <div aria-disabled className="flex h-full flex-col gap-1 rounded-2xl border border-dashed border-line px-5 py-4 text-muted">
+                    <strong className="font-serif text-[26px] font-semibold">{k}</strong>
+                    <span className="text-[14px]">Directory in progress</span>
+                    <span className="mt-1 text-[13px]">We are adding dioceses and parishes. Check back soon.</span>
+                  </div>
+                )}
+              </li>
+            )
+          })}
+        </ul>
       </section>
       <AddParishBox href="/churches/add" />
     </div>

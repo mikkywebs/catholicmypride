@@ -5,6 +5,7 @@ import type { Church, Diocese } from './types'
 /** “Murang'a” → “muranga”, “St Joseph's Parish” → “st-josephs-parish”. Matches the database rule in update 0040. */
 export const dirSlug = (s: string) => slugify(s.replace(/['’]/g, '')) || 'parish'
 
+export const continentPath = (continent: string) => `/churches/${dirSlug(continent)}`
 export const countryPath = (country: string) => `/churches/${dirSlug(country)}`
 export const diocesePath = (d: Pick<Diocese, 'country' | 'name'>) => `${countryPath(d.country)}/${dirSlug(d.name)}`
 export const parishPath = (c: Pick<Church, 'id' | 'slug'>, d: Pick<Diocese, 'country' | 'name'>) => `${diocesePath(d)}/${c.slug || c.id}`

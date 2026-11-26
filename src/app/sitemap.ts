@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getBooks, getChaplets, getChurches, getDioceses, getNovenas, getPosts, getPrayers, getRecentReadings, getSongs } from '@/lib/data'
-import { countryPath, diocesePath, parishPath } from '@/lib/directory'
+import { continentPath, countryPath, diocesePath, parishPath } from '@/lib/directory'
 import { getFaqs, getQuizBank } from '@/lib/faith'
 import { QUIZ_PER_PAGE, QUIZ_TOPICS, topicOf } from '@/lib/quiz-topics'
 import { publicClient } from '@/lib/supabase/public'
@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const byId = new Map(dioceses.map((d) => [d.id, d]))
   const withParishes = new Set(churches.map((c) => c.diocese_id))
   const directory = [
+    ...[...new Set(dioceses.map((d) => d.continent))].map((c) => ({ url: u(continentPath(c)), priority: 0.6 })),
     ...[...new Set(dioceses.map((d) => d.country))].map((c) => ({ url: u(countryPath(c)), priority: 0.6 })),
     ...dioceses.filter((d) => withParishes.has(d.id)).map((d) => ({ url: u(diocesePath(d)), priority: 0.6 })),
     ...churches.filter((c) => c.diocese_id && byId.has(c.diocese_id)).map((c) => ({ url: u(parishPath(c, byId.get(c.diocese_id!)!)), lastModified: c.updated_at ?? undefined, priority: 0.5 })),

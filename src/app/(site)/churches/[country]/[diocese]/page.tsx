@@ -7,7 +7,7 @@ import { DirPicture, DirRows, Fold, type Row } from '@/components/directory-bits
 import { ParishList } from '@/components/parish-list'
 import { Breadcrumb } from '@/components/ui'
 import { getChurches, getDioceses } from '@/lib/data'
-import { breadcrumbLd, countryPath, diocesePath, dioceseTitle, dirSlug, parishItem, parishPath, parseRegions } from '@/lib/directory'
+import { breadcrumbLd, continentPath, countryPath, diocesePath, dioceseTitle, dirSlug, parishItem, parishPath, parseRegions } from '@/lib/directory'
 import { SITE_URL } from '@/lib/format'
 import type { Church } from '@/lib/types'
 
@@ -67,8 +67,8 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
 
   return (
     <div className="mx-auto flex max-w-[1000px] flex-col gap-7 px-6 pb-[72px] pt-8">
-      <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: d.country, path: countryPath(d.country) }, { name: t, path: diocesePath(d) }])} />
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: d.country, href: countryPath(d.country) }, { label: t }]} />
+      <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: d.continent, path: continentPath(d.continent) }, { name: d.country, path: countryPath(d.country) }, { name: t, path: diocesePath(d) }])} />
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: d.continent, href: continentPath(d.continent) }, { label: d.country, href: countryPath(d.country) }, { label: t }]} />
 
       <header className={d.featured_image ? 'grid items-center gap-6 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]' : 'flex flex-col'}>
         {d.featured_image && <DirPicture src={d.featured_image} alt={d.image_alt ?? d.cathedral} className="aspect-[4/3] w-full rounded-2xl" sizes="(max-width: 768px) 100vw, 460px" priority />}

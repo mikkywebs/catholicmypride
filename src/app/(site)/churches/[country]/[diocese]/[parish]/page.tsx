@@ -8,7 +8,7 @@ import { PlaceMap } from '@/components/place-map'
 import { Breadcrumb } from '@/components/ui'
 import { DirPicture, DirRows } from '@/components/directory-bits'
 import { getChurches, getDioceses } from '@/lib/data'
-import { breadcrumbLd, countryPath, diocesePath, dioceseTitle, dirSlug, massLines, parishPath, parseRegions } from '@/lib/directory'
+import { breadcrumbLd, continentPath, countryPath, diocesePath, dioceseTitle, dirSlug, massLines, parishPath, parseRegions } from '@/lib/directory'
 import { SITE_URL } from '@/lib/format'
 
 async function load(countrySlug: string, dioceseSlug: string, parishSlug: string) {
@@ -59,8 +59,8 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
   return (
     <div className="mx-auto flex max-w-[960px] flex-col gap-6 px-6 pb-[72px] pt-8">
       <JsonLd data={ld} />
-      <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: d.country, path: countryPath(d.country) }, { name: t, path: diocesePath(d) }, { name: c.name, path }])} />
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: d.country, href: countryPath(d.country) }, { label: d.name, href: diocesePath(d) }, { label: c.name }]} />
+      <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: d.continent, path: continentPath(d.continent) }, { name: d.country, path: countryPath(d.country) }, { name: t, path: diocesePath(d) }, { name: c.name, path }])} />
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: d.continent, href: continentPath(d.continent) }, { label: d.country, href: countryPath(d.country) }, { label: d.name, href: diocesePath(d) }, { label: c.name }]} />
 
       <header className={c.featured_image ? 'grid items-center gap-6 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]' : 'flex flex-col gap-2'}>
         {c.featured_image && <DirPicture src={c.featured_image} alt={c.image_alt ?? c.name} className="aspect-[4/3] w-full rounded-2xl" sizes="(max-width: 768px) 100vw, 440px" priority />}

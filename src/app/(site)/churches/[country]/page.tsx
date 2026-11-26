@@ -7,8 +7,10 @@ import { AddParishBox } from '@/components/add-parish-box'
 import { DirRows, Fold } from '@/components/directory-bits'
 import { Breadcrumb } from '@/components/ui'
 import { getChurches, getDioceses, getDirectoryRegions } from '@/lib/data'
-import { breadcrumbLd, countryPath, diocesePath, dioceseTitle, dirSlug, parishItem } from '@/lib/directory'
+import { breadcrumbLd, continentPath, countryPath, diocesePath, dioceseTitle, dirSlug, parishItem } from '@/lib/directory'
 import { SITE_URL } from '@/lib/format'
+import { CONTINENTS } from '@/lib/geo'
+import { ContinentView } from '@/components/continent-view'
 
 async function load(slug: string) {
   const [dioceses, churches, regions] = await Promise.all([getDioceses(), getChurches(), getDirectoryRegions()])
@@ -21,8 +23,18 @@ async function load(slug: string) {
   return { country, dioceses: mine, parishes, region }
 }
 
+/** /churches/africa etc. share this route with country pages. */
+const continentOf = (slug: string) => CONTINENTS.find((c) => dirSlug(c) === slug) ?? null
+
 export async function generateMetadata(props: PageProps<'/churches/[country]'>): Promise<Metadata> {
   const { country: slug } = await props.params
+  const cont = continentOf(slug)
+  if (cont) {
+    const has = (await getDioceses()).some((d) => d.continent === cont)
+    const title = `Catholic Churches in ${cont}: Parishes by Country`
+    const description = `Find Catholic parishes in ${cont} by country, ecclesiastical province, archdiocese and diocese, with addresses, Mass times and directions.`
+    return { title, description, alternates: { canonical: continentPath(cont) }, robots: has ? undefined : { index: false, follow: true } }
+  }
   const x = await load(slug)
   if (!x) return {}
   const title = `Catholic Churches in ${x.country}: Parishes by Diocese`
@@ -36,8 +48,15 @@ export default function Page(props: PageProps<'/churches/[country]'>) {
 
 async function Content({ params }: { params: PageProps<'/churches/[country]'>['params'] }) {
   const { country: slug } = await params
+  const cont = continentOf(slug)
+  if (cont) {
+    const [dioceses, churches] = await Promise.all([getDioceses(), getChurches()])
+    if (!dioceses.some((d) => d.continent === cont)) notFound()
+    return <ContinentView continent={cont} dioceses={dioceses} churches={churches} />
+  }
   const x = await load(slug)
   if (!x) notFound()
+  const continent = x.dioceses[0].continent
   const count = new Map<string, number>()
   for (const c of x.parishes) count.set(c.diocese_id!, (count.get(c.diocese_id!) ?? 0) + 1)
   const byProvince = new Map<string, typeof x.dioceses>()
@@ -50,8 +69,8 @@ async function Content({ params }: { params: PageProps<'/churches/[country]'>['p
   const facts = r ? [r.total_dioceses && `${r.total_dioceses} dioceses`, r.total_parishes && `${Number(r.total_parishes).toLocaleString('en-GB')} parishes`, r.catholic_population && `${Number(r.catholic_population).toLocaleString('en-GB')} Catholics`].filter(Boolean) : []
   return (
     <div className="mx-auto flex max-w-[1000px] flex-col gap-7 px-6 pb-[72px] pt-8">
-      <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: x.country, path: countryPath(x.country) }])} />
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: x.country }]} />
+      <JsonLd data={breadcrumbLd(SITE_URL, [{ name: 'Parish Directory', path: '/churches' }, { name: continent, path: continentPath(continent) }, { name: x.country, path: countryPath(x.country) }])} />
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Parish Directory', href: '/churches' }, { label: continent, href: continentPath(continent) }, { label: x.country }]} />
       <div className="flex flex-col gap-2 text-center">
         <p className="eyebrow m-0">Catholic Parish Directory</p>
         <h1 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[46px]">Catholic Churches in {x.country}</h1>
