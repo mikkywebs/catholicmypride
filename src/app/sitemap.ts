@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
-import { getBooks, getChaplets, getNovenas, getPosts, getPrayers, getRecentReadings, getSongs } from '@/lib/data'
+import { getBooks, getChaplets, getChurches, getDioceses, getNovenas, getPosts, getPrayers, getRecentReadings, getSongs } from '@/lib/data'
+import { countryPath, diocesePath, parishPath } from '@/lib/directory'
 import { publicClient } from '@/lib/supabase/public'
 import { SITE_URL } from '@/lib/format'
 
@@ -13,9 +14,17 @@ async function saintSlugs() {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const u = (p: string) => `${SITE_URL}${p}`
-  const [posts, songs, books, novenas, prayers, readings, saints, chaplets] = await Promise.all([
-    getPosts(1000), getSongs(1000), getBooks(), getNovenas(), getPrayers(), getRecentReadings(400), saintSlugs(), getChaplets(),
+  const [posts, songs, books, novenas, prayers, readings, saints, chaplets, dioceses, churches] = await Promise.all([
+    getPosts(1000), getSongs(1000), getBooks(), getNovenas(), getPrayers(), getRecentReadings(400), saintSlugs(), getChaplets(), getDioceses(), getChurches(),
   ])
+  // Parish directory: every country, each diocese that has parishes (empty ones are kept out of Google), and every parish.
+  const byId = new Map(dioceses.map((d) => [d.id, d]))
+  const withParishes = new Set(churches.map((c) => c.diocese_id))
+  const directory = [
+    ...[...new Set(dioceses.map((d) => d.country))].map((c) => ({ url: u(countryPath(c)), priority: 0.6 })),
+    ...dioceses.filter((d) => withParishes.has(d.id)).map((d) => ({ url: u(diocesePath(d)), priority: 0.6 })),
+    ...churches.filter((c) => c.diocese_id && byId.has(c.diocese_id)).map((c) => ({ url: u(parishPath(c, byId.get(c.diocese_id!)!)), lastModified: c.updated_at ?? undefined, priority: 0.5 })),
+  ]
   const fixed = ['', '/about', '/contact', '/donate', '/prayer-requests', '/mass-readings', '/novenas', '/daily-prayers', '/chaplets', '/saint-of-the-day', '/blog', '/audio', '/quotes', '/rosary', '/faith-questions', '/quiz', '/quiz/bank', '/write-for-us', '/ebooks', '/churches', '/privacy', '/terms', '/cookies', '/disclaimer']
   return [
     ...fixed.map((p) => ({ url: u(p || '/'), changeFrequency: 'daily' as const, priority: p === '' ? 1 : 0.7 })),
@@ -27,5 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...prayers.map((p) => ({ url: u(`/daily-prayers/${p.slug}`), priority: 0.6 })),
     ...songs.map((s) => ({ url: u(`/audio/${s.slug}`), priority: 0.6 })),
     ...books.map((b) => ({ url: u(`/ebooks/${b.slug}`), priority: 0.6 })),
+    ...directory,
+    { url: u('/churches/add'), priority: 0.5 },
   ]
 }

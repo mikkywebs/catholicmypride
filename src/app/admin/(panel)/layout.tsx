@@ -8,7 +8,7 @@ import { ensureUpcomingPrayers, ensureUpcomingReadings, ensureUpcomingSaints } f
 const NAV: [string, string][] = [
   ['Dashboard', '/admin'], ['Blog', '/admin/posts'], ['Blog Ideas', '/admin/blog-ideas'], ['Article Submissions', '/admin/submissions'], ['Novenas', '/admin/novenas'], ['Daily Prayers', '/admin/prayers'], ['Chaplets', '/admin/chaplets'],
   ['Mass Readings', '/admin/readings'], ['Saints & Feasts', '/admin/saints'], ['Music & Audio', '/admin/songs'], ['Ebooks', '/admin/books'],
-  ['Dioceses', '/admin/dioceses'], ['Parishes', '/admin/churches'], ['Countries & Provinces', '/admin/regions'], ['Prayer Requests', '/admin/prayer-requests'], ['Messages', '/admin/messages'], ['Q&A', '/admin/faqs'], ['Asked Questions', '/admin/faq-requests'], ['Quiz', '/admin/quiz'], ['Quotes', '/admin/quotes'], ['WhatsApp Briefing', '/admin/whatsapp'],
+  ['Dioceses', '/admin/dioceses'], ['Parishes', '/admin/churches'], ['Parish Submissions', '/admin/parish-submissions'], ['Countries & Provinces', '/admin/regions'], ['Prayer Requests', '/admin/prayer-requests'], ['Messages', '/admin/messages'], ['Q&A', '/admin/faqs'], ['Asked Questions', '/admin/faq-requests'], ['Quiz', '/admin/quiz'], ['Quotes', '/admin/quotes'], ['WhatsApp Briefing', '/admin/whatsapp'],
   ['Categories', '/admin/categories'], ['Settings', '/admin/settings'],
 ]
 

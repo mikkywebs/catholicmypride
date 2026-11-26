@@ -8,6 +8,7 @@ import { slugify } from '@/lib/format'
 import { cleanYouTubeUrl, isYouTubeUrl } from '@/lib/text'
 import { serverClient } from '@/lib/supabase/server'
 import { SEASON_MODES } from '@/lib/season-theme'
+import { coordsFromMapUrl, dirSlug } from '@/lib/directory'
 
 export type FormState = { ok: boolean; message: string } | null
 
@@ -125,6 +126,11 @@ export async function saveItem(typeKey: string, id: string | null, _: FormState,
   if (t.key === 'dioceses' && Array.isArray(row.deaneries)) row.deaneries = [...new Set(row.deaneries as string[])]
   if ((t.key === 'dioceses' || t.key === 'regions') && (!row.continent || !row.country)) return { ok: false, message: 'Please choose the continent and country.' }
   if (t.key === 'churches' && !row.diocese_id) return { ok: false, message: 'Please choose the archdiocese or diocese.' }
+  if (t.key === 'churches') {
+    const pos = coordsFromMapUrl(row.map_url as string | null)
+    if (pos) { row.lat = pos.lat; row.lng = pos.lng }
+    row.slug = await uniqueParishSlug(db, String(row.diocese_id), String(row.name ?? ''), id ?? null)
+  }
 
   const q = id ? db.from(t.table).update(row).eq('id', id).select('id').single() : db.from(t.table).insert(row).select('id').single()
   const { data, error } = await q
@@ -458,4 +464,50 @@ export async function loadStarter(kind: 'faqs' | 'quiz' | 'quotes') {
   }
   refresh([kind, 'content'])
   redirect(`/admin/${kind}?loaded=${added}`)
+}
+
+
+// ---------------- Parish directory ----------------
+type Db = Awaited<ReturnType<typeof requireAdmin>>['db']
+
+/** A parish's web address: its name, made unique within its diocese (-2, -3 …). A saved parish keeps its address. */
+async function uniqueParishSlug(db: Db, dioceseId: string, name: string, id: string | null) {
+  if (id) {
+    const { data } = await db.from('churches').select('slug, diocese_id').eq('id', id).maybeSingle()
+    if (data?.slug && data.diocese_id === dioceseId) return data.slug as string
+  }
+  const base = dirSlug(name)
+  const { data: taken } = await db.from('churches').select('slug').eq('diocese_id', dioceseId).like('slug', `${base}%`)
+  const used = new Set((taken ?? []).map((r) => r.slug as string))
+  if (!used.has(base)) return base
+  for (let n = 2; ; n++) if (!used.has(`${base}-${n}`)) return `${base}-${n}`
+}
+
+/** Approve a parish sent by a visitor: add it, or apply the correction to the listed parish. */
+export async function approveParish(id: string) {
+  const { db } = await requireAdmin()
+  const { data: s } = await db.from('church_submissions').select('*').eq('id', id).maybeSingle()
+  if (!s) redirect('/admin/parish-submissions')
+  const fields: Record<string, unknown> = {}
+  for (const k of ['deanery', 'address', 'map_url', 'mass_times', 'phone', 'email', 'website', 'lat', 'lng']) if (s[k] !== null && s[k] !== '') fields[k] = s[k]
+  let churchId = s.church_id as string | null
+  if (s.kind === 'update' && churchId) {
+    const { error } = await db.from('churches').update({ ...fields, name: s.name, diocese_id: s.diocese_id, updated_at: new Date().toISOString() }).eq('id', churchId)
+    if (error) redirect(`/admin/parish-submissions?error=${encodeURIComponent(error.message)}`)
+  } else {
+    const slug = await uniqueParishSlug(db, s.diocese_id as string, s.name as string, null)
+    const { data: d } = await db.from('dioceses').select('name, kind, country').eq('id', s.diocese_id).maybeSingle()
+    const { data: made, error } = await db.from('churches').insert({ ...fields, name: s.name, diocese_id: s.diocese_id, slug, country: d?.country ?? null, diocese: d?.name ?? null, status: 'published' }).select('id').single()
+    if (error) redirect(`/admin/parish-submissions?error=${encodeURIComponent(error.message)}`)
+    churchId = made?.id ?? null
+  }
+  await db.from('church_submissions').update({ status: 'approved', church_id: churchId }).eq('id', id)
+  refresh(['churches', 'content'])
+  redirect('/admin/parish-submissions?approved=1')
+}
+
+export async function declineParish(id: string) {
+  const { db } = await requireAdmin()
+  await db.from('church_submissions').update({ status: 'declined' }).eq('id', id)
+  redirect('/admin/parish-submissions')
 }

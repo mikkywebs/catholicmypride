@@ -5,7 +5,7 @@ import { publicClient } from './supabase/public'
 import { lectionaryReading } from './lectionary'
 import { dailyPrayerFor, dailyPrayerSlug, dateFromPrayerSlug } from './daily-prayer'
 import { calendarSaint, calendarSaintsFor, CELEBRATION_ORDER } from './saints-data'
-import type { Book, Category, Chaplet, Church, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Region, Settings, Song } from './types'
+import type { Book, Category, Chaplet, Church, Diocese, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Region, Settings, Song } from './types'
 
 // Every public read is cached and tagged. Admin saves call updateTag(<tag>)
 // so changes appear straight away.
@@ -339,8 +339,22 @@ export async function getChurches(): Promise<Church[]> {
   cacheTag('churches')
   const db = publicClient()
   if (!db) return []
+  // The extra parish details need database update 0040; until it is run, the basic list still loads.
+  const full = await db.from('churches').select('id, name, address, map_url, deanery, diocese_id, slug, mass_times, phone, email, website, lat, lng, updated_at, diocese:dioceses(*)').not('diocese_id', 'is', null).eq('status', 'published').order('name').limit(10000)
+  if (!full.error) return (full.data as unknown as Church[]) ?? []
   const { data } = await db.from('churches').select('id, name, address, map_url, deanery, diocese_id, diocese:dioceses(*)').not('diocese_id', 'is', null).order('name').limit(5000)
   return (data as unknown as Church[]) ?? []
+}
+
+/** Every published archdiocese, diocese and other jurisdiction, for the directory pages. */
+export async function getDioceses(): Promise<Diocese[]> {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('churches')
+  const db = publicClient()
+  if (!db) return []
+  const { data } = await db.from('dioceses').select('*').order('name').limit(5000)
+  return (data as Diocese[]) ?? []
 }
 
 export async function getDirectoryRegions(): Promise<Region[]> {
