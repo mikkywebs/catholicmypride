@@ -17,7 +17,8 @@ async function load(countrySlug: string, dioceseSlug: string, parishSlug: string
   if (!d) return null
   const c = churches.find((x) => x.diocese_id === d.id && (x.slug === parishSlug || x.id === parishSlug))
   if (!c) return null
-  const nearby = churches.filter((x) => x.diocese_id === d.id && x.id !== c.id).sort((a, b) => (a.deanery === c.deanery ? 0 : 1) - (b.deanery === c.deanery ? 0 : 1) || a.name.localeCompare(b.name)).slice(0, 8)
+  // Same deanery only (a parish without a deanery yet shows others in its diocese).
+  const nearby = churches.filter((x) => x.diocese_id === d.id && x.id !== c.id && (!c.deanery || x.deanery === c.deanery)).sort((a, b) => a.name.localeCompare(b.name)).slice(0, c.deanery ? 30 : 8)
   return { d, c, nearby }
 }
 
@@ -99,7 +100,7 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
 
       {nearby.length > 0 && (
         <section className="flex flex-col gap-2 border-t border-line pt-5">
-          <h2 className="m-0 text-lg font-semibold">{c.deanery ? `More parishes near ${c.name.split(',')[0]}` : `Other parishes in the ${t}`}</h2>
+          <h2 className="m-0 text-lg font-semibold">{c.deanery ? `Other parishes in ${c.deanery}` : `Other parishes in the ${t}`}</h2>
           <DirRows rows={nearby.map((n) => ({ id: n.id, name: n.name, href: parishPath(n, d), sub: n.deanery, img: n.featured_image, alt: n.image_alt }))} />
           <Link href={diocesePath(d)} className="px-2 font-semibold">All parishes in the {t} →</Link>
         </section>
