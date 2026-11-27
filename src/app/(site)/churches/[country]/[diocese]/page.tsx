@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { JsonLd } from '@/components/article-bits'
 import { DirPicture, DirRows, Fold, type Row } from '@/components/directory-bits'
+import { AddParishBox } from '@/components/add-parish-box'
 import { ParishList } from '@/components/parish-list'
 import { Breadcrumb } from '@/components/ui'
 import { getChurches, getDioceses } from '@/lib/data'
@@ -119,12 +120,9 @@ async function Content({ params }: { params: PageProps<'/churches/[country]/[dio
           {regionBlocks.length > 0 && unplaced.length > 0 && <Fold title="Other deaneries" meta={`${unplaced.length} deaneries`}>{unplaced.map(deaneryBlock)}</Fold>}
           {loose.length > 0 && (deaneries.length ? <Fold title="Parishes without a deanery yet" meta={churchCounts(loose)}><Grouped list={loose} /></Fold> : <Grouped list={loose} />)}
         </section>
-      ) : <p className="m-0 rounded-2xl border border-line bg-surface p-6 text-center text-muted">No parishes are listed here yet.</p>}
+      ) : null}
 
-      <p className="m-0 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-gold bg-surface px-5 py-4">
-        <span><strong>Is your parish missing?</strong> <span className="text-muted">Send its address and Mass times; we add it after a quick check.</span></span>
-        <Link href={`/churches/add?diocese=${d.id}`} className="rounded-md bg-accent px-4 py-2 font-semibold text-accent-ink no-underline">➕ Add your parish</Link>
-      </p>
+      <AddParishBox href={`/churches/add?diocese=${d.id}`} place={`the ${t}`} first={!parishes.length} />
 
       {siblings.length > 0 && (
         <nav aria-label="Other dioceses in the province" className="flex flex-col gap-2">

@@ -37,7 +37,7 @@ export function ContinentView({ continent, dioceses, churches }: { continent: st
           ))}
         </ul>
       </section>
-      <AddParishBox href="/churches/add" />
+      <AddParishBox href="/churches/add" place={continent} first={!parishes.length} />
     </div>
   )
 }

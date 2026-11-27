@@ -92,7 +92,7 @@ async function Content({ params, searchParams }: { params: PageProps<'/churches/
           </Fold>
         ))}
       </section>
-      <AddParishBox href={`/churches/add?country=${encodeURIComponent(x.country)}`} />
+      <AddParishBox href={`/churches/add?country=${encodeURIComponent(x.country)}`} place={x.country} first={!x.parishes.length} />
     </div>
   )
 }
