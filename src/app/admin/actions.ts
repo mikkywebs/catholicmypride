@@ -323,11 +323,18 @@ export async function seedDioceses(country: string) {
     toAdd.push({ ...w, cathedral: facts.cathedrals?.[w.name] ?? null, continent: facts.continent, country, status: 'published' })
   }
   // In batches, so a large country (Italy has 226) is added quickly.
+  let reason = ''
   for (let i = 0; i < toAdd.length; i += 50) {
     const batch = toAdd.slice(i, i + 50)
     const { error } = await db.from('dioceses').insert(batch)
-    if (error) failed += batch.length
-    else added += batch.length
+    if (!error) { added += batch.length; continue }
+    // One unaccepted row (for example a type the database does not know yet) must not block the rest:
+    // add them one by one and count only the ones that really fail.
+    for (const row of batch) {
+      const { error: e } = await db.from('dioceses').insert(row)
+      if (e) { failed++; reason ||= /kind_check/.test(e.message) ? `the database does not yet accept the type “${String(row.kind)}”` : e.message }
+      else added++
+    }
   }
   // Also list the provinces on the country entry, if there is none yet.
   const { data: region } = await db.from('directory_regions').select('id, province_list').eq('country', country).is('province', null).maybeSingle()
@@ -337,7 +344,7 @@ export async function seedDioceses(country: string) {
     await db.from('directory_regions').update({ province_list: Object.keys(facts.provinces) }).eq('id', region.id)
   }
   refresh(['churches', 'content'])
-  redirect(`/admin/dioceses?country=${encodeURIComponent(country)}&seeded=${added}&updated=${updated}&failed=${failed}`)
+  redirect(`/admin/dioceses?country=${encodeURIComponent(country)}&seeded=${added}&updated=${updated}&failed=${failed}${reason ? `&reason=${encodeURIComponent(reason.slice(0, 160))}` : ''}`)
 }
 
 // ---------------- Questions & Answers / Quiz ----------------

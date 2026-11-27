@@ -48,7 +48,7 @@ export default async function Page(props: PageProps<'/admin/dioceses'>) {
       </div>
       {sp.saved && <p role="status" className="m-0 rounded-lg bg-[#e3f1e8] px-4 py-3 text-[#1f5c38]">Saved. The website has been updated.</p>}
       {sp.deleted && <p role="status" className="m-0 rounded-lg bg-[#eef0f3] px-4 py-3">Deleted.</p>}
-      {sp.seeded !== undefined && <p role="status" className="m-0 rounded-lg bg-[#e3f1e8] px-4 py-3 text-[#1f5c38]">Added {String(sp.seeded)} {sp.seeded === '1' ? 'diocese' : 'dioceses'}{sp.updated && sp.updated !== '0' ? `, and filled the province on ${String(sp.updated)}` : ''}. Nothing you had entered was changed.{sp.failed && sp.failed !== '0' ? ` ${String(sp.failed)} could not be added; run the latest database update and try again.` : ''}</p>}
+      {sp.seeded !== undefined && <p role="status" className="m-0 rounded-lg bg-[#e3f1e8] px-4 py-3 text-[#1f5c38]">Added {String(sp.seeded)} {sp.seeded === '1' ? 'diocese' : 'dioceses'}{sp.updated && sp.updated !== '0' ? `, and filled the province on ${String(sp.updated)}` : ''}. Nothing you had entered was changed.{sp.failed && sp.failed !== '0' ? ` ${String(sp.failed)} could not be added${typeof sp.reason === 'string' ? ` because ${sp.reason}` : ''}. Run the latest database update in Supabase, then press the button again.` : ''}</p>}
 
       <details className="rounded-2xl border border-line bg-surface px-5 py-3">
         <summary className="cursor-pointer font-semibold">Add a country’s ready-made dioceses <span className="font-normal text-muted">({Object.keys(DIRECTORY_FACTS).length} countries available)</span></summary>
