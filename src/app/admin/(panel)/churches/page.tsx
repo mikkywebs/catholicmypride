@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/admin'
 import { deleteItem } from '../../actions'
 import { AutoSubmit } from '@/components/admin/auto-submit'
 import { dioceseTitle, parishPath } from '@/lib/directory'
+import { allRows } from '@/lib/supabase/all-rows'
 
 type D = { id: string; name: string; kind: string; country: string; province: string | null; deaneries: string[] | null }
 type C = { id: string; name: string; address: string | null; deanery: string | null; mass_times: string | null; featured_image?: string | null; slug: string | null; status: string; diocese_id: string | null }
@@ -20,8 +21,8 @@ export default async function Page(props: PageProps<'/admin/churches'>) {
   const page = Math.max(1, Math.floor(Number(sp.page) || 1))
 
   const [{ data: dioceses }, { data: all }] = await Promise.all([
-    db.from('dioceses').select('id, name, kind, country, province, deaneries').order('name').limit(5000),
-    db.from('churches').select('diocese_id').limit(20000),
+    allRows((a, b) => db.from('dioceses').select('id, name, kind, country, province, deaneries').order('name').order('id').range(a, b)),
+    allRows((a, b) => db.from('churches').select('diocese_id').order('id').range(a, b)),
   ])
   const ds = (dioceses ?? []) as D[]
   const byId = new Map(ds.map((d) => [d.id, d]))

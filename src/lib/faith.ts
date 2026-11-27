@@ -4,6 +4,7 @@ import path from 'node:path'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
 import type { Faq, QuizQuestion } from './types'
+import { allRows } from '@/lib/supabase/all-rows'
 
 // Questions & Answers and the Quiz bank. The website uses what is saved in the admin; until anything
 // is saved, it uses the starter set in data/faith/ (see "Load the starter questions" in the admin).
@@ -25,7 +26,7 @@ export async function getFaqs(): Promise<Faq[]> {
   cacheTag('faqs')
   const db = publicClient()
   if (db) {
-    const { data, error } = await db.from('faqs').select('id, question, slug, topic, answer_md, sources, seo_title, seo_description, updated_at').order('topic').limit(2000)
+    const { data, error } = await allRows((a, b) => db.from('faqs').select('id, question, slug, topic, answer_md, sources, seo_title, seo_description, updated_at').order('topic').order('id').range(a, b))
     if (!error && data && data.length) return (data as Faq[]).sort(byTopic)
   }
   return (await loadStarterFaqs()).map((f) => ({ ...f, id: `starter-${f.slug}` })).sort(byTopic)
@@ -41,7 +42,7 @@ export async function getQuizBank(): Promise<QuizQuestion[]> {
   cacheTag('quiz')
   const db = publicClient()
   if (db) {
-    const { data, error } = await db.from('quiz_questions').select('id, question, topic, option_a, option_b, option_c, option_d, correct, explanation, source').limit(5000)
+    const { data, error } = await allRows((a, b) => db.from('quiz_questions').select('id, question, topic, option_a, option_b, option_c, option_d, correct, explanation, source').order('id').range(a, b))
     if (!error && data && data.length) return (data as QuizQuestion[]).sort(byTopic)
   }
   return (await loadStarterQuiz()).map((q, i) => ({ ...q, id: `starter-${i}` })).sort(byTopic)

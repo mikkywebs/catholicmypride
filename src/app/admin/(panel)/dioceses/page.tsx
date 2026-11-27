@@ -4,6 +4,7 @@ import { deleteItem, seedDioceses } from '../../actions'
 import { AutoSubmit } from '@/components/admin/auto-submit'
 import { DIOCESE_KINDS, DIRECTORY_FACTS } from '@/lib/directory-data'
 import { diocesePath, dioceseTitle } from '@/lib/directory'
+import { allRows } from '@/lib/supabase/all-rows'
 
 type D = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address: string | null; cathedral?: string | null; featured_image?: string | null; deaneries: string[] | null }
 
@@ -18,9 +19,9 @@ export default async function Page(props: PageProps<'/admin/dioceses'>) {
   const str = (k: string) => (typeof sp[k] === 'string' ? (sp[k] as string).trim() : '')
   const q = str('q'), missing = MISSING[str('missing')] ? str('missing') : ''
 
-  const { data } = await db.from('dioceses').select('*').order('name').limit(5000)
+  const { data } = await allRows((a, b) => db.from('dioceses').select('*').order('name').order('id').range(a, b))
   const all = (data ?? []) as D[]
-  const { data: ch } = await db.from('churches').select('diocese_id').limit(20000)
+  const { data: ch } = await allRows((a, b) => db.from('churches').select('diocese_id').order('id').range(a, b))
   const parishes = new Map<string, number>()
   for (const r of ch ?? []) if (r.diocese_id) parishes.set(r.diocese_id as string, (parishes.get(r.diocese_id as string) ?? 0) + 1)
 

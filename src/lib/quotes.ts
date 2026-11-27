@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { cacheLife, cacheTag } from 'next/cache'
 import { publicClient } from './supabase/public'
+import { allRows } from '@/lib/supabase/all-rows'
 
 export type QuoteKind = 'jesus' | 'mary' | 'apparition' | 'bible' | 'saint' | 'pope' | 'bishop' | 'scholar' | 'church'
 export type Quote = { id: string; text: string; author: string; source: string | null; kind: QuoteKind; show_on: string | null }
@@ -21,7 +22,7 @@ export async function getQuotes(): Promise<Quote[]> {
   cacheTag('quotes')
   const db = publicClient()
   if (db) {
-    const { data, error } = await db.from('quotes').select('id, text, author, source, kind, show_on').eq('status', 'published').limit(5000)
+    const { data, error } = await allRows((a, b) => db.from('quotes').select('id, text, author, source, kind, show_on').eq('status', 'published').order('id').range(a, b))
     // Our Lady's words in Scripture and in approved apparitions are shown together under “Our Lady”.
     if (!error && data && data.length) return (data as Quote[]).map((q) => (q.kind === 'apparition' ? { ...q, kind: 'mary' } : q))
   }

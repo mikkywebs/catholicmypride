@@ -6,6 +6,7 @@ import { lectionaryReading } from './lectionary'
 import { dailyPrayerFor, dailyPrayerSlug, dateFromPrayerSlug } from './daily-prayer'
 import { calendarSaint, calendarSaintsFor, CELEBRATION_ORDER } from './saints-data'
 import type { Book, Category, Chaplet, Church, Diocese, Novena, Post, Prayer, PublicPrayerRequest, Reading, Saint, Region, Settings, Song } from './types'
+import { allRows } from '@/lib/supabase/all-rows'
 
 // Every public read is cached and tagged. Admin saves call updateTag(<tag>)
 // so changes appear straight away.
@@ -353,10 +354,10 @@ export async function getChurches(): Promise<Church[]> {
   // The extra parish details need database update 0040; until it is run, the basic list still loads.
   const cols = 'id, name, address, map_url, deanery, diocese_id, slug, mass_times, phone, email, website, lat, lng, updated_at'
   for (const extra of [', featured_image, image_alt, kind', ', featured_image, image_alt', '']) {
-    const full = await db.from('churches').select(`${cols}${extra}, diocese:dioceses(*)`).not('diocese_id', 'is', null).eq('status', 'published').order('name').limit(10000)
+    const full = await allRows((a, b) => db.from('churches').select(`${cols}${extra}, diocese:dioceses(*)`).not('diocese_id', 'is', null).eq('status', 'published').order('name').order('id').range(a, b))
     if (!full.error) return (full.data as unknown as Church[]) ?? []
   }
-  const { data } = await db.from('churches').select('id, name, address, map_url, deanery, diocese_id, diocese:dioceses(*)').not('diocese_id', 'is', null).order('name').limit(5000)
+  const { data } = await allRows((a, b) => db.from('churches').select('id, name, address, map_url, deanery, diocese_id, diocese:dioceses(*)').not('diocese_id', 'is', null).order('name').order('id').range(a, b))
   return (data as unknown as Church[]) ?? []
 }
 
@@ -367,7 +368,7 @@ export async function getDioceses(): Promise<Diocese[]> {
   cacheTag('churches')
   const db = publicClient()
   if (!db) return []
-  const { data } = await db.from('dioceses').select('*').order('name').limit(5000)
+  const { data } = await allRows((a, b) => db.from('dioceses').select('*').order('name').order('id').range(a, b))
   return (data as Diocese[]) ?? []
 }
 
@@ -377,7 +378,7 @@ export async function getDirectoryRegions(): Promise<Region[]> {
   cacheTag('churches')
   const db = publicClient()
   if (!db) return []
-  const { data } = await db.from('directory_regions').select('id, continent, country, province, total_provinces, total_dioceses, total_parishes, total_priests, catholic_population').limit(2000)
+  const { data } = await allRows((a, b) => db.from('directory_regions').select('id, continent, country, province, total_provinces, total_dioceses, total_parishes, total_priests, catholic_population').order('id').range(a, b))
   return (data as Region[]) ?? []
 }
 
