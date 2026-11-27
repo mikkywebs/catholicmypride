@@ -461,4 +461,61 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
       Utrecht: 'Sint Catharinakathedraal, Utrecht', Breda: 'Kathedrale Sint-Antonius van Padua, Breda', 'Groningen–Leeuwarden': 'Sint-Jozefkathedraal, Groningen', 'Haarlem–Amsterdam': 'Kathedrale Basiliek van Sint-Bavo, Haarlem', Roermond: 'Sint Christoffelkathedraal, Roermond', Rotterdam: 'Kathedrale Kerk van de HH. Laurentius en Elisabeth, Rotterdam', '’s-Hertogenbosch': 'Kathedrale Basiliek van St. Jan de Evangelist, ’s-Hertogenbosch',
     },
   },
+  Belgium: {
+    continent: 'Europe',
+    note: 'Belgium is one province under Mechelen–Brussels. Ukrainian Catholics are served by the Eparchy of Saint-Vladimir-le-Grand de Paris, listed under France.',
+    other: [{ name: 'Military Ordinariate of Belgium', kind: 'Military Ordinariate' }],
+    asOf: '31 December 2021',
+    source: 'GCatholic.org',
+    totals: { total_provinces: 1, total_dioceses: 8, total_parishes: 3681, catholic_population: 8316000 },
+    provinces: {
+      'Mechelen–Brussels': ['Mechelen–Brussels', 'Antwerp', 'Bruges', 'Ghent', 'Hasselt', 'Liège', 'Namur', 'Tournai'],
+    },
+    cathedrals: {
+      'Mechelen–Brussels': 'Primatiale Sint-Romboutskathedraal, Mechelen', Antwerp: 'Onze-Lieve-Vrouwekathedraal, Antwerp', Bruges: 'Sint-Salvators- en Donaaskathedraal, Bruges', Ghent: 'Sint-Baafskathedraal, Ghent',
+      Hasselt: 'Kathedraal Sint-Quintinus, Hasselt', Liège: 'Cathédrale Saint-Paul, Liège', Namur: 'Cathédrale Saint-Aubain, Namur', Tournai: 'Cathédrale Notre-Dame de Tournai',
+      'Military Ordinariate of Belgium': 'Sint-Jacob-op-Koudenbergkerk, Brussels',
+    },
+  },
+  Austria: {
+    continent: 'Europe',
+    other: [
+      { name: 'Wettingen-Mehrerau', kind: 'Territorial Abbey' },
+      { name: 'Military Ordinariate of Austria', kind: 'Military Ordinariate' },
+    ],
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_provinces: 2, total_dioceses: 9, total_parishes: 2956, catholic_population: 4970000 },
+    provinces: {
+      Salzburg: ['Salzburg', 'Feldkirch', 'Graz–Seckau', 'Gurk', 'Innsbruck'],
+      Vienna: ['Vienna', 'Eisenstadt', 'Linz', 'Sankt Pölten'],
+    },
+    cathedrals: {
+      Salzburg: 'Dom Sankt Rupert und Sankt Virgil, Salzburg', Feldkirch: 'Dom Sankt Nikolaus, Feldkirch', 'Graz–Seckau': 'Dom Sankt Ägydius, Graz', Gurk: 'Dom Sankt Peter und Paul, Klagenfurt', Innsbruck: 'Dom Sankt Jakob, Innsbruck',
+      Vienna: 'Stephansdom (Dom Sankt Stephan), Vienna', Eisenstadt: 'Dom Sankt Martin und Sankt Rupert, Eisenstadt', Linz: 'Dom Maria Empfängnis (Neuer Dom), Linz', 'Sankt Pölten': 'Dom Mariä Himmelfahrt, Sankt Pölten',
+      'Military Ordinariate of Austria': 'Kathedrale St. Georg, Wiener Neustadt',
+    },
+  },
+  Switzerland: {
+    continent: 'Europe',
+    note: 'Switzerland has no ecclesiastical province: its six dioceses and two territorial abbeys all depend directly on the Holy See. Ukrainian Catholics are served by the Eparchy of Saint-Vladimir-le-Grand de Paris, listed under France.',
+    other: [
+      { name: 'Basel', kind: 'Diocese' },
+      { name: 'Chur', kind: 'Diocese' },
+      { name: 'Lausanne, Geneva and Fribourg', kind: 'Diocese' },
+      { name: 'Lugano', kind: 'Diocese' },
+      { name: 'Sankt Gallen', kind: 'Diocese' },
+      { name: 'Sion', kind: 'Diocese' },
+      { name: 'Einsiedeln', kind: 'Territorial Abbey' },
+      { name: 'Saint-Maurice', kind: 'Territorial Abbey' },
+    ],
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 6, total_parishes: 1575, catholic_population: 3549000 },
+    provinces: {},
+    cathedrals: {
+      Basel: 'Bistumskathedrale St. Urs und Viktor, Solothurn', Chur: 'Kathedrale Mariä Himmelfahrt, Chur', 'Lausanne, Geneva and Fribourg': 'Cathédrale Saint-Nicolas, Fribourg', Lugano: 'Cattedrale San Lorenzo, Lugano',
+      'Sankt Gallen': 'Kathedrale St. Gallus und Otmar, St. Gallen', Sion: 'Cathédrale Notre-Dame du Glarier, Sion', Einsiedeln: 'Abtei- und Kathedralkirche Maria Himmelfahrt und St. Mauritius, Einsiedeln', 'Saint-Maurice': 'Basilique de Saint-Maurice, Saint-Maurice',
+    },
+  },
 }

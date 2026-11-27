@@ -87,7 +87,7 @@ async function Content({ params, searchParams }: { params: PageProps<'/churches/
       <section className="flex flex-col gap-3">
         <h2 className="m-0 font-serif text-[28px] font-semibold">Provinces and dioceses</h2>
         {provinces.map(([p, ds]) => (
-          <Fold key={p || 'other'} id={p ? dirSlug(p) : 'other'} open={Boolean(p) && dirSlug(p) === openProvince} title={p ? `Province of ${p}` : 'Other jurisdictions'} meta={`${ds.length} ${ds.length === 1 ? (p ? 'diocese' : 'jurisdiction') : p ? 'dioceses' : 'jurisdictions'} · ${ds.reduce((n, d) => n + (count.get(d.id) ?? 0), 0).toLocaleString('en-GB')} parishes listed`}>
+          <Fold key={p || 'other'} id={p ? dirSlug(p) : 'other'} open={(Boolean(p) && dirSlug(p) === openProvince) || provinces.length === 1} title={p ? `Province of ${p}` : provinces.length === 1 ? 'Dioceses (directly under the Holy See)' : 'Other jurisdictions'} meta={`${ds.length} ${ds.length === 1 ? (p ? 'diocese' : 'jurisdiction') : p ? 'dioceses' : 'jurisdictions'} · ${ds.reduce((n, d) => n + (count.get(d.id) ?? 0), 0).toLocaleString('en-GB')} parishes listed`}>
             <DirRows rows={ds.sort(sortD).map((d) => ({ id: d.id, name: dioceseTitle(d), href: diocesePath(d), sub: d.cathedral ?? null, note: count.get(d.id) ? `${plural(count.get(d.id)!, 'parish', 'parishes')} listed` : 'Add the first parish', img: d.featured_image, alt: d.image_alt }))} />
           </Fold>
         ))}
