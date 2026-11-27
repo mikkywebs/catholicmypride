@@ -4,6 +4,7 @@ import type { Settings } from '@/lib/types'
 import { CopyrightYear } from './year'
 import { BrandIcon, BRANDS, EXTRA_BRANDS, LinkIcon } from './icons'
 import { detectPlatform } from '@/lib/social'
+import { PrayerReminders } from './prayer-reminders'
 
 type Flags = { blog: boolean; songs: boolean; books: boolean; churches: boolean; saints: boolean }
 
@@ -34,6 +35,12 @@ export function Footer({ s, flags }: { s: Settings; flags: Flags }) {
 
   return (
     <footer className="border-t border-footer-line bg-footer text-[15px] text-muted">
+      <div className="border-b border-footer-line px-6 py-6">
+        <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-3 text-center md:flex-row md:justify-between md:text-left">
+          <span><strong className="text-ink">Pray with us at set times.</strong> Get a reminder on your phone for the Angelus and our other daily prayers, even when the site is closed.</span>
+          <PrayerReminders />
+        </div>
+      </div>
       <div className="bg-navy px-6 py-9 text-navy-ink">
         <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-5 text-center md:flex-row md:flex-wrap md:justify-between md:text-left">
           <div className="flex flex-1 flex-col gap-1 md:basis-[420px]">

@@ -22,7 +22,8 @@
     "react-dom": "19.3.0",
     "sanitize-html": "^2.18.2",
     "server-only": "^0.0.1",
-    "simple-icons": "^16.37.0"
+    "simple-icons": "^16.37.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
@@ -30,6 +31,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.2",
+    "@types/web-push": "^3.6.4",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",

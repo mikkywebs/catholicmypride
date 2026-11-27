@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } fr
 import { announcePlay, onOtherPlay } from './audio-bus'
 import { NextIcon, PauseIcon, PlayIcon, PrevIcon, VolumeIcon } from './icons'
 import { useClientValue } from './use-client'
+import { PrayerReminders } from './prayer-reminders'
 import { activeSlots, clock, dueTimed, recentTimed, type BarSlot, type TimedPrayer } from '@/lib/schedule'
 
 export type Track = { id: string; slug: string; title: string; src: string; cover: string | null }
@@ -126,6 +127,25 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
     const t = setTimeout(() => setLate(show), 0)
     return () => clearTimeout(t)
   }, [minute]) // eslint-disable-line react-hooks/exhaustive-deps
+  // Opened from a prayer-time notification (/?pray=<slug>): start that prayer, or offer "Pray now" if sound is blocked.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search)
+    const want = q.get('pray')
+    if (!want) return
+    const t = library.find((x) => x.id === want || x.slug === want)
+    q.delete('pray')
+    history.replaceState(null, '', window.location.pathname + (q.size ? `?${q}` : '') + window.location.hash)
+    if (!t) return
+    const p = timed.find((x) => x.id === t.id)
+    const due = p ? dueTimed([p], new Date()) : null
+    try { if (due) localStorage.setItem('cmp-timed', due.key) } catch {}
+    // Label with the prayer time that has just passed (the Angelus has three).
+    const n = new Date(), mins = n.getHours() * 60 + n.getMinutes()
+    const at = (x: string) => Number(x.slice(0, 2)) * 60 + Number(x.slice(3, 5))
+    const last = p?.times.filter((x) => at(x) <= mins).sort((a, b) => at(b) - at(a))[0] ?? p?.times[0]
+    const id = setTimeout(() => setPrayer({ id: t.id, label: `${last ? clock(last) + ' · ' : ''}${t.title}`, resume: false, blocked: false }), 300)
+    return () => clearTimeout(id)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   // Admin preview: open any page with ?prayer-preview=<id or slug> to see what visitors see at prayer time,
   // or add &late=1 to see the reminder for late arrivals. Nothing is remembered on the device.
   useEffect(() => {
@@ -203,6 +223,7 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
       <div className="mx-auto flex max-w-[640px] flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border-2 border-gold bg-navy px-5 py-3 text-navy-ink shadow-[0_8px_24px_rgba(0,0,0,0.25)]">
         <span className="min-w-0 flex-1 basis-60 text-[15px]">🔔 <strong>{late.title}</strong> was prayed at {late.time} ({late.ago} minutes ago). Pray it with us now?</span>
         <button type="button" onClick={prayLate} className="inline-flex min-h-11 items-center gap-2 rounded-md bg-gold px-4 font-bold text-[#1f2430]"><PlayIcon size={16} /> Pray it now</button>
+        <PrayerReminders tone="dark" onlyOffer />
         <button type="button" onClick={closeLate} aria-label="Close" className="flex size-10 items-center justify-center rounded-full text-navy-muted">✕</button>
       </div>
     </div>
@@ -212,6 +233,7 @@ export function MusicBar({ library, slots, fallback, timed = [] }: { library: Tr
       <div className="mx-auto flex max-w-[640px] flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border-2 border-gold bg-navy px-5 py-3 text-navy-ink shadow-[0_8px_24px_rgba(0,0,0,0.25)]">
         <span className="min-w-0 flex-1 basis-60 text-[15px]">🔔 It is time to pray: <strong>{prayer.label}</strong></span>
         <button type="button" onClick={play} className="inline-flex min-h-11 items-center gap-2 rounded-md bg-gold px-4 font-bold text-[#1f2430]"><PlayIcon size={16} /> Pray now</button>
+        <PrayerReminders tone="dark" onlyOffer />
         <button type="button" onClick={() => setPrayer(null)} aria-label="Close" className="flex size-10 items-center justify-center rounded-full text-navy-muted">✕</button>
       </div>
     </div>
