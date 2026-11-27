@@ -65,7 +65,10 @@ async function Content({ params, searchParams }: { params: PageProps<'/churches/
   const byProvince = new Map<string, typeof x.dioceses>()
   for (const d of x.dioceses) byProvince.set(d.province || '', [...(byProvince.get(d.province || '') ?? []), d])
   const provinces = [...byProvince.entries()].sort(([a], [b]) => (a ? 0 : 1) - (b ? 0 : 1) || a.localeCompare(b))
-  const sortD = (a: { kind: string; name: string }, b: { kind: string; name: string }) => (a.kind === 'Archdiocese' ? -1 : 0) - (b.kind === 'Archdiocese' ? -1 : 0) || a.name.localeCompare(b.name)
+  // The province's own see first (Naples before Capua), then other archdioceses, then the rest by name.
+  type S = { kind: string; name: string; province: string | null }
+  const rank = (d: S) => (d.province && d.name === d.province ? 0 : d.kind === 'Archdiocese' || d.kind === 'Patriarchate' ? 1 : 2)
+  const sortD = (a: S, b: S) => rank(a) - rank(b) || a.name.localeCompare(b.name)
   const byId = new Map(x.dioceses.map((d) => [d.id, d]))
   const items = x.parishes.map((c) => parishItem(c, byId.get(c.diocese_id!)!))
   const r = x.region

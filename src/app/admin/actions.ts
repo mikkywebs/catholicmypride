@@ -302,10 +302,11 @@ export async function seedDioceses(country: string) {
   const have = new Map((existing ?? []).map((d) => [norm(d.name as string), d]))
   const wanted = [
     ...Object.entries(facts.provinces).flatMap(([province, list]) =>
-      list.map((name, i) => ({ name, province, kind: i === 0 ? 'Archdiocese' : 'Diocese' }))),
+      list.map((name, i) => ({ name, province, kind: facts.kinds?.[name] ?? (i === 0 ? 'Archdiocese' : 'Diocese') }))),
     ...(facts.other ?? []).map((o) => ({ name: o.name, province: null as string | null, kind: o.kind })),
   ]
   let added = 0, updated = 0, failed = 0
+  const toAdd: Record<string, unknown>[] = []
   for (const w of wanted) {
     const found = have.get(norm(w.name))
     if (found) {
@@ -319,9 +320,14 @@ export async function seedDioceses(country: string) {
       }
       continue
     }
-    const { error } = await db.from('dioceses').insert({ ...w, cathedral: facts.cathedrals?.[w.name] ?? null, continent: facts.continent, country, status: 'published' })
-    if (error) failed++
-    else added++
+    toAdd.push({ ...w, cathedral: facts.cathedrals?.[w.name] ?? null, continent: facts.continent, country, status: 'published' })
+  }
+  // In batches, so a large country (Italy has 226) is added quickly.
+  for (let i = 0; i < toAdd.length; i += 50) {
+    const batch = toAdd.slice(i, i + 50)
+    const { error } = await db.from('dioceses').insert(batch)
+    if (error) failed += batch.length
+    else added += batch.length
   }
   // Also list the provinces on the country entry, if there is none yet.
   const { data: region } = await db.from('directory_regions').select('id, province_list').eq('country', country).is('province', null).maybeSingle()
