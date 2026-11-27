@@ -6,10 +6,10 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }} />
 }
 
-export function articleLd(o: { title: string; description?: string | null; image?: string | null; path: string; published?: string | null; modified?: string | null; author?: string | null; citations?: { title: string; url: string }[] }) {
+export function articleLd(o: { title: string; description?: string | null; image?: string | null; path: string; published?: string | null; modified?: string | null; author?: string | null; citations?: { title: string; url: string }[]; news?: boolean }) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': o.news ? 'NewsArticle' : 'Article',
     headline: o.title,
     description: o.description ?? undefined,
     image: o.image ? [o.image] : undefined,

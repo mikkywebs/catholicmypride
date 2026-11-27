@@ -1,3 +1,4 @@
+import { isNews } from '@/lib/news'
 import { ListViews } from '@/components/engage'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -43,16 +44,19 @@ async function Content({ searchParams }: { searchParams: PageProps<'/blog'>['sea
   const page = pageOf(sp.page)
   const [{ posts, total }, cats] = await Promise.all([getPostsPage(page, PER, cat), getCategories('blog')])
   const pages = Math.max(1, Math.ceil(total / PER))
+  const current = cats.find((c) => c.slug === cat)
+  const news = isNews(current)
+  const word = news ? 'news' : 'articles'
   return (
     <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pb-[72px] pt-10">
-      <div className="text-center"><Eyebrow>Blog</Eyebrow><H1 className="mt-2">Faith, Saints &amp; Feasts</H1></div>
+      <div className="text-center"><Eyebrow>Blog</Eyebrow><H1 className="mt-2">{news && current ? current.name : <>Faith, Saints &amp; Feasts</>}</H1></div>
       {cats.length > 0 && (
         <nav aria-label="Categories" className="flex flex-wrap justify-center gap-2">
           <Link href="/blog" className={`rounded-full border px-4 py-2 no-underline ${!cat ? 'border-accent bg-accent text-accent-ink' : 'border-line bg-surface text-ink'}`}>All</Link>
           {cats.map((c) => <Link key={c.id} href={`/blog?category=${c.slug}`} className={`rounded-full border px-4 py-2 no-underline ${cat === c.slug ? 'border-accent bg-accent text-accent-ink' : 'border-line bg-surface text-ink'}`}>{c.name}</Link>)}
         </nav>
       )}
-      {posts.length === 0 ? <EmptyState>{page > 1 ? <>No more articles. <Link href={pageHref(1, cat)}>Back to the first page</Link></> : 'No articles here yet.'}</EmptyState> : (
+      {posts.length === 0 ? <EmptyState>{page > 1 ? <>No more {word}. <Link href={pageHref(1, cat)}>Back to the first page</Link></> : `No ${word} here yet.`}</EmptyState> : (
         <div className="grid gap-8 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
           {posts.map((p) => (
             <Link key={p.id} href={`/blog/${p.slug}`} className="reveal flex flex-col gap-3 text-ink no-underline">

@@ -1,13 +1,13 @@
 import type { TocItem } from '@/lib/format'
 
-/** "In this article": jump links to each heading of a long post. Shown only when there are 3 or more headings. */
-export function TableOfContents({ items }: { items: TocItem[] }) {
+/** "In this article" (or "In this story" for news): jump links to each heading of a long post. Shown only when there are 3 or more headings. */
+export function TableOfContents({ items, news = false }: { items: TocItem[]; news?: boolean }) {
   if (items.length < 3) return null
   let n = 0
   return (
     <details open className="toc group rounded-2xl border border-line bg-surface px-5 py-4 sm:px-6">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-serif text-[22px] font-semibold [&::-webkit-details-marker]:hidden">
-        In this article
+        {news ? 'In this story' : 'In this article'}
         <span className="text-[14px] font-sans font-semibold text-muted"><span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span> ▾</span>
       </summary>
       <nav aria-label="Table of contents" className="mt-3">

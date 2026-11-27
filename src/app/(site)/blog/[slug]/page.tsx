@@ -10,6 +10,7 @@ import { Breadcrumb, Chip, Featured, Prose, ReadTime } from '@/components/ui'
 import { getPost, getRelatedPosts, getSettings } from '@/lib/data'
 import { dateLabel, duration, mdWithToc, parseSources, readMinutes, splitAfterFirstParagraph } from '@/lib/format'
 import { TableOfContents } from '@/components/toc'
+import { isNews } from '@/lib/news'
 import { YouTubeEmbed } from '@/components/youtube-embed'
 
 export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): Promise<Metadata> {
@@ -39,13 +40,14 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
   const related = await getRelatedPosts(p)
   const listen = duration(p.audio_seconds)
   const body = mdWithToc(p.body_md)
+  const news = isNews(p.category)
   const sources = parseSources(p.sources)
   // The video replaces the featured image, or sits after the first paragraph of the article (the default).
   const videoTop = Boolean(p.youtube_url) && p.video_position === 'instead of the featured image'
   const [lead, rest] = p.youtube_url && !videoTop ? splitAfterFirstParagraph(body.html) : [body.html, '']
   return (
     <div className="mx-auto flex max-w-[780px] flex-col gap-6 px-6 pb-[72px] pt-8">
-      <JsonLd data={articleLd({ title: p.title, description: p.seo_description || p.excerpt, image: p.featured_image, path: `/blog/${slug}`, published: p.published_at, modified: p.updated_at, author: p.author, citations: sources })} />
+      <JsonLd data={articleLd({ title: p.title, description: p.seo_description || p.excerpt, image: p.featured_image, path: `/blog/${slug}`, published: p.published_at, modified: p.updated_at, author: p.author, citations: sources, news })} />
       <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Blog', href: '/blog' }, ...(p.category ? [{ label: p.category.name, href: `/blog?category=${p.category.slug}` }] : [])]} />
       <div className="flex flex-col gap-3.5">
         {p.category && <p className="eyebrow m-0">{p.category.name}</p>}
@@ -62,7 +64,7 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       {videoTop ? <YouTubeEmbed url={p.youtube_url} title={p.title} /> : <Featured src={p.featured_image} alt={p.image_alt} priority />}
       <ShareBar title={p.title} />
       {p.audio_url && <AudioPlayer src={p.audio_url} label="Listen to this post" initialSeconds={p.audio_seconds} downloadName={p.allow_download ? `${p.slug}.mp3` : undefined} />}
-      <TableOfContents items={body.toc} />
+      <TableOfContents items={body.toc} news={news} />
       <Prose html={lead} />
       {p.youtube_url && !videoTop && <YouTubeEmbed url={p.youtube_url} title={p.title} />}
       {rest && <Prose html={rest} />}
@@ -82,11 +84,11 @@ async function Content({ params }: { params: PageProps<'/blog/[slug]'>['params']
       {p.tags.length > 0 && <div className="flex flex-wrap gap-2" aria-label="Tags">{p.tags.map((t) => <Chip key={t}>{t}</Chip>)}</div>}
       <Reactions type="post" id={p.id} kinds={['love', 'amen', 'thumbs']} title="Did this bless you?" />
       <StayConnected s={{ whatsapp_channel_url: s.whatsapp_channel_url, youtube_url: s.youtube_url, facebook_url: s.facebook_url, x_url: s.x_url }} />
-      <p className="m-0 rounded-2xl border border-line bg-surface px-6 py-4 text-center text-[15px] text-muted">✍️ Would you like to write for Catholic My Pride? <Link href="/write-for-us" className="font-semibold">Share your article</Link></p>
+      <p className="m-0 rounded-2xl border border-line bg-surface px-6 py-4 text-center text-[15px] text-muted">{news ? <>📰 Have news from your parish or diocese? <Link href="/write-for-us" className="font-semibold">Send it to us</Link></> : <>✍️ Would you like to write for Catholic My Pride? <Link href="/write-for-us" className="font-semibold">Share your article</Link></>}</p>
       <div className="flex flex-col gap-2 border-t border-line pt-4"><strong>Found this helpful? Share it.</strong><ShareBar title={p.title} /></div>
       {related.length > 0 && (
         <section className="reveal flex flex-col gap-4 pt-3">
-          <h2 className="m-0 border-b border-line pb-3 font-serif text-[32px] font-semibold">Related posts</h2>
+          <h2 className="m-0 border-b border-line pb-3 font-serif text-[32px] font-semibold">{news ? 'More news' : 'Related posts'}</h2>
           <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))]">
             {related.map((r) => (
               <Link key={r.id} href={`/blog/${r.slug}`} className="flex flex-col gap-2 text-ink no-underline">
