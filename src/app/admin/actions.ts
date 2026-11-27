@@ -294,9 +294,28 @@ export async function lectionaryForDate(date: string) {
 // ---------------- Directory: add a country's dioceses in one go ----------------
 export async function seedDioceses(country: string) {
   const { db } = await requireAdmin()
+  const r = await seedOne(db, country)
+  if (!r) redirect('/admin/dioceses')
+  refresh(['churches', 'content'])
+  redirect(`/admin/dioceses?country=${encodeURIComponent(country)}&seeded=${r.added}&updated=${r.updated}&failed=${r.failed}${r.reason ? `&reason=${encodeURIComponent(r.reason.slice(0, 160))}` : ''}`)
+}
+
+/** Adds (or tops up) every country of one region in one press, e.g. all of West Africa. */
+export async function seedRegion(continent: string, countries: string[]) {
+  const { db } = await requireAdmin()
+  let added = 0, updated = 0, failed = 0, reason = ''
+  for (const c of countries) {
+    const r = await seedOne(db, c)
+    if (r) { added += r.added; updated += r.updated; failed += r.failed; reason ||= r.reason }
+  }
+  refresh(['churches', 'content'])
+  redirect(`/admin/dioceses?continent=${encodeURIComponent(continent)}&seeded=${added}&updated=${updated}&failed=${failed}${reason ? `&reason=${encodeURIComponent(reason.slice(0, 160))}` : ''}`)
+}
+
+async function seedOne(db: Awaited<ReturnType<typeof requireAdmin>>['db'], country: string) {
   const { DIRECTORY_FACTS } = await import('@/lib/directory-data')
   const facts = DIRECTORY_FACTS[country]
-  if (!facts) redirect('/admin/dioceses')
+  if (!facts) return null
   const norm = (s: string) => s.toLowerCase().replace(/\s+city$/, '').replace(/[^a-z]/g, '')
   const { data: existing } = await db.from('dioceses').select('id, name, province, cathedral').eq('country', country)
   const have = new Map((existing ?? []).map((d) => [norm(d.name as string), d]))
@@ -343,8 +362,7 @@ export async function seedDioceses(country: string) {
   } else if (!(region.province_list as string[] | null)?.length) {
     await db.from('directory_regions').update({ province_list: Object.keys(facts.provinces) }).eq('id', region.id)
   }
-  refresh(['churches', 'content'])
-  redirect(`/admin/dioceses?country=${encodeURIComponent(country)}&seeded=${added}&updated=${updated}&failed=${failed}${reason ? `&reason=${encodeURIComponent(reason.slice(0, 160))}` : ''}`)
+  return { added, updated, failed, reason }
 }
 
 // ---------------- Questions & Answers / Quiz ----------------

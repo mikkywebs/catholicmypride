@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import { requireAdmin } from '@/lib/admin'
-import { deleteItem, seedDioceses } from '../../actions'
+import { deleteItem, seedDioceses, seedRegion } from '../../actions'
 import { AutoSubmit } from '@/components/admin/auto-submit'
 import { DIOCESE_KINDS, DIRECTORY_FACTS } from '@/lib/directory-data'
 import { diocesePath, dioceseTitle } from '@/lib/directory'
 import { allRows } from '@/lib/supabase/all-rows'
-import { CONTINENTS, COUNTRY_CONTINENT } from '@/lib/geo'
+import { byRegion, CONTINENTS, COUNTRY_CONTINENT } from '@/lib/geo'
 
 type D = { id: string; name: string; kind: string; continent: string; country: string; province: string | null; address: string | null; cathedral?: string | null; featured_image?: string | null; deaneries: string[] | null }
 
@@ -60,7 +60,7 @@ export default async function Page(props: PageProps<'/admin/dioceses'>) {
 
       <details className="rounded-2xl border border-line bg-surface px-5 py-3">
         <summary className="cursor-pointer font-semibold">Add a country’s ready-made dioceses <span className="font-normal text-muted">({Object.keys(DIRECTORY_FACTS).length} countries available)</span></summary>
-        <p className="m-0 mt-2 text-[14px] text-muted">Creates every archdiocese and diocese with its province, checked against GCatholic.org. Ones already entered are skipped, so it is safe to press again.</p>
+        <p className="m-0 mt-2 text-[14px] text-muted">Creates every archdiocese and diocese with its province, checked against GCatholic.org. Ones already entered are skipped, so it is safe to press again. “Check again” also fills in any cathedral names you have not typed yourself.</p>
         <div className="mt-3 flex flex-col gap-2">
           {CONTINENTS.map((k) => {
             const cs = Object.keys(DIRECTORY_FACTS).filter((c) => DIRECTORY_FACTS[c].continent === k).sort()
@@ -69,17 +69,32 @@ export default async function Page(props: PageProps<'/admin/dioceses'>) {
             return (
               <details key={k} open={continent === k} className="rounded-xl border border-line px-4 py-2">
                 <summary className="cursor-pointer font-semibold">{k} <span className="font-normal text-muted">· {cs.length} {cs.length === 1 ? 'country' : 'countries'} · {full === cs.length ? '✓ all added' : `${full} fully added`}</span></summary>
-                <ul className="m-0 mt-2 grid list-none gap-2 p-0 pb-2 sm:grid-cols-2 lg:grid-cols-3">
-                  {cs.map((c) => {
-                    const done = have(c) >= factsCount(c)
+                <div className="flex flex-col gap-3 pb-2 pt-2">
+                  {byRegion(k, cs, (c) => c).map((r) => {
+                    const left = r.items.filter((c) => have(c) < factsCount(c))
                     return (
-                      <li key={c}><form action={seedDioceses.bind(null, c)} className="flex items-center justify-between gap-2 rounded-xl border border-line px-3 py-2">
-                        <span className="flex flex-col"><strong>{c}</strong><span className="text-[13px] text-muted">{done ? `✓ All ${factsCount(c)} added` : `${have(c)} of ${factsCount(c)} added`}</span></span>
-                        <button className={`rounded-md px-3 py-1.5 text-sm font-semibold ${done ? 'border border-field text-muted' : 'bg-accent text-accent-ink'}`}>{done ? 'Check again' : 'Add'}</button>
-                      </form></li>
+                      <section key={r.name} className="flex flex-col gap-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <h4 className="m-0 text-[15px] font-semibold">{r.name} <span className="font-normal text-muted">· {r.items.length} {r.items.length === 1 ? 'country' : 'countries'}{left.length ? ` · ${left.length} to add` : ' · ✓ all added'}</span></h4>
+                          <form action={seedRegion.bind(null, k, r.items)}>
+                            <button className={`rounded-md px-3 py-1.5 text-sm font-semibold ${left.length ? 'bg-accent text-accent-ink' : 'border border-field text-muted'}`}>{left.length ? `Add all of ${r.name}` : `Check all of ${r.name} again`}</button>
+                          </form>
+                        </div>
+                        <ul className="m-0 grid list-none gap-2 p-0 sm:grid-cols-2 lg:grid-cols-3">
+                          {r.items.map((c) => {
+                            const done = have(c) >= factsCount(c)
+                            return (
+                              <li key={c}><form action={seedDioceses.bind(null, c)} className="flex items-center justify-between gap-2 rounded-xl border border-line px-3 py-2">
+                                <span className="flex flex-col"><strong>{c}</strong><span className="text-[13px] text-muted">{done ? `✓ All ${factsCount(c)} added` : `${have(c)} of ${factsCount(c)} added`}</span></span>
+                                <button className={`rounded-md px-3 py-1.5 text-sm font-semibold ${done ? 'border border-field text-muted' : 'bg-accent text-accent-ink'}`}>{done ? 'Check again' : 'Add'}</button>
+                              </form></li>
+                            )
+                          })}
+                        </ul>
+                      </section>
                     )
                   })}
-                </ul>
+                </div>
               </details>
             )
           })}

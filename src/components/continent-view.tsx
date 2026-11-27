@@ -6,6 +6,7 @@ import { Breadcrumb } from './ui'
 import { breadcrumbLd, continentPath, countryPath, isParish, parishItem, plural } from '@/lib/directory'
 import { SITE_URL } from '@/lib/format'
 import type { Church, Diocese } from '@/lib/types'
+import { byRegion } from '@/lib/geo'
 
 /** /churches/africa: the countries of one continent that have directory data. */
 export function ContinentView({ continent, dioceses, churches }: { continent: string; dioceses: Diocese[]; churches: Church[] }) {
@@ -28,14 +29,19 @@ export function ContinentView({ continent, dioceses, churches }: { continent: st
       {parishes.length > 0 && <ParishList items={parishes.map((c) => parishItem(c, byId.get(c.diocese_id!)!))} placeholder={`Search parishes in ${continent} by name, town or area`} />}
       <section className="flex flex-col gap-3">
         <h2 className="m-0 font-serif text-[28px] font-semibold">Countries</h2>
-        <ul className="m-0 grid list-none gap-3 p-0 [grid-template-columns:repeat(auto-fill,minmax(230px,1fr))]">
-          {countries.map((c) => (
-            <li key={c.name}><Link href={countryPath(c.name)} className="flex flex-col rounded-xl border border-line bg-surface px-4 py-3 text-ink no-underline hover:border-accent">
-              <strong className="text-[18px]">{c.name}</strong>
-              <span className="text-[14px] text-muted">{c.dioceses} dioceses · {c.parishes ? `${c.parishes} parishes listed` : 'parishes being added'}</span>
-            </Link></li>
-          ))}
-        </ul>
+        {byRegion(continent, countries, (c) => c.name).map((r) => (
+          <div key={r.name} className="flex flex-col gap-3 pt-2">
+            <h3 className="m-0 text-[15px] font-semibold uppercase tracking-[0.1em] text-muted">{r.name}</h3>
+            <ul className="m-0 grid list-none gap-3 p-0 [grid-template-columns:repeat(auto-fill,minmax(230px,1fr))]">
+              {r.items.map((c) => (
+                <li key={c.name}><Link href={countryPath(c.name)} className="flex flex-col rounded-xl border border-line bg-surface px-4 py-3 text-ink no-underline hover:border-accent">
+                  <strong className="text-[18px]">{c.name}</strong>
+                  <span className="text-[14px] text-muted">{c.dioceses} dioceses · {c.parishes ? `${c.parishes} parishes listed` : 'parishes being added'}</span>
+                </Link></li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </section>
       <AddParishBox href="/churches/add" place={continent} first={!parishes.length} />
     </div>

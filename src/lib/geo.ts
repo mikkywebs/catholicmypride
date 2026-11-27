@@ -224,3 +224,52 @@ export const COUNTRY_CONTINENT: Record<string, Continent> = {
 export function countriesIn(continent: string) {
   return Object.keys(COUNTRY_CONTINENT).filter((c) => COUNTRY_CONTINENT[c] === continent).sort((a, b) => a.localeCompare(b))
 }
+
+// Regions within each continent (based on the UN geoscheme), for grouping country lists.
+export const REGIONS: Record<Continent, { name: string; countries: string[] }[]> = {
+  Africa: [
+    { name: 'West Africa', countries: ['Benin', 'Burkina Faso', 'Cabo Verde', "Côte d'Ivoire", 'Gambia', 'Ghana', 'Guinea', 'Guinea-Bissau', 'Liberia', 'Mali', 'Mauritania', 'Niger', 'Nigeria', 'Senegal', 'Sierra Leone', 'Togo'] },
+    { name: 'Central Africa', countries: ['Cameroon', 'Central African Republic', 'Chad', 'Congo', 'Democratic Republic of the Congo', 'Equatorial Guinea', 'Gabon', 'São Tomé and Príncipe', 'Angola'] },
+    { name: 'East Africa', countries: ['Burundi', 'Comoros', 'Djibouti', 'Eritrea', 'Ethiopia', 'Kenya', 'Madagascar', 'Malawi', 'Mauritius', 'Mozambique', 'Rwanda', 'Seychelles', 'Somalia', 'South Sudan', 'Tanzania', 'Uganda', 'Zambia', 'Zimbabwe'] },
+    { name: 'Southern Africa', countries: ['Botswana', 'Eswatini', 'Lesotho', 'Namibia', 'South Africa'] },
+    { name: 'North Africa', countries: ['Algeria', 'Egypt', 'Libya', 'Morocco', 'Sudan', 'Tunisia'] },
+  ],
+  Asia: [
+    { name: 'East Asia', countries: ['China', 'Hong Kong', 'Macau', 'Japan', 'Mongolia', 'North Korea', 'South Korea', 'Taiwan'] },
+    { name: 'South-East Asia', countries: ['Brunei', 'Cambodia', 'Indonesia', 'Laos', 'Malaysia', 'Myanmar', 'Philippines', 'Singapore', 'Thailand', 'Timor-Leste', 'Vietnam'] },
+    { name: 'South Asia', countries: ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Iran', 'Maldives', 'Nepal', 'Pakistan', 'Sri Lanka'] },
+    { name: 'Central Asia', countries: ['Kazakhstan', 'Kyrgyzstan', 'Tajikistan', 'Turkmenistan', 'Uzbekistan'] },
+    { name: 'Middle East', countries: ['Armenia', 'Azerbaijan', 'Bahrain', 'Cyprus', 'Georgia', 'Iraq', 'Israel', 'Jordan', 'Kuwait', 'Lebanon', 'Oman', 'Palestine', 'Qatar', 'Saudi Arabia', 'Syria', 'Turkey', 'United Arab Emirates', 'Yemen'] },
+  ],
+  Europe: [
+    { name: 'Northern Europe', countries: ['Denmark', 'England and Wales', 'Estonia', 'Finland', 'Iceland', 'Ireland', 'Latvia', 'Lithuania', 'Norway', 'Scotland', 'Sweden'] },
+    { name: 'Western Europe', countries: ['Austria', 'Belgium', 'France', 'Germany', 'Liechtenstein', 'Luxembourg', 'Monaco', 'Netherlands', 'Switzerland'] },
+    { name: 'Southern Europe', countries: ['Albania', 'Andorra', 'Bosnia and Herzegovina', 'Croatia', 'Greece', 'Holy See', 'Italy', 'Kosovo', 'Malta', 'Montenegro', 'North Macedonia', 'Portugal', 'San Marino', 'Serbia', 'Slovenia', 'Spain'] },
+    { name: 'Eastern Europe', countries: ['Belarus', 'Bulgaria', 'Czechia', 'Hungary', 'Moldova', 'Poland', 'Romania', 'Russia', 'Slovakia', 'Ukraine'] },
+  ],
+  'North America': [
+    { name: 'Northern America', countries: ['Bermuda', 'Canada', 'United States'] },
+    { name: 'Central America', countries: ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Mexico', 'Nicaragua', 'Panama'] },
+    { name: 'Caribbean', countries: ['Antigua and Barbuda', 'Bahamas', 'Barbados', 'Cuba', 'Curaçao', 'Dominica', 'Dominican Republic', 'Grenada', 'Guadeloupe', 'Haiti', 'Jamaica', 'Martinique', 'Puerto Rico', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Trinidad and Tobago', 'U.S. Virgin Islands'] },
+  ],
+  'South America': [
+    { name: 'Andean countries', countries: ['Bolivia', 'Colombia', 'Ecuador', 'Peru', 'Venezuela'] },
+    { name: 'Southern Cone', countries: ['Argentina', 'Chile', 'Paraguay', 'Uruguay'] },
+    { name: 'Brazil and the Guianas', countries: ['Brazil', 'French Guiana', 'Guyana', 'Suriname'] },
+  ],
+  Oceania: [
+    { name: 'Australia and New Zealand', countries: ['Australia', 'New Zealand'] },
+    { name: 'Melanesia', countries: ['Fiji', 'New Caledonia', 'Papua New Guinea', 'Solomon Islands', 'Vanuatu'] },
+    { name: 'Micronesia', countries: ['Guam', 'Kiribati', 'Marshall Islands', 'Micronesia', 'Nauru', 'Northern Mariana Islands', 'Palau'] },
+    { name: 'Polynesia', countries: ['American Samoa', 'Cook Islands', 'French Polynesia', 'Samoa', 'Tonga', 'Tuvalu', 'Wallis and Futuna'] },
+  ],
+}
+
+/** Groups country names by region of `continent`, in the order above; anything unlisted goes under “Other”. */
+export function byRegion<T>(continent: string, items: T[], name: (x: T) => string) {
+  const regions = REGIONS[continent as Continent] ?? []
+  const out = regions.map((r) => ({ name: r.name, items: items.filter((x) => r.countries.includes(name(x))) })).filter((r) => r.items.length)
+  const rest = items.filter((x) => !regions.some((r) => r.countries.includes(name(x))))
+  if (rest.length) out.push({ name: 'Other', items: rest })
+  return out
+}
