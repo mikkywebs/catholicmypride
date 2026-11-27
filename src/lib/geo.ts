@@ -189,6 +189,7 @@ export const COUNTRY_CONTINENT: Record<string, Continent> = {
   "Chile": "South America",
   "Colombia": "South America",
   "Ecuador": "South America",
+  "French Guiana": "South America",
   "Guyana": "South America",
   "Paraguay": "South America",
   "Peru": "South America",
