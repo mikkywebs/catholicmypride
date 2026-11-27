@@ -2226,7 +2226,6 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
       "Guangzhou": ["Hong Kong"],
     },
   },
-  },
   "Macau": {
     continent: "Asia",
     note: "The Diocese of Macau depends directly on the Holy See.",
