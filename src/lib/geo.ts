@@ -126,6 +126,7 @@ export const COUNTRY_CONTINENT: Record<string, Continent> = {
   "Iceland": "Europe",
   "Ireland": "Europe",
   "Italy": "Europe",
+  "Kosovo": "Europe",
   "Latvia": "Europe",
   "Liechtenstein": "Europe",
   "Lithuania": "Europe",
