@@ -9,7 +9,7 @@ type D = { id: string; name: string; kind: string; continent: string; country: s
 
 const MISSING: Record<string, string> = { photo: 'No cathedral photo', cathedral: 'No cathedral name', address: 'No address', deaneries: 'No deaneries' }
 const field = 'min-h-11 w-full rounded-lg border border-field bg-surface px-3 text-[15px]'
-const KIND_ORDER = ['Archdiocese', 'Diocese', 'Eparchy', 'Apostolic Vicariate', 'Prefecture', 'Military Ordinariate']
+const KIND_ORDER = ['Archdiocese', 'Diocese', 'Eparchy', 'Apostolic Vicariate', 'Prefecture', 'Military Ordinariate', 'Personal Ordinariate']
 
 /** Dioceses in the admin: country → province, with search, filters and the ready-made country lists. */
 export default async function Page(props: PageProps<'/admin/dioceses'>) {

@@ -298,7 +298,7 @@ export async function seedDioceses(country: string) {
   const facts = DIRECTORY_FACTS[country]
   if (!facts) redirect('/admin/dioceses')
   const norm = (s: string) => s.toLowerCase().replace(/\s+city$/, '').replace(/[^a-z]/g, '')
-  const { data: existing } = await db.from('dioceses').select('id, name, province').eq('country', country)
+  const { data: existing } = await db.from('dioceses').select('id, name, province, cathedral').eq('country', country)
   const have = new Map((existing ?? []).map((d) => [norm(d.name as string), d]))
   const wanted = [
     ...Object.entries(facts.provinces).flatMap(([province, list]) =>
@@ -310,13 +310,16 @@ export async function seedDioceses(country: string) {
     const found = have.get(norm(w.name))
     if (found) {
       // Already entered: only fill an empty province, never change anything else.
-      if (!found.province && w.province) {
-        const { error } = await db.from('dioceses').update({ province: w.province, updated_at: new Date().toISOString() }).eq('id', found.id)
+      const fill: Record<string, string> = {}
+      if (!found.province && w.province) fill.province = w.province
+      if (!found.cathedral && facts.cathedrals?.[w.name]) fill.cathedral = facts.cathedrals[w.name]
+      if (Object.keys(fill).length) {
+        const { error } = await db.from('dioceses').update({ ...fill, updated_at: new Date().toISOString() }).eq('id', found.id)
         if (!error) updated++
       }
       continue
     }
-    const { error } = await db.from('dioceses').insert({ ...w, continent: facts.continent, country, status: 'published' })
+    const { error } = await db.from('dioceses').insert({ ...w, cathedral: facts.cathedrals?.[w.name] ?? null, continent: facts.continent, country, status: 'published' })
     if (error) failed++
     else added++
   }

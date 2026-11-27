@@ -149,7 +149,10 @@ export const COUNTRY_CONTINENT: Record<string, Continent> = {
   "Sweden": "Europe",
   "Switzerland": "Europe",
   "Ukraine": "Europe",
-  "United Kingdom": "Europe",
+  // The Church in Great Britain has two bishops’ conferences, so the directory lists them separately
+  // (Northern Ireland is part of the all-island Church in Ireland).
+  "England and Wales": "Europe",
+  "Scotland": "Europe",
   "Antigua and Barbuda": "North America",
   "Bahamas": "North America",
   "Barbados": "North America",

@@ -66,6 +66,10 @@ async function Content({ searchParams }: { searchParams: PageProps<'/blog'>['sea
         </div>
       )}
       <Pager page={Math.min(page, pages)} pages={pages} href={(n) => pageHref(n, cat)} label="Blog pages" />
+      <p className="m-0 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-gold bg-surface px-5 py-4">
+        <span><strong>Write for Catholic My Pride.</strong> <span className="text-muted">We welcome articles and guest posts from Catholic writers in every country.</span></span>
+        <Link href="/write-for-us" className="rounded-md bg-accent px-4 py-2 font-semibold text-accent-ink no-underline">✍️ Submit your article</Link>
+      </p>
     </div>
   )
 }

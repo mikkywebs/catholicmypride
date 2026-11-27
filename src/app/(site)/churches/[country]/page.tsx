@@ -10,6 +10,7 @@ import { getChurches, getDioceses, getDirectoryRegions } from '@/lib/data'
 import { breadcrumbLd, continentPath, countryPath, diocesePath, dioceseTitle, dirSlug, isParish, parishItem, plural } from '@/lib/directory'
 import { SITE_URL } from '@/lib/format'
 import { CONTINENTS } from '@/lib/geo'
+import { DIRECTORY_FACTS } from '@/lib/directory-data'
 import { ContinentView } from '@/components/continent-view'
 
 async function load(slug: string) {
@@ -77,6 +78,7 @@ async function Content({ params, searchParams }: { params: PageProps<'/churches/
         <p className="eyebrow m-0">Catholic Parish Directory</p>
         <h1 className="m-0 font-serif text-[36px] font-semibold leading-tight sm:text-[46px]">Catholic Churches in {x.country}</h1>
         <p className="mx-auto m-0 max-w-2xl text-muted">{[...facts, x.parishes.some(isParish) ? `${plural(x.parishes.filter(isParish).length, 'parish', 'parishes')} listed here so far` : null].filter(Boolean).join(' · ')}</p>
+        {DIRECTORY_FACTS[x.country]?.note && <p className="mx-auto m-0 max-w-2xl text-[15px] text-muted">{DIRECTORY_FACTS[x.country].note}</p>}
       </div>
       {items.length > 0 && <ParishList items={items} placeholder={`Search parishes in ${x.country} by name, town or area`} />}
       <section className="flex flex-col gap-3">

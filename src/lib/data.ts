@@ -99,6 +99,17 @@ export async function getPostsPage(page: number, per: number, categorySlug?: str
   return { posts: (data as Post[]) ?? [], total: count ?? 0 }
 }
 
+/** The latest articles sent in by readers (shown on Write for Us). */
+export async function getContributorPosts(limit = 6): Promise<Post[]> {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('posts')
+  const db = publicClient()
+  if (!db) return []
+  const { data, error } = await db.from('posts').select('id, title, slug, excerpt, author, author_country, published_at').eq('is_contributor', true).order('published_at', { ascending: false }).limit(limit)
+  return error ? [] : ((data as Post[]) ?? [])
+}
+
 export async function getPosts(limit = 12, categorySlug?: string): Promise<Post[]> {
   'use cache'
   cacheLife('minutes')
