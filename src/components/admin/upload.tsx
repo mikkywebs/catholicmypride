@@ -2,6 +2,7 @@
 
 import { createBrowserClient } from '@supabase/ssr'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { deleteImage, type ImageUse } from '@/app/admin/actions'
 
 function browserClient() {
   return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
@@ -33,17 +34,44 @@ async function upload(blob: Blob, folder: string, ext: string) {
   return db.storage.from('media').getPublicUrl(path).data.publicUrl
 }
 
+/** Deletes an uploaded image for good, after showing where it is used and asking first. */
+function useDeleteImage() {
+  const [note, setNote] = useState<{ text: string; links?: ImageUse[] } | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const run = async (url: string) => {
+    setNote(null)
+    if (!url.includes('/storage/v1/object/public/media/images/')) { setNote({ text: 'This image is not one of your uploads, so it cannot be deleted here. Use Remove instead.' }); return false }
+    setDeleting(true)
+    try {
+      const check = await deleteImage(url, false)
+      if (!check.ok) { setNote({ text: check.message ?? 'Could not delete the image.', links: check.blocked }); return false }
+      const others = check.uses ?? []
+      const list = others.length ? `\n\nIt is used on:\n${others.map((u) => `• ${u.label}`).join('\n')}\n\nIt will be removed from ${others.length === 1 ? 'that item' : 'all of them'}.` : ''
+      if (!window.confirm(`Delete this image permanently? This cannot be undone.${list}`)) return false
+      const done = await deleteImage(url, true)
+      if (!done.ok) { setNote({ text: done.message ?? 'Could not delete the image.', links: done.blocked }); return false }
+      setNote({ text: 'Image deleted permanently.' })
+      return true
+    } catch { setNote({ text: 'Could not delete the image. Please try again.' }); return false } finally { setDeleting(false) }
+  }
+  const message = note ? (
+    <span role="status" className="text-sm text-muted">{note.text}{note.links?.length ? <> {note.links.map((l, i) => <span key={l.href}>{i ? ', ' : ''}<a href={l.href} target="_blank">{l.label}</a></span>)}</> : null}</span>
+  ) : null
+  return { run, deleting, message }
+}
+
 const btn = 'inline-flex min-h-10 items-center rounded-md border border-field bg-surface px-4 text-sm font-semibold text-ink'
 
 const FOLDER: Record<keyof typeof SIZES, string> = { '16:9': '16x9', '4:5': '4x5', '2:3': '2x3', square: 'square' }
 type LibImage = { url: string; name: string; created: string; sameShape: boolean | null }
 
 /** Images already uploaded, newest first. Same-shape images first; older uploads are checked when they load. */
-function MediaLibrary({ shape, onPick, onClose }: { shape: keyof typeof SIZES; onPick: (url: string) => void; onClose: () => void }) {
+function MediaLibrary({ shape, onPick, onClose, onDeleted }: { shape: keyof typeof SIZES; onPick: (url: string) => void; onClose: () => void; onDeleted?: (url: string) => void }) {
   const [items, setItems] = useState<LibImage[] | null>(null)
   const [err, setErr] = useState('')
   const [limit, setLimit] = useState(48)
   const [W, H] = SIZES[shape]
+  const del = useDeleteImage()
 
   const load = useCallback(async () => {
     const db = browserClient()
@@ -80,18 +108,22 @@ function MediaLibrary({ shape, onPick, onClose }: { shape: keyof typeof SIZES; o
           <h2 className="m-0 flex-1 text-xl">Choose an uploaded image</h2>
           <button type="button" onClick={onClose} className={btn}>Close</button>
         </div>
-        <p className="m-0 -mt-2 text-[13px] text-muted">Images already in the {shape} shape are shown first. Others will be cropped to fit.</p>
+        <p className="m-0 -mt-2 text-[13px] text-muted">Images already in the {shape} shape are shown first. Others will be cropped to fit. 🗑 deletes an image for good.</p>
+        {del.message}
         <div className="min-h-40 overflow-y-auto">
           {items === null && <p className="text-muted">Loading images…</p>}
           {err && <p role="alert" className="text-[#b42318]">{err}</p>}
           {items?.length === 0 && !err && <p className="text-muted">No images uploaded yet.</p>}
           <div className={`grid gap-3 ${cols}`}>
             {sorted.slice(0, limit).map((i) => (
-              <button key={i.url} type="button" onClick={() => onPick(i.url)} className="group relative overflow-hidden rounded-xl border border-line text-left focus-visible:outline-2 focus-visible:outline-accent">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={i.url} alt="" loading="lazy" onLoad={(e) => checkShape(i.url, e.currentTarget)} className={`w-full object-cover transition group-hover:opacity-85 ${aspect}`} />
-                {i.sameShape === false && <span className="absolute left-1.5 top-1.5 rounded bg-black/65 px-1.5 py-0.5 text-[11px] font-semibold text-white">Other shape</span>}
-              </button>
+              <div key={i.url} className="group relative">
+                <button type="button" onClick={() => onPick(i.url)} className="block w-full overflow-hidden rounded-xl border border-line text-left focus-visible:outline-2 focus-visible:outline-accent">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={i.url} alt="" loading="lazy" onLoad={(e) => checkShape(i.url, e.currentTarget)} className={`w-full object-cover transition group-hover:opacity-85 ${aspect}`} />
+                  {i.sameShape === false && <span className="absolute left-1.5 top-1.5 rounded bg-black/65 px-1.5 py-0.5 text-[11px] font-semibold text-white">Other shape</span>}
+                </button>
+                <button type="button" disabled={del.deleting} onClick={async () => { if (await del.run(i.url)) { setItems((x) => (x ? x.filter((y) => y.url !== i.url) : x)); onDeleted?.(i.url) } }} aria-label="Delete this image permanently" title="Delete permanently" className="absolute right-1.5 top-1.5 flex size-8 items-center justify-center rounded-full bg-black/65 text-[15px] text-white hover:bg-[#b42318]">🗑</button>
+              </div>
             ))}
           </div>
           {sorted.length > limit && <button type="button" onClick={() => setLimit((n) => n + 48)} className={`${btn} mt-4`}>Show more</button>}
@@ -106,6 +138,7 @@ export function ImageUpload({ name, label, shape, initial, altName, altInitial }
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
   const [library, setLibrary] = useState(false)
+  const del = useDeleteImage()
   const input = useRef<HTMLInputElement>(null)
   const aspect = shape === '16:9' ? 'aspect-video' : shape === '4:5' ? 'aspect-[4/5] max-w-[300px]' : shape === '2:3' ? 'aspect-[2/3] max-w-[240px]' : 'aspect-square max-w-[200px]'
   const pick = async (f: File | undefined) => {
@@ -132,11 +165,13 @@ export function ImageUpload({ name, label, shape, initial, altName, altInitial }
       <div className="flex flex-wrap gap-2">
         <button type="button" className={btn} onClick={() => setLibrary(true)} disabled={busy}>Choose from uploaded</button>
         <button type="button" className={btn} onClick={() => input.current?.click()} disabled={busy}>{busy ? 'Uploading…' : 'Upload new'}</button>
-        {url && <button type="button" className={btn} onClick={() => setUrl('')}>Remove</button>}
+        {url && <button type="button" className={btn} onClick={() => setUrl('')} title="Takes the image off this item only. The file stays in your uploads.">Remove</button>}
+        {url && <button type="button" className={`${btn} border-[#b42318] text-[#b42318]`} disabled={del.deleting} onClick={async () => { if (await del.run(url)) setUrl('') }}>{del.deleting ? 'Deleting…' : 'Delete permanently'}</button>}
         <input ref={input} type="file" accept="image/*" hidden onChange={(e) => pick(e.target.files?.[0])} />
       </div>
+      {del.message}
       {err && <span role="alert" className="text-sm text-[#b42318]">{err}</span>}
-      {library && <MediaLibrary shape={shape} onClose={() => setLibrary(false)} onPick={(u) => { setUrl(u); setLibrary(false) }} />}
+      {library && <MediaLibrary shape={shape} onClose={() => setLibrary(false)} onPick={(u) => { setUrl(u); setLibrary(false) }} onDeleted={(u) => { if (u === url) setUrl('') }} />}
       {altName && (
         <label className="flex flex-col gap-1.5 text-sm font-semibold">Image description (alt text)
           <input name={altName} defaultValue={altInitial ?? ''} placeholder="Describe what is in the picture" className="min-h-11 rounded-lg border border-field bg-surface px-3 font-normal text-ink" />

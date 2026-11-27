@@ -550,3 +550,46 @@ export async function declineParish(id: string) {
   await db.from('church_submissions').update({ status: 'declined' }).eq('id', id)
   redirect('/admin/parish-submissions')
 }
+
+// ---------------- Images: permanent delete ----------------
+export type ImageUse = { label: string; href: string }
+export type ImageDeleteResult = { ok: boolean; deleted?: boolean; uses?: ImageUse[]; blocked?: ImageUse[]; message?: string }
+
+const MEDIA_MARK = '/storage/v1/object/public/media/'
+
+/** Deletes an uploaded image from storage for good. First call (confirm=false) only reports where the image is used;
+ *  with confirm=true it is cleared from those items and the file is deleted. Images used in Settings or inside a
+ *  post's text are never deleted automatically (they would leave a broken picture): change those first. */
+export async function deleteImage(url: string, confirm = false): Promise<ImageDeleteResult> {
+  const { db } = await requireAdmin()
+  const at = url.indexOf(MEDIA_MARK)
+  const path = at >= 0 ? decodeURIComponent(url.slice(at + MEDIA_MARK.length).split('?')[0]) : ''
+  if (!path.startsWith('images/') || path.includes('..')) return { ok: false, message: 'Only uploaded images can be deleted here.' }
+
+  const uses: (ImageUse & { table: string; id: string; fields: string[]; tags: string[] })[] = []
+  for (const [key, t] of Object.entries(CONTENT_TYPES)) {
+    const fields = t.fields.filter((f) => f.type === 'image').map((f) => f.name)
+    if (!fields.length) continue
+    const { data } = await db.from(t.table).select(`id, ${t.titleField}, ${fields.join(', ')}`).or(fields.map((f) => `${f}.eq.${JSON.stringify(url)}`).join(','))
+    for (const r of (data ?? []) as unknown as Record<string, unknown>[]) {
+      uses.push({ table: t.table, id: String(r.id), fields: fields.filter((f) => r[f] === url), tags: t.tags, label: `${t.singular}: ${String(r[t.titleField] ?? '').slice(0, 80)}`, href: `/admin/${key}/${r.id}` })
+    }
+  }
+  const blocked: ImageUse[] = []
+  const { data: s } = await db.from('settings').select('*').eq('id', 1).maybeSingle()
+  if (s && JSON.stringify(s).includes(path)) blocked.push({ label: 'Settings (site images)', href: '/admin/settings' })
+  const { data: inText } = await db.from('posts').select('id, title').ilike('body_md', `%${path}%`)
+  for (const r of inText ?? []) blocked.push({ label: `Inside the text of blog post: ${r.title}`, href: `/admin/posts/${r.id}` })
+
+  if (blocked.length) return { ok: false, blocked, uses, message: 'This image is still used where it cannot be removed automatically. Change it there first.' }
+  if (!confirm) return { ok: true, uses }
+
+  for (const u of uses) {
+    const { error } = await db.from(u.table).update(Object.fromEntries(u.fields.map((f) => [f, null]))).eq('id', u.id)
+    if (error) return { ok: false, message: `Could not clear it from ${u.label}: ${error.message}` }
+  }
+  const { error } = await db.storage.from('media').remove([path])
+  if (error) return { ok: false, message: error.message }
+  refresh([...new Set(['content', ...uses.flatMap((u) => u.tags)])])
+  return { ok: true, deleted: true, uses }
+}
