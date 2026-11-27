@@ -29,6 +29,7 @@ export type CountryFacts = {
 export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   Nigeria: {
     continent: 'Africa',
+    cathedrals: { "Aba": "Christ the King Cathedral", "Abakaliki": "St. Theresa’s Cathedral", "Abeokuta": "Cathedral of Sts. Peter and Paul", "Abuja": "Our Lady Queen of Nigeria Pro-Cathedral", "Aguleri": "Cathedral of St. Joseph", "Ahiara": "Cathedral of Maria Mater Ecclesiae", "Auchi": "Immaculate Conception Cathedral", "Awgu": "Cathedral of St. Michael the Archangel", "Awka": "St. Patrick’s Cathedral", "Bauchi": "Cathedral of St. John Evangelist", "Benin City": "Holy Cross Cathedral", "Bomadi": "Our Lady of the Waters Cathedral", "Calabar": "Sacred Heart Cathedral", "Ekiti": "St. Patrick’s Cathedral", "Ekwulobia": "Cathedral of St. Joseph", "Enugu": "Holy Ghost Cathedral", "Gboko": "Cathedral of St. John the Baptist", "Idah": "Cathedral of St. Boniface", "Ijebu-Ode": "Cathedral of St. Sebastian", "Ikot Ekpene": "St. Anne’s Cathedral", "Ilorin": "St. Joseph’s Cathedral", "Issele-Uku": "St. Paul’s Cathedral", "Jalingo": "Cathedral of Our Lady Queen of Peace", "Jos": "Cathedral of Our Lady of Fatima", "Kaduna": "St. Joseph’s Cathedral", "Kafanchan": "St. Peter Claver’s Cathedral", "Kano": "Cathedral of Our Lady of Fatima", "Katsina": "Cathedral of St. Martin de Porres", "Katsina-Ala": "Cathedral of St. Gerard Majella", "Kontagora": "St. Michael’s Cathedral", "Lafia": "Cathedral of St. William", "Lagos": "Cathedral of the Holy Cross", "Lokoja": "Immaculate Conception Cathedral", "Maiduguri": "St. Patrick’s Cathedral", "Makurdi": "Our Lady of Perpetual Help Cathedral", "Minna": "St. Michael’s Cathedral", "Nnewi": "Cathedral of Our Lady of Assumption", "Nsukka": "St. Theresa’s Cathedral", "Ogoja": "St. Benedict’s Cathedral", "Okigwe": "St. Mary’s Cathedral", "Ondo": "Sacred Heart Cathedral", "Onitsha": "Cathedral Basilica of the Most Holy Trinity", "Orlu": "Holy Trinity Cathedral", "Osogbo": "St. Benedict’s Cathedral", "Otukpo": "St. Francis’ Cathedral", "Owerri": "Maria Assumpta Cathedral", "Oyo": "Our Lady of the Assumption Cathedral", "Pankshin": "Cathedral of the Holy Cross", "Port Harcourt": "Corpus Christi Cathedral", "Shendam": "Cathedral of the Sacred Heart of Jesus", "Sokoto": "Holy Family Cathedral", "Umuahia": "Mater Dei Cathedral", "Uromi": "Cathedral of St. Anthony of Padua", "Uyo": "Christ the King Cathedral", "Warri": "Sacred Heart Cathedral", "Wukari": "Cathedral of St. Mary", "Yola": "St. Theresa’s Cathedral", "Zaria": "Cathedral of Christ the King", "Ibadan": "Cathedral of St. Mary" },
     other: [{ name: 'Our Lady of the Annunciation at Ibadan (Maronite)', kind: 'Eparchy' }],
     asOf: '31 December 2023',
     source: 'GCatholic.org',
@@ -47,6 +48,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   Ghana: {
     continent: 'Africa',
+    cathedrals: { "Accra": "Holy Spirit Cathedral", "Cape Coast": "St. Francis de Sales Cathedral", "Damongo": "St. Anne’s Cathedral", "Donkorkrom": "Cathedral of St. Francis Xavier", "Goaso": "Cathedral of St. Anthony of Padua", "Ho": "Sacred Heart Cathedral", "Jasikan": "Cathedral of St. Peter Claver", "Keta-Akatsi": "Christ the King Cathedral", "Koforidua": "St. George’s Cathedral", "Konongo-Mampong": "St. Paul Cathedral", "Kumasi": "St. Peter’s Cathedral Basilica", "Navrongo-Bolgatanga": "Cathedral Basilica of Our Lady of Seven Sorrows", "Obuasi": "St. Thomas Cathedral", "Sekondi-Takoradi": "Our Lady Star of the Sea Cathedral", "Sunyani": "Christ the King Cathedral", "Tamale": "Our Lady of Annunciation Cathedral", "Techiman": "Cathedral of St. Paul", "Wa": "St. Andrew’s Cathedral", "Wiawso": "Cathedral of St. Joseph", "Yendi": "Cathedral of Our Lady of Lourdes" },
     asOf: '31 December 2023',
     source: 'GCatholic.org',
     totals: { total_provinces: 4, total_dioceses: 20, total_parishes: 798, total_priests: 2053, catholic_population: 4377000 },
@@ -59,6 +61,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   Kenya: {
     continent: 'Africa',
+    cathedrals: { "Bungoma": "Cathedral of Christ the King", "Eldoret": "Cathedral of the Sacred Heart of Jesus", "Embu": "Sts. Peter and Paul Cathedral", "Garissa": "Our Lady of Consolation Cathedral", "Homa Bay": "Most Holy Trinity Cathedral", "Isiolo": "St. Eusebius Cathedral", "Kakamega": "Cathedral of St. Joseph", "Kapsabet": "Cathedral of St. Peter", "Kericho": "Cathedral of the Sacred Heart of Jesus", "Kisii": "Cathedral of St. Charles Lwanga", "Kisumu": "St. Theresa’s Cathedral", "Kitale": "Cathedral of the Immaculate Heart", "Kitui": "Cathedral of Our Lady of Africa", "Lodwar": "Cathedral of St. Augustine", "Machakos": "Cathedral of Our Lady of Lourdes", "Malindi": "Cathedral of St. Anthony", "Maralal": "Cathedral of Sts. Peter and Paul", "Marsabit": "Cathedral of Our Lady of Consolata", "Meru": "St. Joseph Cathedral", "Mombasa": "Holy Ghost Cathedral", "Murang'a": "Cathedral of the Sacred Heart of Jesus", "Nairobi": "Cathedral Basilica of the Holy Family", "Nakuru": "Christ the King Cathedral", "Ngong": "Cathedral of St. Joseph", "Nyahururu": "Cathedral of Mary Immaculate", "Nyeri": "Our Lady of Consolata Cathedral", "Wote": "Cathedral of St. Joseph the Worker" },
     other: [{ name: 'Military Ordinariate of Kenya', kind: 'Military Ordinariate' }],
     asOf: '31 December 2023',
     source: 'GCatholic.org',
@@ -73,6 +76,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   Uganda: {
     continent: 'Africa',
+    cathedrals: { "Arua": "Cathedral of the Sacred Heart of Jesus", "Fort Portal": "Virika Cathedral of Our Lady of Snows", "Gulu": "St. Joseph’s Cathedral", "Hoima": "Cathedral of Our Lady of Lourdes", "Jinja": "Cathedral of St. Joseph", "Kabale": "Our Lady of Good Shepherd Cathedral", "Kampala": "St. Mary’s Cathedral (Rubaga Cathedral)", "Kasana-Luweero": "Our Lady Queen of Peace Cathedral", "Kasese": "Our Lady Mary of Assumption Cathedral", "Kiyinda-Mityana": "St. Noa Mawaggali Cathedral", "Kotido": "Good Shepherd Cathedral", "Lira": "Cathedral of the Holy Martyrs of Uganda", "Lugazi": "Our Lady Queen of Peace Cathedral", "Masaka": "Our Lady of Sorrows Cathedral", "Mbarara": "Our Lady of Perpetual Help Cathedral", "Moroto": "Regina Mundi Cathedral", "Nebbi": "Immaculate Heart of Mary Cathedral", "Soroti": "Immaculate Conception Cathedral", "Tororo": "Cathedral of the Uganda Martyrs" },
     other: [{ name: 'Military Ordinariate of Uganda', kind: 'Military Ordinariate' }],
     asOf: '31 December 2023',
     source: 'GCatholic.org',
@@ -86,6 +90,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   Cameroon: {
     continent: 'Africa',
+    cathedrals: { "Bafang": "Cathédrale du Cœur-Immaculé de Marie", "Bafia": "Cathédrale Saint-Sébastien", "Bafoussam": "Cathédrale Saint-Joseph", "Bamenda": "Cathédrale Saint-Joseph", "Batouri": "Cathédrale Notre-Dame de l'Immaculée Conception", "Bertoua": "Cathédrale de la Sainte-Famille", "Buéa": "Cathédrale Regina Pacis", "Douala": "Cathédrale Saint-Pierre et Saint-Paul", "Doumé-Abong' Mbang": "Cathédrale du Sacré-Cœur de Jésus", "Ebolowa": "Cathédrale Sainte-Anne et Saint-Joachim", "Edéa": "Cathédrale Sacré-Cœur", "Eséka": "Cathédrale Notre Dame de Fatima", "Garoua": "Cathédrale Sainte-Thérèse", "Kribi": "Cathédrale Saint-Joseph", "Kumba": "Cathédrale Sacré-Cœur", "Kumbo": "Cathédrale Sainte-Thérèse", "Mamfe": "Cathédrale Saint-Joseph", "Maroua-Mokolo": "Cathédrale Notre-Dame de l'Assomption", "Mbalmayo": "Cathédrale Saint-Rosaire", "Ngaoundéré": "Cathédrale Notre-Dame des Apôtres", "Nkongsamba": "Cathédrale de l'Immaculée Conception", "Obala": "Cathédrale Notre-Dame du Mont Carmel", "Sangmélima": "Cathédrale Notre-Dame", "Yagoua": "Cathédrale Sainte-Anne", "Yaoundé": "Cathédrale Notre-Dame des Victoires", "Yokadouma": "Cathédrale Marie Reine de la Paix" },
     asOf: '31 December 2023',
     source: 'GCatholic.org',
     totals: { total_provinces: 5, total_dioceses: 26, total_parishes: 1368, total_priests: 3179, catholic_population: 8110000 },
@@ -99,6 +104,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   'South Africa': {
     continent: 'Africa',
+    cathedrals: { "Aliwal": "Sacred Heart Cathedral", "Bethlehem": "Cathedral of the Holy Ghost", "Bloemfontein": "Sacred Heart Cathedral", "Cape Town": "Cathedral of St. Mary of the Flight into Egypt", "De Aar": "Cathedral of St. Mary", "Dundee": "Cathedral of the Holy Rosary", "Durban": "Emmanuel Cathedral", "Eshowe": "Cathedral of St. Benedict", "Ingwavuma": "Cathedral of the Good Shepherd and Our Lady of Sorrows", "Johannesburg": "Cathedral of Christ the King", "Keimoes-Upington": "Cathedral of the Immaculate Conception", "Kimberley": "St. Mary’s Cathedral", "Klerksdorp": "Cathedral of Christ the Redeemer", "Kokstad": "St. Patrick’s Cathedral", "Kroonstad": "St. Patrick’s Cathedral", "Mariannhill": "St. Joseph’s Cathedral", "Mthatha": "Cathedral of All Saints", "Oudtshoorn": "St. Saviour’s Cathedral", "Polokwane": "Cathedral of the Sacred Heart", "Port Elizabeth": "Cathedral of St. Augustine", "Pretoria": "Sacred Heart Cathedral", "Queenstown": "Cathedral of Christ the King", "Rustenburg": "Cathedral of the Most Holy Redeemer", "Tzaneen": "Cathedral of the Most Holy Trinity", "Umzimkulu": "Cathedral of Our Lady of Lourdes", "Witbank": "Christ the King Cathedral" },
     // Manzini (Eswatini), Gaborone and Francistown (Botswana) belong to these provinces but lie outside South Africa.
     other: [
       { name: 'Ingwavuma', kind: 'Apostolic Vicariate' },
@@ -117,6 +123,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   Tanzania: {
     continent: 'Africa',
+    cathedrals: { "Arusha": "St. Theresa’s Metropolitan Cathedral", "Bagamoyo": "Cathedral of the Immaculate Heart of Mary", "Bariadi": "Pro-Cathedral of St. John the Evangelist", "Bukoba": "Mater Misericordiae Cathedral", "Bunda": "Cathedral of St. Paul", "Dar-es-Salaam": "Metropolitan Cathedral of St. Joseph", "Dodoma": "St. Paul of the Cross Cathedral", "Geita": "Cathedral of Mary Queen of Peace", "Ifakara": "Cathedral of St. Patrick", "Iringa": "Kihesa Cathedral of the Sacred Heart", "Kahama": "Cathedral of St. Charles Lwanga", "Kayanga": "Cathedral of St. George", "Kigoma": "Cathedral of Our Lady of Victory", "Kondoa": "Cathedral of the Holy Spirit", "Lindi": "Cathedral of St. Andrew Kaggwa", "Mafinga": "Cathedral of the Assumption of the Blessed Virgin Mary", "Mahenge": "Cathedral of Christ the King", "Mbeya": "Christ the King Cathedral", "Mbinga": "St. Kilian Cathedral", "Mbulu": "Sanu Cathedral", "Morogoro": "Cathedral of St. Patrick", "Moshi": "Cathedral of Christ the King", "Mpanda": "Cathedral of the Immaculate Conception", "Mtwara": "Cathedral of All Saints", "Musoma": "Cathedral of Holy Mary Mother of God", "Mwanza": "Metropolitan Cathedral of the Epiphany", "Njombe": "Cathedral of St. Joseph", "Rulenge-Ngara": "Pro-Cathedral of Christ the King", "Same": "Cathedral of Christ the King", "Shinyanga": "Cathedral of Mater Misericordiae", "Singida": "Cathedral of the Holy Ghost", "Songea": "St. Mathias Mulumba Kalemba Metropolitan Cathedral", "Sumbawanga": "Cathedral of the Magi", "Tabora": "St. Therese of the Child Jesus Metropolitan Cathedral", "Tanga": "Cathedral of St. Anthony", "Tunduru-Masasi": "Cathedral of St. Francis Xavier", "Zanzibar": "St. Joseph’s Cathedral" },
     asOf: '31 December 2023',
     source: 'GCatholic.org',
     totals: { total_provinces: 7, total_dioceses: 38, total_parishes: 1416, total_priests: 3372, catholic_population: 19212000 },
@@ -2409,6 +2416,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Democratic Republic of the Congo": {
     continent: "Africa",
+    cathedrals: { "Basankusu": "Cathédrale Saints-Pierre-et-Paul", "Bokungu–Ikela": "Cathédrale Marie Reine d’Afrique", "Boma": "Cathédrale Notre-Dame de l’Assomption", "Bondo": "Cathédrale Sainte-Croix", "Budjala": "Cathédrale Notre-Dame", "Bukavu": "Cathédrale Notre-Dame de la Paix", "Bunia": "Cathédrale Notre-Dame des Grâces", "Buta": "Cathédrale Saint-Joseph", "Butembo–Beni": "Cathédrale Mater Ecclesiae", "Dungu–Doruma": "Cathédrale Saints Martyrs de l’Ouganda", "Goma": "Cathédrale Saint-Joseph", "Idiofa": "Cathédrale Saint-Kizito", "Inongo": "Cathédrale Saint-Albert", "Isangi": "Cathédrale Marie Médiatrice", "Isiro–Niangara": "Cathédrale Sainte-Thérèse de l’Enfant-Jésus", "Kabinda": "Cathédrale Saint-Martin", "Kalemie–Kirungu": "Cathédrale Saint-Joseph", "Kamina": "Cathédrale Sainte-Thérèse de l’Enfant-Jésus", "Kananga": "Cathédrale Saint Joseph Mikalayi", "Kasongo": "Cathédrale Saint-Charles-Borromée", "Kenge": "Cathédrale Bienheureuse Anwarite", "Kikwit": "Cathédrale Saint-François Xavier", "Kilwa–Kasenga": "Cathédrale Saint-André", "Kindu": "Cathédrale Saint-Esprit", "Kinshasa": "Cathédrale Notre-Dame du Congo", "Kisangani": "Cathédrale Notre-Dame du Rosaire", "Kisantu": "Cathédrale Notre-Dame des Sept Douleurs", "Kole": "Cathédrale Regina Pacis", "Kolwezi": "Cathédrale Sainte-Barbe et Saint-Eloi", "Kongolo": "Cathédrale Sacré-Cœur-de-Marie", "Lisala": "Cathédrale Saint-Hermès", "Lolo": "Cathédrale Saint Jean-Baptiste", "Lubumbashi": "Cathédrale Saints-Pierre-et-Paul", "Luebo": "Cathédrale Saint-Jean-Baptiste", "Luiza": "Cathédrale Saint-Vincent", "Mahagi–Nioka": "Cathédrale Notre-Dame de Lourdes", "Manono": "Cathédrale Sainte-Barbe", "Matadi": "Cathédrale Notre-Dame Médiatrice de toutes les Grâces", "Mbandaka–Bikoro": "Cathédrale Saint-Eugène", "Mbujimayi": "Cathédrale Saint-Jean-Baptiste de Bonzola", "Molegbe": "Cathédrale Saint-Antoine-de-Padoue", "Mweka": "Cathédrale Saint-Martin", "Popokabaka": "Cathédrale Sainte-Famille", "Sakania–Kipushi": "Cathédrale Sacré-Cœur", "Tshilomba": "Cathédrale Saint-Jacques", "Tshumbe": "Cathédrale Sainte-Marie", "Uvira": "Cathédrale Saint-Paul", "Wamba": "Cathédrale Saint-Joseph" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 48, total_provinces: 6 },
@@ -2423,6 +2431,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Angola": {
     continent: "Africa",
+    cathedrals: { "Benguela": "Sé Catedral de Nossa Senhora de Fátima", "Cabinda": "Sé Catedral de Nossa Senhora Rainha do Mundo", "Caxito": "Sé Catedral de Sant’Ana", "Dundo": "Sé Catedral de Nossa Senhora da Conceiçao", "Ganda": "Sé Catedral de São João Batista", "Huambo": "Sé Catedral de Nossa Senhora da Conceição", "Kwito-Bié": "Sé Catedral de São Lourenço", "Luanda": "Sé Catedral de São Salvador", "Lubango": "Sé Catedral de São José", "Luena": "Sé Catedral de Nossa Senhora da Assunção", "Malanje": "Sé Catedral de Nossa Senhora da Assunção", "Mbanza Congo": "Sé Catedral de Nossa Senhora da Conceição", "Menongue": "Sé Catedral de Nossa Senhora de Fátima", "Namibe": "Sé Catedral de São Pedro", "Ndalatando": "Sé Catedral de São João Baptista", "Ondjiva": "Sé Catedral de Nossa Senhora das Vitórias", "Saurimo": "Sé Catedral de Nossa Senhora da Assunção", "Sumbe": "Sé Catedral de Nossa Senhora da Conceição", "Uíje": "Sé Catedral de Nossa Senhora da Conceição", "Viana": "Sé Catedral de São Francisco de Assis" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 20, total_provinces: 5 },
@@ -2436,6 +2445,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Madagascar": {
     continent: "Africa",
+    cathedrals: { "Ambanja": "Cathédrale Saint-Joseph", "Ambatondrazaka": "Cathédrale de la Très Sainte Trinité", "Ambositra": "Cathédrale du Cœur-Immaculé de Marie", "Antananarivo": "Cathédrale de l’Immaculée Conception", "Antsirabé": "Cathédrale Notre-Dame-de-la-Salette", "Antsiranana": "Cathédrale Sacré-Cœur de Jésus", "Farafangana": "Cathédrale du Sacré-Cœur de Jésus", "Fenoarivo Atsinanana": "Cathédrale Saint-Maurice", "Fianarantsoa": "Cathédrale du Saint-Nom de Jésus", "Ihosy": "Cathédrale Saint-Vincent de Paul", "Mahajanga": "Cathédrale du Cœur-Immaculé de Marie", "Maintirano": "Cathédrale de l’Assomption", "Mananjary": "Cathédrale Saint-Augustin", "Miarinarivo": "Cathédrale Kristy Mpanjaka", "Moramanga": "Cathédrale du Sacré-Cœur de Jésus", "Morombe": "Cathédrale du Sacré-Cœur de Jésus", "Morondava": "Cathédrale Maria Manjaka Namahora", "Port-Bergé": "Cathédrale Notre-Dame-de-l’Assomption", "Toamasina": "Cathédrale Saint-Joseph", "Tôlagnaro": "Cathédrale Saint-Vincent-de-Paul", "Toliara": "Cathédrale Saint-Vincent de Paul", "Tsiroanomandidy": "Cathédrale Notre-Dame du Bon Remède" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 22, total_provinces: 5 },
@@ -2449,6 +2459,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Mozambique": {
     continent: "Africa",
+    cathedrals: { "Alto Molócuè": "Catedral Nossa Senhora Rainha do Mundo", "Beira": "Catedral Metropolitana de Nossa Senhora do Rosário", "Caia": "Catedral São Mateus Apostólo", "Chimoio": "Catedral de Maria Imaculada", "Gurúè": "Catedral de Santo António de Lisboa", "Inhambane": "Catedral da Nossa Senhora da Conceição", "Lichinga": "Catedral de São José", "Maputo": "Catedral Metropolitana de Nossa Senhora da Conceição", "Nacala": "Catedral de Nossa Senhora da Boa Viagem", "Nampula": "Catedral Metropolitana de Nossa Senhora de Fátima", "Pemba": "Catedral de São Paulo", "Quelimane": "Catedral de Nossa Senhora do Livramento", "Tete": "Catedral de São Tiago Maior", "Xai-Xai": "Catedral São João Baptista" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 14, total_provinces: 3 },
@@ -2460,6 +2471,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Ethiopia": {
     continent: "Africa",
+    cathedrals: { "Metropolitanate of Addis Abeba (Ethiopic)": "Cathedral of the Nativity of the Blessed Virgin Mary", "Eparchy of Adigrat (Ethiopic)": "Cathedral of the Holy Saviour", "Awasa": "Cathedral of Kidane Mehret", "Eparchy of Bahir Dar–Dessie (Ethiopic)": "Cathedral of Egziabher Ab", "Eparchy of Emdeber (Ethiopic)": "St. Anthony Cathedral", "Gambella": "St. Joseph Cathedral", "Harar": "Pro-Cathedral of the Holy Name of Mary", "Hosanna": "St. Joseph Cathedral", "Jimma–Bonga": "Pro-Cathedral Lideta Mariam", "Meki": "Kidane Miheret Cathedral", "Nekemte": "Cathedral of Kidane Mehret", "Robe": "Cathedral of Emmanuel", "Soddo": "Cathedral of the Holy Trinity" },
     note: "The Ethiopian Catholic Church (Ethiopic rite) forms one province. Latin Catholics in the south belong to apostolic vicariates and one prefecture that depend directly on the Holy See.",
     other: [{ name: "Awasa", kind: "Apostolic Vicariate" }, { name: "Gambella", kind: "Apostolic Vicariate" }, { name: "Harar", kind: "Apostolic Vicariate" }, { name: "Hosanna", kind: "Apostolic Vicariate" }, { name: "Jimma–Bonga", kind: "Apostolic Vicariate" }, { name: "Meki", kind: "Apostolic Vicariate" }, { name: "Nekemte", kind: "Apostolic Vicariate" }, { name: "Soddo", kind: "Apostolic Vicariate" }, { name: "Robe", kind: "Prefecture" }],
     kinds: { "Metropolitanate of Addis Abeba (Ethiopic)": "Archdiocese", "Eparchy of Adigrat (Ethiopic)": "Eparchy", "Eparchy of Bahir Dar–Dessie (Ethiopic)": "Eparchy", "Eparchy of Emdeber (Ethiopic)": "Eparchy" },
@@ -2472,6 +2484,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Egypt": {
     continent: "Africa",
+    cathedrals: { "Eparchy of Abu Qurqas (Coptic)": "Cathédrale Saint-Antoine et Saint-Paul", "Eparchy of Al Qusia (Coptic)": "Cathédrale du Sacré-Cœur", "Eparchy of Alexandria (Coptic)": "Cathédrale Notre-Dame d’Egypte", "Alexandria of Egypt": "Cathédrale Sainte-Catherine", "Eparchy of Assiut (Coptic)": "Cathédrale Mère du Divin Amour", "Eparchy of Cairo (Maronite)": "Cathédrale maronite de Saint-Joseph", "Eparchy of Cairo (Syriac)": "Cathédrale syrienne catholique du Rosaire", "Eparchy of Guizeh (Coptic)": "Cathédrale Saint-Georges", "Eparchy of Iskanderiya (Armenian)": "Cathédrale de l’Annonciation", "Eparchy of Ismayliah (Coptic)": "Cathédrale Saint-Marc", "Eparchy of Luqsor (Coptic)": "Cathédrale Saint-Michel", "Eparchy of Minya (Coptic)": "Cathédrale Christ-Roi", "Eparchy of Sohag (Coptic)": "Cathédrale Christ-Roi" },
     note: "Egypt is the home of the Coptic Catholic patriarch, who resides in Cairo. Latin Catholics belong to the Apostolic Vicariate of Alexandria of Egypt. The Melkite patriarchal territory of Egypt and Sudan is not yet a type in this directory.",
     other: [{ name: "Alexandria of Egypt", kind: "Apostolic Vicariate" }, { name: "Eparchy of Cairo (Chaldean)", kind: "Eparchy" }, { name: "Eparchy of Cairo (Maronite)", kind: "Eparchy" }, { name: "Eparchy of Cairo (Syriac)", kind: "Eparchy" }],
     kinds: { "Coptic Patriarchate of Alexandria": "Patriarchate", "Eparchy of Alexandria (Coptic)": "Eparchy", "Eparchy of Abu Qurqas (Coptic)": "Eparchy", "Eparchy of Al Qusia (Coptic)": "Eparchy", "Eparchy of Assiut (Coptic)": "Eparchy", "Eparchy of Guizeh (Coptic)": "Eparchy", "Eparchy of Ismayliah (Coptic)": "Eparchy", "Eparchy of Luqsor (Coptic)": "Eparchy", "Eparchy of Minya (Coptic)": "Eparchy", "Eparchy of Sohag (Coptic)": "Eparchy", "Eparchy of Iskanderiya (Armenian)": "Eparchy" },
@@ -2485,6 +2498,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Congo": {
     continent: "Africa",
+    cathedrals: { "Brazzaville": "Cathédrale Sacré-Cœur", "Dolisie": "Cathédrale Saint-Paul", "Gamboma": "Cathédrale Saint-Pie-X", "Impfondo": "Cathédrale Saint-Paul", "Kinkala": "Cathédrale Sainte-Monique", "Nkayi": "Cathédrale Saint-Louis", "Ouesso": "Cathédrale Saint-Pierre Claver", "Owando": "Cathédrale Christ-Roi", "Pointe-Noire": "Cathédrale Saint-Pierre-Apôtre" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 9, total_provinces: 3 },
@@ -2496,6 +2510,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Burkina Faso": {
     continent: "Africa",
+    cathedrals: { "Banfora": "Cathédrale Saint-Pierre", "Bobo-Dioulasso": "Cathédrale Notre Dame de Lourdes", "Dédougou": "Cathédrale Sainte-Anne", "Diébougou": "Cathédrale Saint-Pierre et Saint-Paul", "Dori": "Cathédrale Sainte-Anne", "Fada N'Gourma": "Cathédrale Saint-Joseph", "Gaoua": "Cathédrale Sacré-Cœur", "Kaya": "Cathédrale Notre-Dame de Kaya", "Koudougou": "Cathédrale Saint-Augustin", "Koupéla": "Cathédrale Notre-Dame des Grâces", "Manga": "Cathédrale Notre-Dame de l’Assomption", "Nouna": "Cathédrale Notre-Dame du Perpétuel Sécours", "Ouagadougou": "Cathédrale de l’Immaculée Conception", "Ouahigouya": "Cathédrale Notre-Dame de la Délivrance", "Tenkodogo": "Cathedral of Maria Regina" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 15, total_provinces: 3 },
@@ -2507,6 +2522,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Côte d'Ivoire": {
     continent: "Africa",
+    cathedrals: { "Abengourou": "Cathédrale Sainte-Thérèse de l’Enfant-Jésus", "Abidjan": "Cathédrale Saint-Paul du Plateau", "Agboville": "Cathédrale Sainte-Jean-Marie-Vianney", "Bondoukou": "Cathédrale Sainte-Odile", "Bouaké": "Cathédrale Sainte-Thérèse", "Daloa": "Cathédrale du Christ-Roi", "Gagnoa": "Cathédrale Sainte-Anne", "Grand-Bassam": "Cathédrale Sacré-Cœur", "Katiola": "Cathédrale Sainte-Jeanne-d’Arc", "Korhogo": "Cathédrale Saint-Jean-Baptiste", "Man": "Cathédrale Saint-Michel", "Odienné": "Cathédrale Saint-Augustin", "San Pedro": "Cathédrale Saint-Pierre", "Yamoussoukro": "Cathédrale Saint-Augustin", "Yopougon": "Cathédrale Saint-André" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 15, total_provinces: 4 },
@@ -2519,6 +2535,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Benin": {
     continent: "Africa",
+    cathedrals: { "Abomey": "Cathédrale Saints-Pierre-et-Paul", "Cotonou": "Cathédrale Notre-Dame-de-Miséricorde", "Dassa-Zoumé": "Cathédrale Notre-Dame de Fourvière", "Djougou": "Cathédrale du Sacré-Cœur", "Kandi": "Cathédrale Notre-Dame-du-Mont-Carmel", "Lokossa": "Cathédrale Saint-Pierre-Claver", "N'Dali": "Cathédrale Saint-Marc-l’Evangéliste", "Natitingou": "Cathédrale de l’Immaculée Conception", "Parakou": "Cathédrale Saints Pierre et Paul", "Porto Novo": "Cathédrale Notre-Dame de l’Immaculée Conception" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 10, total_provinces: 2 },
@@ -2529,6 +2546,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Togo": {
     continent: "Africa",
+    cathedrals: { "Aného": "Cathédrale Saints Pierre et Paul", "Atakpamé": "Cathédrale Notre-Dame de la Trinité", "Dapaong": "Cathédrale Saint Charles Lwanga", "Kara": "Cathédrale Saints Pierre et Paul", "Kpalimé": "Cathédrale Saint-Esprit", "Lomé": "Cathédrale du Sacré Cœur", "Sokodé": "Cathédrale Sainte-Thérèse de l’Enfant-Jésus" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 7, total_provinces: 1 },
@@ -2538,6 +2556,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Senegal": {
     continent: "Africa",
+    cathedrals: { "Dakar": "Cathédrale Notre-Dame des Victoires", "Kaolack": "Cathédrale Saint-Théophile", "Kolda": "Cathédrale Notre-Dame des Victoires", "Saint-Louis du Sénégal": "Cathédrale Saint-Louis", "Tambacounda": "Cathédrale Marie Reine de l’Univers", "Thiès": "Cathédrale Sainte-Anne", "Ziguinchor": "Cathédrale Saint-Antoine de Padoue" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 7, total_provinces: 1 },
@@ -2547,6 +2566,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Mali": {
     continent: "Africa",
+    cathedrals: { "Bamako": "Cathédrale du Sacré-Cœur de Jésus", "Kayes": "Cathédrale de l’Immaculée Conception", "Mopti": "Cathédrale Saint-Joseph", "San": "Cathédrale Notre-Dame de Lourdes", "Ségou": "Cathédrale de l’Immaculée Conception", "Sikasso": "Cathédrale Notre-Dame de Lourdes" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 6, total_provinces: 1 },
@@ -2556,6 +2576,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Niger": {
     continent: "Africa",
+    cathedrals: { "Maradi": "Cathédrale Notre-Dame de Lourdes", "Niamey": "Cathédrale Notre-Dame du Perpétuel Secours" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 2, total_provinces: 1 },
@@ -2565,6 +2586,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Guinea": {
     continent: "Africa",
+    cathedrals: { "Boké": "Cathédrale du Sacré-Cœur de Jésus", "Conakry": "Cathédrale Sainte-Marie", "Guéckédou": "Cathédrale Notre-Dame du Rosaire", "Kankan": "Cathédrale Notre-Dame des Victoires et de la Paix", "N'Zérékoré": "Cathédrale du Cœur-Immaculé de Marie" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 5, total_provinces: 1 },
@@ -2574,6 +2596,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Sierra Leone": {
     continent: "Africa",
+    cathedrals: { "Bo": "Cathedral of the Immaculate Heart of Mary", "Freetown": "Sacred Heart Cathedral", "Kenema": "St. Paul’s Cathedral", "Makeni": "Our Lady of Fatima Cathedral" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 4, total_provinces: 1 },
@@ -2583,6 +2606,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Gambia": {
     continent: "Africa",
+    cathedrals: { "Banjul": "Cathedral of Our Lady of the Assumption" },
     note: "The Diocese of Banjul covers the whole country and depends directly on the Holy See.",
     other: [{ name: "Banjul", kind: "Diocese" }],
     asOf: '27 November 2026',
@@ -2593,6 +2617,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Liberia": {
     continent: "Africa",
+    cathedrals: { "Cape Palmas": "Cathedral of St. Therese of the Child Jesus", "Gbarnga": "Cathedral of the Holy Spirit", "Monrovia": "Sacred Heart Cathedral" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 3, total_provinces: 1 },
@@ -2602,6 +2627,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Chad": {
     continent: "Africa",
+    cathedrals: { "Doba": "Cathédrale Sainte-Thérèse", "Goré": "Cathédrale Sainte-Marie-des-Anges", "Koumra": "Cathédrale Sainte-Thérèse", "Laï": "Cathédrale de la Sainte-Famille", "Mongo": "Cathédrale Saint-Ignace", "Moundou": "Cathédrale du Sacré-Cœur", "N'Djaména": "Cathédrale Notre-Dame de la Paix", "Pala": "Cathédrale Saint-Pierre et Saint-Paul", "Sarh": "Cathédrale Notre-Dame de l’Immaculée Conception" },
     other: [{ name: "Mongo", kind: "Apostolic Vicariate" }],
     asOf: '27 November 2026',
     source: 'GCatholic.org',
@@ -2612,6 +2638,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Central African Republic": {
     continent: "Africa",
+    cathedrals: { "Alindao": "Cathédrale Sacré-Cœur", "Bambari": "Cathédrale Saint-Joseph", "Bangassou": "Cathédrale Saint-Pierre-Claver", "Bangui": "Cathédrale Notre-Dame de l’Immaculée Conception", "Berbérati": "Cathédrale du Sacré-Cœur", "Bossangoa": "Cathédrale Saint-Antoine de Padoue", "Bouar": "Cathédrale Marie Mère de l’Église", "Kaga-Bandoro": "Cathédrale Sainte-Thérèse de l’Enfant-Jésus", "Mbaïki": "Cathédrale Sainte-Jeanne-d’Arc" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 9, total_provinces: 2 },
@@ -2622,6 +2649,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Gabon": {
     continent: "Africa",
+    cathedrals: { "Franceville": "Cathédrale Saint-Hilaire", "Libreville": "Cathédrale Notre Dame de l’Assomption", "Makokou": "Cathédrale Notre-Dame des Victoires", "Mouila": "Cathédrale Saint-Jean-l’Apôtre", "Oyem": "Cathédrale Saint-Charles-Lwanga", "Port-Gentil": "Cathédrale Saint-Louis" },
     other: [{ name: "Makokou", kind: "Apostolic Vicariate" }],
     asOf: '27 November 2026',
     source: 'GCatholic.org',
@@ -2632,6 +2660,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Equatorial Guinea": {
     continent: "Africa",
+    cathedrals: { "Bata": "Catedral Santiago y Nuestra Señora del Pilar", "Ebebiyín": "Catedral Santa Isabel", "Evinayong": "Catedral de San José", "Malabo": "Catedral de Santa Isabel", "Mongomo": "Catedral Basílica de la Inmaculada Concepción" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 5, total_provinces: 1 },
@@ -2641,6 +2670,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Guinea-Bissau": {
     continent: "Africa",
+    cathedrals: { "Bafatá": "Sé Catedral de Nossa Senhora da Graça", "Bissau": "Sé Catedral de Nossa Senhora da Candelária" },
     note: "Both dioceses depends directly on the Holy See.",
     other: [{ name: "Bafatá", kind: "Diocese" }, { name: "Bissau", kind: "Diocese" }],
     asOf: '27 November 2026',
@@ -2651,6 +2681,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Cabo Verde": {
     continent: "Africa",
+    cathedrals: { "Mindelo": "Catedral Nossa Senhora da Luz", "Santiago de Cabo Verde": "Pró-catedral Nossa Senhora da Graça" },
     note: "Both dioceses depends directly on the Holy See.",
     other: [{ name: "Mindelo", kind: "Diocese" }, { name: "Santiago de Cabo Verde", kind: "Diocese" }],
     asOf: '27 November 2026',
@@ -2661,6 +2692,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Mauritania": {
     continent: "Africa",
+    cathedrals: { "Nouakchott": "Cathédrale Saint-Joseph" },
     note: "The Diocese of Nouakchott covers the whole country and depends directly on the Holy See.",
     other: [{ name: "Nouakchott", kind: "Diocese" }],
     asOf: '27 November 2026',
@@ -2671,6 +2703,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "São Tomé and Príncipe": {
     continent: "Africa",
+    cathedrals: { "São Tomé e Príncipe": "Sé Catedral de Nossa Senhora da Graça" },
     note: "One diocese covers the whole country and depends directly on the Holy See.",
     other: [{ name: "São Tomé e Príncipe", kind: "Diocese" }],
     asOf: '27 November 2026',
@@ -2681,6 +2714,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Zambia": {
     continent: "Africa",
+    cathedrals: { "Chipata": "Cathedral of St. Anne", "Kabwe": "Cathedral of the Sacred Heart", "Kasama": "Cathedral of St. John the Apostle", "Livingstone": "Cathedral of St. Theresa", "Lusaka": "Cathedral of the Child Jesus", "Mansa": "Cathedral of the Assumption of Our Lady", "Mongu": "Cathedral of Our Lady of Lourdes", "Monze": "Cathedral of the Sacred Heart of Jesus", "Mpika": "Cathedral of St. Joseph the Worker", "Ndola": "Cathedral of Christ the King", "Solwezi": "Cathedral of St. Daniel" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 11, total_provinces: 3 },
@@ -2692,6 +2726,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Malawi": {
     continent: "Africa",
+    cathedrals: { "Blantyre": "Limbe Cathedral of Our Lady of Wisdom", "Chikwawa": "Cathedral of St. Michael", "Dedza": "Bembeke Cathedral of the Holy Family", "Karonga": "Cathedral of St. Mary", "Lilongwe": "Maula Cathedral of Our Lady Queen of Africa", "Mangochi": "Cathedral of St. Augustine", "Mzuzu": "Cathedral of St. Peter", "Zomba": "Sacred Heart Cathedral" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 8, total_provinces: 2 },
@@ -2702,6 +2737,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Zimbabwe": {
     continent: "Africa",
+    cathedrals: { "Bulawayo": "Cathedral Basilica of the Immaculate Conception", "Chinhoyi": "Cathedral of Corpus Christi", "Gokwe": "Cathedral of St. John the Baptist", "Gweru": "Cathedral of St. Theresa", "Harare": "Cathedral of the Sacred Heart", "Hwange": "Cathedral of St. Ignatius", "Masvingo": "Cathedral of Sts. Peter and Paul", "Mutare": "Holy Trinity Cathedral" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 8, total_provinces: 2 },
@@ -2712,6 +2748,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Rwanda": {
     continent: "Africa",
+    cathedrals: { "Butare": "Cathédrale Notre-Dame de la Sagesse", "Byumba": "Cathédrale du Cœur Immaculé de Marie", "Cyangugu": "Cathédrale du Cœur Immaculé de Marie", "Gikongoro": "Cathédrale de la Sainte Famille", "Kabgayi": "Basilique Cathédrale de Notre-Dame de l’Immaculée Conception", "Kibungo": "Cathédrale de Saint Pierre", "Kigali": "Cathédrale Saint-Michel", "Nyundo": "Cathédrale Notre-Dame de l’Annonciation", "Ruhengeri": "Cathédrale Notre Dame de Fatima" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 9, total_provinces: 1 },
@@ -2721,6 +2758,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Burundi": {
     continent: "Africa",
+    cathedrals: { "Bubanza": "Cathédrale Christ Roi", "Bujumbura": "Cathédrale Regina Mundi", "Bururi": "Cathédrale Christ Roi", "Gitega": "Cathédrale Christ Roi", "Muyinga": "Cathédrale Notre Dame de Fatima", "Ngozi": "Cathédrale Notre Dame de Fatima", "Rutana": "Cathédrale Saint-Joseph", "Ruyigi": "Cathédrale des Martyrs de l’Uganda" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 8, total_provinces: 2 },
@@ -2731,6 +2769,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "South Sudan": {
     continent: "Africa",
+    cathedrals: { "Bentiu": "Cathedral of St. Martin de Porres", "Juba": "Cathedral of St. Theresa", "Malakal": "Cathedral of St. Joseph", "Rumbek": "Cathedral of the Holy Family", "Tombura–Yambio": "Cathedral of Christ the King", "Torit": "Cathedral of Sts. Peter and Paul", "Wau": "Cathedral of St. Mary", "Yei": "Cathedral of Christ the King" },
     note: "Eastern Catholics are also served by the Maronite Diocese of Cairo, the Armenian Diocese of Iskanderiya, and Melkite and Syriac patriarchal territories (listed under Egypt where their seat is).",
     asOf: '27 November 2026',
     source: 'GCatholic.org',
@@ -2741,6 +2780,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Sudan": {
     continent: "Africa",
+    cathedrals: { "El Obeid": "Cathedral of Our Lady Queen of Africa", "Khartoum": "St. Matthew’s Cathedral" },
     note: "Eastern Catholics are also served by the Maronite Diocese of Cairo, the Armenian Diocese of Iskanderiya, and Melkite and Syriac patriarchal territories (listed under Egypt where their seat is).",
     asOf: '27 November 2026',
     source: 'GCatholic.org',
@@ -2751,6 +2791,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Eritrea": {
     continent: "Africa",
+    cathedrals: { "Metropolitanate of Asmara (Eritrean)": "Cathedral of Kidane Mehret", "Eparchy of Barentu (Eritrean)": "Cathedral of St. Michael", "Eparchy of Keren (Eritrean)": "Cathedral of St. Michael", "Eparchy of Segheneity (Eritrean)": "Cathedral of St. Michael the Archangel" },
     note: "All four jurisdictions belong to the Eritrean Catholic Church, a metropolitan Church sui iuris.",
     kinds: { "Metropolitanate of Asmara (Eritrean)": "Archdiocese", "Eparchy of Barentu (Eritrean)": "Eparchy", "Eparchy of Keren (Eritrean)": "Eparchy", "Eparchy of Segheneity (Eritrean)": "Eparchy" },
     asOf: '27 November 2026',
@@ -2762,6 +2803,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Namibia": {
     continent: "Africa",
+    cathedrals: { "Windhoek": "St. Mary’s Cathedral", "Rundu": "St. Mary’s Cathedral" },
     kinds: { "Rundu": "Apostolic Vicariate" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
@@ -2772,6 +2814,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Algeria": {
     continent: "Africa",
+    cathedrals: { "Alger–Iulia Caesarea": "Cathédrale du Sacré-Cœur", "Oran": "Cathédrale Sainte-Marie" },
     note: "The Diocese of Laghouat (Sahara) depends directly on the Holy See.",
     other: [{ name: "Laghouat", kind: "Diocese" }],
     asOf: '27 November 2026',
@@ -2783,6 +2826,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Morocco": {
     continent: "Africa",
+    cathedrals: { "Rabat": "Cathédrale Saint-Pierre", "Tánger": "Cathédrale de l’Immaculée-Conception et du Saint-Esprit" },
     note: "Both archdioceses depend directly on the Holy See; neither heads a province.",
     other: [{ name: "Rabat", kind: "Archdiocese" }, { name: "Tánger", kind: "Archdiocese" }],
     asOf: '27 November 2026',
@@ -2793,6 +2837,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Tunisia": {
     continent: "Africa",
+    cathedrals: { "Tunis": "Cathédrale Saint-Vincent-de-Paul et Sainte-Olive" },
     note: "The Archdiocese of Tunis covers the whole country and depends directly on the Holy See.",
     other: [{ name: "Tunis", kind: "Archdiocese" }],
     asOf: '27 November 2026',
@@ -2803,6 +2848,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Libya": {
     continent: "Africa",
+    cathedrals: { "Tripoli": "Pro-Cathedral of St. Francis" },
     note: "Libya has no dioceses; its four mission jurisdictions depend directly on the Holy See.",
     other: [{ name: "Benghazi", kind: "Apostolic Vicariate" }, { name: "Derna", kind: "Apostolic Vicariate" }, { name: "Tripoli", kind: "Apostolic Vicariate" }, { name: "Misurata", kind: "Prefecture" }],
     asOf: '27 November 2026',
@@ -2813,6 +2859,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Botswana": {
     continent: "Africa",
+    cathedrals: { "Gaborone": "Christ the King Cathedral", "Francistown": "Cathedral of Our Lady of the Desert" },
     note: "Both dioceses belong to the ecclesiastical province of Pretoria (South Africa).",
     kinds: { "Francistown": "Diocese", "Gaborone": "Diocese" },
     asOf: '27 November 2026',
@@ -2824,6 +2871,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Eswatini": {
     continent: "Africa",
+    cathedrals: { "Manzini": "Cathedral of Our Lady of Assumption" },
     note: "The Diocese of Manzini belongs to the ecclesiastical province of Pretoria (South Africa).",
     kinds: { "Manzini": "Diocese" },
     asOf: '27 November 2026',
@@ -2835,6 +2883,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Lesotho": {
     continent: "Africa",
+    cathedrals: { "Leribe": "Cathedral of St. Monica", "Maseru": "Cathedral of Our Lady of Victories", "Mohale's Hoek": "Cathedral of St. Patrick", "Qacha's Nek": "Cathedral of the Holy Redeemer" },
     asOf: '27 November 2026',
     source: 'GCatholic.org',
     totals: { total_dioceses: 4, total_provinces: 1 },
@@ -2844,6 +2893,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Mauritius": {
     continent: "Africa",
+    cathedrals: { "Port-Louis": "Cathédrale Saint-Louis", "Rodrigues": "Cathédrale Saint-Gabriel" },
     note: "Both jurisdictions depend directly on the Holy See.",
     other: [{ name: "Port-Louis", kind: "Diocese" }, { name: "Rodrigues", kind: "Apostolic Vicariate" }],
     asOf: '27 November 2026',
@@ -2864,6 +2914,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Comoros": {
     continent: "Africa",
+    cathedrals: { "Archipel des Comores": "Cathédrale Sainte Thérèse de l’Enfant Jésus" },
     note: "One apostolic vicariate (which also covers Mayotte) depends directly on the Holy See.",
     other: [{ name: "Archipel des Comores", kind: "Apostolic Vicariate" }],
     asOf: '27 November 2026',
@@ -2874,6 +2925,7 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
   },
   "Djibouti": {
     continent: "Africa",
+    cathedrals: { "Djibouti": "Cathédrale de Notre-Dame du Bon-Pasteur" },
     note: "One diocese covers the whole country and depends directly on the Holy See.",
     other: [{ name: "Djibouti", kind: "Diocese" }],
     asOf: '27 November 2026',
