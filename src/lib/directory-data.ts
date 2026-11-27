@@ -1576,4 +1576,227 @@ export const DIRECTORY_FACTS: Record<string, CountryFacts> = {
       "Fort-de-France–Saint-Pierre": ["Cayenne"],
     },
   },
+  // ---------- Oceania ----------
+  "Australia": {
+    continent: 'Oceania',
+    note: "Australia has five ecclesiastical provinces. The archdioceses of Canberra and Goulburn and of Hobart, the Eastern Catholic eparchies and the two ordinariates depend directly on the Holy See. The Ukrainian, Chaldean and Syro-Malabar eparchies also serve New Zealand.",
+    other: [{ name: "Canberra and Goulburn", kind: "Archdiocese" }, { name: "Hobart", kind: "Archdiocese" }, { name: "Eparchy of Saint Maron of Sydney (Maronite)", kind: "Eparchy" }, { name: "Eparchy of Saint Michael’s of Sydney (Melkite)", kind: "Eparchy" }, { name: "Eparchy of Saint Thomas the Apostle of Melbourne (Syro-Malabar)", kind: "Eparchy" }, { name: "Eparchy of Saint Thomas the Apostle of Sydney (Chaldean)", kind: "Eparchy" }, { name: "Military Ordinariate of Australia", kind: "Military Ordinariate" }, { name: "Personal Ordinariate of Our Lady of the Southern Cross", kind: "Personal Ordinariate" }],
+    kinds: { "Eparchy of Saints Peter and Paul of Melbourne (Ukrainian Greek Catholic)": "Eparchy" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 35, total_provinces: 5 },
+    provinces: {
+      "Adelaide": ["Adelaide", "Darwin", "Port Pirie"],
+      "Brisbane": ["Brisbane", "Cairns", "Rockhampton", "Toowoomba", "Townsville"],
+      "Melbourne": ["Melbourne", "Ballarat", "Eparchy of Saints Peter and Paul of Melbourne (Ukrainian Greek Catholic)", "Sale", "Sandhurst"],
+      "Perth": ["Perth", "Broome", "Bunbury", "Geraldton"],
+      "Sydney": ["Sydney", "Armidale", "Bathurst", "Broken Bay", "Lismore", "Maitland–Newcastle", "Parramatta", "Wagga Wagga", "Wilcannia–Forbes", "Wollongong"],
+    },
+  },
+  "New Zealand": {
+    continent: 'Oceania',
+    note: "Eastern Catholics in New Zealand are served by the Ukrainian, Chaldean and Syro-Malabar eparchies based in Australia.",
+    other: [{ name: "Military Ordinariate of New Zealand", kind: "Military Ordinariate" }],
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 7, total_provinces: 1 },
+    provinces: {
+      "Wellington": ["Wellington", "Auckland", "Christchurch", "Dunedin", "Hamilton", "Palmerston North"],
+    },
+  },
+  "Papua New Guinea": {
+    continent: 'Oceania',
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 19, total_provinces: 4 },
+    provinces: {
+      "Madang": ["Madang", "Aitape", "Lae", "Vanimo", "Wewak"],
+      "Mount Hagen": ["Mount Hagen", "Goroka", "Kundiawa", "Mendi", "Wabag"],
+      "Port Moresby": ["Port Moresby", "Alotau–Sideia", "Bereina", "Daru–Kiunga", "Kerema"],
+      "Rabaul": ["Rabaul", "Bougainville", "Kavieng", "Kimbe"],
+    },
+  },
+  "Solomon Islands": {
+    continent: 'Oceania',
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 3, total_provinces: 1 },
+    provinces: {
+      "Honiara": ["Honiara", "Auki", "Gizo"],
+    },
+  },
+  "Fiji": {
+    continent: 'Oceania',
+    note: "The Archdiocese of Suva covers Fiji. Its province also includes Rarotonga (Cook Islands), Tarawa and Nauru (Kiribati) and the mission of Funafuti (Tuvalu).",
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1, total_provinces: 1 },
+    provinces: {
+      "Suva": ["Suva"],
+    },
+  },
+  "Kiribati": {
+    continent: 'Oceania',
+    note: "The Diocese of Tarawa and Nauru has its seat in Kiribati, also serves Nauru, and belongs to the ecclesiastical province of Suva (Fiji).",
+    kinds: { "Tarawa and Nauru": "Diocese" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+      "Suva": ["Tarawa and Nauru"],
+    },
+  },
+  "Nauru": {
+    continent: 'Oceania',
+    note: "Nauru is served by the Diocese of Tarawa and Nauru, whose seat is in Kiribati. Add parishes here under that diocese, listed under Kiribati.",
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 0 },
+    provinces: {
+    },
+  },
+  "Tuvalu": {
+    continent: 'Oceania',
+    note: "Tuvalu is served by the Mission sui iuris of Funafuti, which belongs to the ecclesiastical province of Suva (Fiji). Missions are not yet a type in this directory.",
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 0 },
+    provinces: {
+    },
+  },
+  "Samoa": {
+    continent: 'Oceania',
+    note: "The Archdiocese of Samoa–Apia covers Samoa. Its province also includes the Diocese of Samoa–Pago Pago (American Samoa) and the mission of Tokelau.",
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1, total_provinces: 1 },
+    provinces: {
+      "Samoa–Apia": ["Samoa–Apia"],
+    },
+  },
+  "Tonga": {
+    continent: 'Oceania',
+    note: "The Diocese of Tonga covers the whole kingdom and depends directly on the Holy See.",
+    other: [{ name: "Tonga", kind: "Diocese" }],
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+    },
+  },
+  "Vanuatu": {
+    continent: 'Oceania',
+    note: "The Diocese of Port-Vila covers Vanuatu and belongs to the ecclesiastical province of Nouméa (New Caledonia).",
+    kinds: { "Port-Vila": "Diocese" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+      "Nouméa": ["Port-Vila"],
+    },
+  },
+  "Micronesia": {
+    continent: 'Oceania',
+    note: "The Diocese of Caroline Islands covers the Federated States of Micronesia and Palau and belongs to the ecclesiastical province of Agaña (Guam).",
+    kinds: { "Caroline Islands": "Diocese" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+      "Agaña": ["Caroline Islands"],
+    },
+  },
+  "Palau": {
+    continent: 'Oceania',
+    note: "Palau is served by the Diocese of Caroline Islands, whose seat is in Micronesia. Add parishes here under that diocese, listed under Micronesia.",
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 0 },
+    provinces: {
+    },
+  },
+  "Marshall Islands": {
+    continent: 'Oceania',
+    note: "The Apostolic Prefecture of the Marshall Islands belongs to the ecclesiastical province of Agaña (Guam).",
+    kinds: { "Marshall Islands": "Prefecture" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+      "Agaña": ["Marshall Islands"],
+    },
+  },
+  "Guam": {
+    continent: 'Oceania',
+    note: "The Archdiocese of Agaña covers Guam. Its province also includes Caroline Islands (Micronesia and Palau), Chalan Kanoa (Northern Mariana Islands) and the Apostolic Prefecture of the Marshall Islands.",
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1, total_provinces: 1 },
+    provinces: {
+      "Agaña": ["Agaña"],
+    },
+  },
+  "Northern Mariana Islands": {
+    continent: 'Oceania',
+    note: "The Diocese of Chalan Kanoa covers the Northern Mariana Islands and belongs to the ecclesiastical province of Agaña (Guam).",
+    kinds: { "Chalan Kanoa": "Diocese" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+      "Agaña": ["Chalan Kanoa"],
+    },
+  },
+  "American Samoa": {
+    continent: 'Oceania',
+    note: "The Diocese of Samoa–Pago Pago covers American Samoa and belongs to the ecclesiastical province of Samoa–Apia.",
+    kinds: { "Samoa–Pago Pago": "Diocese" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+      "Samoa–Apia": ["Samoa–Pago Pago"],
+    },
+  },
+  "Cook Islands": {
+    continent: 'Oceania',
+    note: "The Diocese of Rarotonga covers the Cook Islands and Niue and belongs to the ecclesiastical province of Suva (Fiji).",
+    kinds: { "Rarotonga": "Diocese" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+      "Suva": ["Rarotonga"],
+    },
+  },
+  "New Caledonia": {
+    continent: 'Oceania',
+    note: "The Archdiocese of Nouméa covers New Caledonia. Its province also includes Port-Vila (Vanuatu) and Wallis et Futuna.",
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1, total_provinces: 1 },
+    provinces: {
+      "Nouméa": ["Nouméa"],
+    },
+  },
+  "Wallis and Futuna": {
+    continent: 'Oceania',
+    note: "The Diocese of Wallis et Futuna belongs to the ecclesiastical province of Nouméa (New Caledonia).",
+    kinds: { "Wallis et Futuna": "Diocese" },
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 1 },
+    provinces: {
+      "Nouméa": ["Wallis et Futuna"],
+    },
+  },
+  "French Polynesia": {
+    continent: 'Oceania',
+    asOf: '27 November 2026',
+    source: 'GCatholic.org',
+    totals: { total_dioceses: 2, total_provinces: 1 },
+    provinces: {
+      "Papeete": ["Papeete", "Taiohae o Tefenuaenata"],
+    },
+  },
 }
